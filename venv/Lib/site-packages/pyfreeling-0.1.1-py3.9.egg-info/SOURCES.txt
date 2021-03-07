@@ -1,0 +1,13 @@
+MANIFEST.in
+setup.cfg
+setup.py
+versioneer.py
+pyfreeling/__init__.py
+pyfreeling/_version.py
+pyfreeling.egg-info/PKG-INFO
+pyfreeling.egg-info/SOURCES.txt
+pyfreeling.egg-info/dependency_links.txt
+pyfreeling.egg-info/requires.txt
+pyfreeling.egg-info/top_level.txt
+pyfreeling/tests/__init__.py
+pyfreeling/tests/test_analyze.py

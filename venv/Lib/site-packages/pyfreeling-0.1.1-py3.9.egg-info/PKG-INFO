@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: pyfreeling
+Version: 0.1.1
+Summary: Python wrapper for Freeling 4.0
+Home-page: http://github.com/malev/pyfreeling
+Author: Marcos Vanetta
+Author-email: marcosvanetta@gmail.com
+License: GPL2
+Description: UNKNOWN
+Keywords: nlp freeling spanish
+Platform: UNKNOWN
