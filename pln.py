@@ -1,4 +1,5 @@
 import codecs
+import pickle
 import nltk
 import nltk.data
 
@@ -45,7 +46,7 @@ class Pln:
         frases2 = sent_tokenize(self.text, "spanish")
         print(frases2)
         words = word_tokenize(self.text, "spanish")
-
+        print(words)
         freq = nltk.FreqDist(words)
         print(freq.items())
 
@@ -76,6 +77,18 @@ class Pln:
         for entrada in sin:
             pal = entrada.split(", ")
             dic_sin[pal[0]] = pal
+
+        abrv = codecs.open("diccionarios/abreviaturas.txt", "r", encoding="utf-8")
+        dic_abreviaturas = {}
+        for entrada in abrv:
+            pal = entrada.split(":")
+            dic_abreviaturas[pal[0]] = pal[1]
+
+        sigl = codecs.open("diccionarios/siglas-final.txt", "r", encoding="utf-8")
+        dic_siglas = {}
+        for entrada in sigl:
+            pal = entrada.split(":")
+            dic_siglas[pal[0]] = pal[1]
 
         for i in words:
             synonyms = []
@@ -237,7 +250,7 @@ class Pln:
             if forma.lower() in palabras:
                 if forma.lower() in diccionario:
                     info = diccionario[forma.lower()]
-
+                    print(info)
                     et = info.split()
 
                     if et[1][0] == "A":
@@ -293,7 +306,7 @@ class Pln:
             "Own_name_number": len(noun),
             "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
         })
-        print(desconocidas)
+        # print(desconocidas)
 
         '''for i in words:
             print(i, end="\n")
@@ -324,32 +337,106 @@ class Pln:
                         sinonimos_usados[i] = ""
             else:
                 sinonimos_usados[i] = ""
-        print(sinonimos_usados)
+        # print(sinonimos_usados)
 
         n_sin = 0
         for i in sinonimos_usados.values():
             if i != "":
                 n_sin += 1
-        print(n_sin)
+        # print(n_sin)
 
         # Etiquetado
         print("Etiquetado")
-        print(cess_esp.parsed_sents()[0])
 
-        corpus1 = XMLCorpusReader("diccionarios", "wn_synset.xml")
-        print(corpus1)
+        '''entrada = codecs.open("diccionarios/wikicorpus3.txt", "r", encoding="utf-8")
 
-        corpus2 = XMLCorpusReader("diccionarios", "corpus-es-1.2.xml")
-        print(corpus2)
+        tagged_words = []
+        tagged_sents = []
+        tagged_sents_per_unigrams = []
+        for linia in entrada:
+            linia = linia.rstrip()
+            if linia.startswith("<") or len(linia) == 0:
+                # nova linia
+                if len(tagged_words) > 0:
+                    tagged_sents.append(tagged_words)
+                    tagged_sents_per_unigrams.append(tagged_words)
+                    tagged_words = []
+            else:
+                camps = linia.split(" ")
+                forma = camps[0]
+                lema = camps[1]
+                etiqueta = camps[2]
+                tupla = (forma, etiqueta)
+                tagged_words.append(tupla)
 
-        '''cess_esp._tagset = "es-ancora"
-        #oraciones = cess_esp.tagged_sents(tagset="universal")
-        print("Etiquetado 2")
-        print(oraciones[0])
+        if len(tagged_words) > 0:
+            tagged_sents.append(tagged_words)
+            tagged_sents_per_unigrams.append(tagged_words)
+            tagged_words = []
 
-        trigram_tagger = nltk.TrigramTagger(oraciones)
+        diccionario = codecs.open("diccionarios/diccionario-freeling-spa.txt", "r", encoding="utf-8")
 
-        print(trigram_tagger.tag(words))'''
+        for linia in diccionario:
+            linia = linia.rstrip()
+            camps = linia.split(":")
+            if len(camps) >= 3:
+                forma = camps[0]
+                lema = camps[1]
+                etiqueta = camps[2]
+                tupla = (forma, etiqueta)
+                tagged_words.append(tupla)
+        tagged_sents_per_unigrams.append(tagged_words)
+
+        default_tagger = nltk.DefaultTagger("NP00000")
+        affix_tagger = nltk.AffixTagger(tagged_sents_per_unigrams, affix_length=-3, min_stem_length=2,
+                                        backoff=default_tagger)
+        unigram_tagger_diccionari = nltk.UnigramTagger(tagged_sents_per_unigrams, backoff=affix_tagger)
+        unigram_tagger = nltk.UnigramTagger(tagged_sents, backoff=unigram_tagger_diccionari)
+        bigram_tagger = nltk.BigramTagger(tagged_sents, backoff=unigram_tagger)
+        trigram_tagger = nltk.TrigramTagger(tagged_sents, backoff=bigram_tagger)
+
+        sortida = open('etiq-spanish.pkl', 'wb')
+        pickle.dump(trigram_tagger, sortida, -1)
+        sortida.close()'''
+
+
+
+
+
+
+
+        '''entrada = open('etiquetador-spa.pkl', 'rb')
+        etiquetador = pickle.load(entrada)
+        entrada.close()
+        analisis = etiquetador.tag(words)
+        print(analisis)'''
+
+        '''dabreviaturas = codecs.open("diccionarios/abreviatures.txt", "r", encoding="utf-8")
+        abreviaturas = {}
+        for i in dabreviaturas:
+            i=i.rstrip()
+            abreviaturas[i]=i
+        print(abreviaturas)
+        abrv=[]
+        for i in words:
+            i = i.rstrip()
+            i = i.rstrip(".")
+            if i in abreviaturas:
+                print(i)
+                abrv.append(i)
+        print(abrv)
+        print((len(abrv) * 100) / len(words))'''
+        abrv = []
+        siglas = []
+        for i in words:
+            if i in dic_abreviaturas:
+                abrv.append(i)
+            if i in dic_siglas:
+                siglas.append(i)
+        print(abrv)
+        print((len(abrv) * 100) / len(words))
+        print(siglas)
+        print((len(siglas) * 100) / len(words))
 
         with open(self.directory + '/data.json', 'w') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
