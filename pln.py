@@ -90,6 +90,13 @@ class Pln:
             pal = entrada.split(":")
             dic_siglas[pal[0]] = pal[1]
 
+        hom = codecs.open("diccionarios/homonimas.txt", "r", encoding="utf-8")
+        dic_hom = {}
+        for entrada in hom:
+            pal = entrada.split()
+            print(pal)
+            dic_hom[pal[0]] = pal[1]
+
         for i in words:
             synonyms = []
             for syn in wordnet.synsets(i):
@@ -428,15 +435,20 @@ class Pln:
         print((len(abrv) * 100) / len(words))'''
         abrv = []
         siglas = []
+        homo = []
         for i in words:
             if i in dic_abreviaturas:
                 abrv.append(i)
             if i in dic_siglas:
                 siglas.append(i)
+            if i in dic_hom:
+                homo.append(i)
         print(abrv)
         print((len(abrv) * 100) / len(words))
         print(siglas)
         print((len(siglas) * 100) / len(words))
+        print(homo)
+        print((len(homo) * 100) / len(words))
 
         with open(self.directory + '/data.json', 'w') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
