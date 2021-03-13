@@ -47,7 +47,9 @@ class Pln:
         print(frases2)
         words = word_tokenize(self.text, "spanish")
         print(words)
+
         freq = nltk.FreqDist(words)
+        print("freq")
         print(freq.items())
 
         clean = frases[:]
@@ -69,8 +71,8 @@ class Pln:
             entrada = entrada.split()
             if len(entrada) >= 4:
                 word = entrada[1]
-                freq = entrada[3]
-                frecuencia[word] = float(freq)
+                frequ = entrada[3]
+                frecuencia[word] = float(frequ)
 
         sin = codecs.open("diccionarios/sinonimos_final.txt", "r", encoding="utf-8")
         dic_sin = {}
@@ -105,6 +107,18 @@ class Pln:
             print(i)
             print(synonyms)
             print("\n")
+
+        print("sigla")
+
+        sigla = []
+        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+        for i in freq.items():
+            if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 5:
+                if i[0] not in dic_abreviaturas:
+                    f.write(i[0]+'\n')
+                    sigla.append(i[0])
+        f.close()
+        print(sigla)
 
         spanish_stemmer = SnowballStemmer('spanish')
 
@@ -405,12 +419,6 @@ class Pln:
         sortida = open('etiq-spanish.pkl', 'wb')
         pickle.dump(trigram_tagger, sortida, -1)
         sortida.close()'''
-
-
-
-
-
-
 
         '''entrada = open('etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
