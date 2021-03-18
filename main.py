@@ -12,6 +12,10 @@ directory = ""
 tipo = ""
 entry = ""
 label = ""
+r1 = ""
+r2 = ""
+button = ""
+boutput = ""
 
 
 def process_text(text, directorio):
@@ -57,7 +61,7 @@ def save_file():
 
 
 def send_text(archivo, directorio, t):
-    if archivo == "":
+    if archivo == "" and entry != "":
         archivo = entry.get()
     if archivo == "" or directorio == "" or t == "":
         messagebox.showerror(title="Error", message="No se puede procesar hasta que seleccione ambos parámetros")
@@ -90,11 +94,11 @@ if __name__ == "__main__":
 
     option = IntVar()
 
-    Radiobutton(window, text="Archivo", variable=option, bg="white",
-                value=1, command=lambda: open_file()).place(x=10, y=10)
+    r1 = Radiobutton(window, text="Archivo", variable=option, bg="white",
+                     value=1, command=lambda: open_file()).place(x=10, y=10)
 
-    Radiobutton(window, text="URL", variable=option, bg="white",
-                value=2, command=lambda: open_url()).place(x=10, y=40)
+    r2 = Radiobutton(window, text="URL", variable=option, bg="white",
+                     value=2, command=lambda: open_url()).place(x=10, y=40)
 
     boutput = Button(window, text="Directorio", bg="aquamarine", width=11, height=1,
                      command=lambda: save_file()).place(x=10, y=90)
