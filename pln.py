@@ -115,7 +115,7 @@ class Pln:
         for i in freq.items():
             if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 5:
                 if i[0] not in dic_abreviaturas:
-                    f.write(i[0]+'\n')
+                    f.write(i[0]+':'+i[0]+'\n')
                     sigla.append(i[0])
         f.close()
         print(sigla)
