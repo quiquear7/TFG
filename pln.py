@@ -22,14 +22,22 @@ import json
 
 class Pln:
 
-    def __init__(self, text, directory):
+    def __init__(self, text, directory, title):
         self.text = text
         self.directory = directory
+        self.title = title
 
     def process(self):
 
+        palabras = self.title.split()
+        titulo = ""
+        for i in palabras:
+            i = i.split(",")
+            if i[0].isalnum():
+                titulo += i.capitalize()
+
         fjson = {
-            "Title": "texto.txt",
+            "Title": titulo,
             "URL": "",
             "Format": "csv",
             "Topic": "",
@@ -115,7 +123,7 @@ class Pln:
         for i in freq.items():
             if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 5:
                 if i[0] not in dic_abreviaturas:
-                    f.write(i[0]+':'+i[0]+'\n')
+                    f.write(i[0] + ':' + i[0] + '\n')
                     sigla.append(i[0])
         f.close()
         print(sigla)
@@ -458,7 +466,8 @@ class Pln:
         print(homo)
         print((len(homo) * 100) / len(words))
 
-        with open(self.directory + '/data.json', 'w') as file:
+        ajson = self.directory + '/' + titulo + '.json'
+        with open(ajson, 'w') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
 
         print("THE END")

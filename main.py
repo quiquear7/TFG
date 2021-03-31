@@ -18,9 +18,9 @@ button = ""
 boutput = ""
 
 
-def process_text(text, directorio):
+def process_text(text, directorio, titulo):
     window.destroy()
-    x = Pln(text, directorio)
+    x = Pln(text, directorio, titulo)
     x.process()
     window2 = Tk()
     window2.title("Analizador")
@@ -71,7 +71,7 @@ def send_text(archivo, directorio, t):
             f = open(archivo, 'r', encoding="utf8", errors="ignore")
             text = f.read()
             print(text)
-            process_text(text, directorio)
+            process_text(text, directorio, "")
         else:
             print(archivo)
             if validators.url(archivo):
@@ -79,9 +79,10 @@ def send_text(archivo, directorio, t):
                 webpage = urlopen(req).read()
                 soup = BeautifulSoup(webpage, "html.parser")
                 text = soup.get_text(strip=True)
+                title = soup.title.string
                 print(text)
                 print("\n")
-                process_text(text, directorio)
+                process_text(text, directorio, title)
             else:
                 messagebox.showerror(title="Error", message="Url incorrecta")
 
