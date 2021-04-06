@@ -1,12 +1,11 @@
 import codecs
 import pickle
+import string
+
 import nltk
 import nltk.data
 
-'''import time
-import requests
-from bs4 import BeautifulSoup
-'''
+import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
@@ -29,13 +28,18 @@ class Pln:
 
     def process(self):
 
+        """obtenemos el título del documento"""
+        punct = string.punctuation
+        for c in punct:
+            self.title = self.title.replace(c, "")
+
         palabras = self.title.split()
         titulo = ""
         for i in palabras:
-            i = i.split(",")
             if i[0].isalnum():
-                titulo += i.capitalize()
+                titulo += i[0].capitalize()
 
+        '''Rellenamos json'''
         fjson = {
             "Title": titulo,
             "URL": "",
@@ -52,71 +56,25 @@ class Pln:
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
         frases = tokenizer.tokenize(self.text)
         frases2 = sent_tokenize(self.text, "spanish")
-        print(frases2)
         words = word_tokenize(self.text, "spanish")
-        print(words)
 
         freq = nltk.FreqDist(words)
-        print("freq")
-        print(freq.items())
+        print("freq: ", freq.items())
 
         clean = frases[:]
         sr = stopwords.words('spanish')
         for token in frases:
             if token in sr:
                 clean.remove(token)
-        print("\n")
-        print("Texto limpio \n")
 
-        palabras = []
-        dic = codecs.open("diccionarios/0_palabras_todas.txt", "r", encoding="utf-8")
-        for i in dic:
-            palabras.append(i.rstrip())
-
-        frecuencia = {}
-        archivo_frecuencia = codecs.open("diccionarios/CREA_total.TXT", "r", encoding="latin-1")
-        for entrada in archivo_frecuencia:
-            entrada = entrada.split()
-            if len(entrada) >= 4:
-                word = entrada[1]
-                frequ = entrada[3]
-                frecuencia[word] = float(frequ)
-
-        sin = codecs.open("diccionarios/sinonimos_final.txt", "r", encoding="utf-8")
-        dic_sin = {}
-        for entrada in sin:
-            pal = entrada.split(", ")
-            dic_sin[pal[0]] = pal
-
-        abrv = codecs.open("diccionarios/abreviaturas.txt", "r", encoding="utf-8")
-        dic_abreviaturas = {}
-        for entrada in abrv:
-            pal = entrada.split(":")
-            dic_abreviaturas[pal[0]] = pal[1]
-
-        sigl = codecs.open("diccionarios/siglas-final.txt", "r", encoding="utf-8")
-        dic_siglas = {}
-        for entrada in sigl:
-            pal = entrada.split(":")
-            dic_siglas[pal[0]] = pal[1]
-
-        hom = codecs.open("diccionarios/homonimas.txt", "r", encoding="utf-8")
-        dic_hom = {}
-        for entrada in hom:
-            pal = entrada.split()
-            print(pal)
-            dic_hom[pal[0]] = pal[1]
-
-        for i in words:
-            synonyms = []
-            for syn in wordnet.synsets(i):
-                for lemma in syn.lemmas(lang="spa"):
-                    synonyms.append(lemma.name())
-            print(i)
-            print(synonyms)
-            print("\n")
-
-        print("sigla")
+        '''obtenemos los diccionarios que vamos a utilizar en el texto'''
+        palabras = dic.diccionario_palabras()
+        dic_frecuencia = dic.diccionario_frecuencia()
+        dic_sinonimos = dic.diccionario_sinonimos()
+        dic_abreviaturas = dic.diccionario_abreviaturas()
+        dic_siglas = dic.diccionario_siglas()
+        dic_hom = dic.diccionario_homonimas()
+        diccionario = dic.diccionario_freeling()
 
         sigla = []
         f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
@@ -126,14 +84,11 @@ class Pln:
                     f.write(i[0] + ':' + i[0] + '\n')
                     sigla.append(i[0])
         f.close()
-        print(sigla)
 
-        spanish_stemmer = SnowballStemmer('spanish')
-
+        '''spanish_stemmer = SnowballStemmer('spanish')
         for i in words:
-            print(i)
             print(spanish_stemmer.stem(i), end='\n')
-            print("\n")
+            print("\n")'''
 
         upper = []
         errores = []
@@ -166,23 +121,7 @@ class Pln:
                 indeterminate.append((i, cont))
             if "º" in i or "ª" in i:
                 numbers.append((i, cont))
-            try:
-                datetime.strptime(i, '%YYYY-%m-%d')
-                date.append((i, cont))
-            except ValueError:
-                try:
-                    datetime.strptime(i, '%d-%m-%YYYY')
-                    date.append((i, cont))
-                except ValueError:
-                    try:
-                        datetime.strptime(i, '%YYYY/%m/%d')
-                        date.append((i, cont))
-                    except ValueError:
-                        try:
-                            datetime.strptime(i, '%d/%m/%YYYY')
-                            date.append((i, cont))
-                        except ValueError:
-                            print("no es una fecha")
+
             cont += 1
         print(upper)
         print(errores)
@@ -204,17 +143,17 @@ class Pln:
             wordsjson = []
             words_temp = word_tokenize(i, "spanish")
             for p in words_temp:
-                if p.lower() in frecuencia:
+                if p.lower() in dic_frecuencia:
                     valor = ""
-                    if frecuencia[p.lower()] >= 0.3:
+                    if dic_frecuencia[p.lower()] >= 0.3:
                         valor = "es muy frecuente"
-                    if 0.3 > frecuencia[p.lower()] > 0.1:
+                    if 0.3 > dic_frecuencia[p.lower()] > 0.1:
                         valor = "es frecuente"
-                    if frecuencia[p.lower()] <= 0.1:
+                    if dic_frecuencia[p.lower()] <= 0.1:
                         valor = "es poco frecuente"
                     wordsjson.append({
                         "Word": p + "",
-                        "Frequency_value": frecuencia[p.lower()],
+                        "Frequency_value": dic_frecuencia[p.lower()],
                         "Results": valor
                     })
                 else:
@@ -234,33 +173,6 @@ class Pln:
 
             sentence += 1
 
-        diccionario = {}
-        archivo_diccionario = codecs.open("diccionarios/diccionario-freeling-spa.txt", "r", encoding="utf-8")
-
-        for entrada in archivo_diccionario:
-            entrada = entrada.rstrip()
-            camps = entrada.split(":")
-            if len(camps) >= 3:
-                forma = camps[0]
-                lema = camps[1]
-                etiqueta = camps[2]
-                if forma in diccionario:
-                    diccionario[forma] = diccionario.get(forma, "") + " " + lema + " " + etiqueta
-                else:
-                    diccionario[forma] = lema + " " + etiqueta
-
-        # Añadimos los signos de puntuación
-        diccionario['"'] = '" Fe'
-        diccionario["'"] = "' Fe"
-        diccionario['.'] = '. Fp'
-        diccionario[','] = ', Fc'
-        diccionario[';'] = '; Fx'
-        diccionario[':'] = ': Fd'
-        diccionario['('] = '( Fpa'
-        diccionario[')'] = ') Fpt'
-        diccionario['['] = '[ Fca'
-        diccionario[']'] = '] Fct'
-
         adjective = []
         conjunction = []
         determiner = []
@@ -279,7 +191,6 @@ class Pln:
             if forma.lower() in palabras:
                 if forma.lower() in diccionario:
                     info = diccionario[forma.lower()]
-                    print(info)
                     et = info.split()
 
                     if et[1][0] == "A":
@@ -313,11 +224,9 @@ class Pln:
                         preposition.append(et[0])
                 else:
                     info = "DESCONOCIDA"
-                print(forma + " " + info)
             else:
                 desconocidas.append(forma)
 
-            print("\n")
 
         fjson['Readability_Analysis_Set'] = ({
             "Sentences_number": len(frases),
@@ -336,26 +245,22 @@ class Pln:
             "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
         })
         # print(desconocidas)
-
-        '''for i in words:
-            print(i, end="\n")
-            url = "https://www.wordreference.com/sinonimos/" + i.lower()
-            page = requests.get(url)
-            html = BeautifulSoup(page.content, 'html.parser')
-            div = html.find(class_='trans clickable')
-            if div is not None:
-                titulo = div.find_next('h3').text.strip()
-                if titulo in i.lower():
-                    sinonimos = div.find_next('ul').text.strip()
-                    print(i, " ", sinonimos)
-            print("\n")'''
-
+        abrv = []
+        siglas = []
+        homo = []
         sinonimos_usados = {}
         for i in words:
+            if i in dic_abreviaturas:
+                abrv.append(i)
+            if i in dic_siglas:
+                siglas.append(i)
+            if i in dic_hom:
+                homo.append(i)
+
             i = i.lower()
             if i not in sinonimos_usados:
-                if i in dic_sin:
-                    x = dic_sin[i]
+                if i in dic_sinonimos:
+                    x = dic_sinonimos[i]
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
@@ -366,108 +271,31 @@ class Pln:
                         sinonimos_usados[i] = ""
             else:
                 sinonimos_usados[i] = ""
-        # print(sinonimos_usados)
 
         n_sin = 0
         for i in sinonimos_usados.values():
             if i != "":
                 n_sin += 1
-        # print(n_sin)
 
-        # Etiquetado
-        print("Etiquetado")
+        print(sinonimos_usados)
+        print("Porcentaje de Sinonimos: ", (n_sin * 100) / len(words))
+        print(abrv)
+        print("Porcentaje de Abreviaturas: ", (len(abrv) * 100) / len(words))
+        print(siglas)
+        print("Porcentaje de Siglas: ", (len(siglas) * 100) / len(words))
+        print(homo)
+        print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
 
-        '''entrada = codecs.open("diccionarios/wikicorpus3.txt", "r", encoding="utf-8")
-
-        tagged_words = []
-        tagged_sents = []
-        tagged_sents_per_unigrams = []
-        for linia in entrada:
-            linia = linia.rstrip()
-            if linia.startswith("<") or len(linia) == 0:
-                # nova linia
-                if len(tagged_words) > 0:
-                    tagged_sents.append(tagged_words)
-                    tagged_sents_per_unigrams.append(tagged_words)
-                    tagged_words = []
-            else:
-                camps = linia.split(" ")
-                forma = camps[0]
-                lema = camps[1]
-                etiqueta = camps[2]
-                tupla = (forma, etiqueta)
-                tagged_words.append(tupla)
-
-        if len(tagged_words) > 0:
-            tagged_sents.append(tagged_words)
-            tagged_sents_per_unigrams.append(tagged_words)
-            tagged_words = []
-
-        diccionario = codecs.open("diccionarios/diccionario-freeling-spa.txt", "r", encoding="utf-8")
-
-        for linia in diccionario:
-            linia = linia.rstrip()
-            camps = linia.split(":")
-            if len(camps) >= 3:
-                forma = camps[0]
-                lema = camps[1]
-                etiqueta = camps[2]
-                tupla = (forma, etiqueta)
-                tagged_words.append(tupla)
-        tagged_sents_per_unigrams.append(tagged_words)
-
-        default_tagger = nltk.DefaultTagger("NP00000")
-        affix_tagger = nltk.AffixTagger(tagged_sents_per_unigrams, affix_length=-3, min_stem_length=2,
-                                        backoff=default_tagger)
-        unigram_tagger_diccionari = nltk.UnigramTagger(tagged_sents_per_unigrams, backoff=affix_tagger)
-        unigram_tagger = nltk.UnigramTagger(tagged_sents, backoff=unigram_tagger_diccionari)
-        bigram_tagger = nltk.BigramTagger(tagged_sents, backoff=unigram_tagger)
-        trigram_tagger = nltk.TrigramTagger(tagged_sents, backoff=bigram_tagger)
-
-        sortida = open('etiq-spanish.pkl', 'wb')
-        pickle.dump(trigram_tagger, sortida, -1)
-        sortida.close()'''
-
-        '''entrada = open('etiquetador-spa.pkl', 'rb')
+        entrada = open('etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
         entrada.close()
         analisis = etiquetador.tag(words)
-        print(analisis)'''
-
-        '''dabreviaturas = codecs.open("diccionarios/abreviatures.txt", "r", encoding="utf-8")
-        abreviaturas = {}
-        for i in dabreviaturas:
-            i=i.rstrip()
-            abreviaturas[i]=i
-        print(abreviaturas)
-        abrv=[]
-        for i in words:
-            i = i.rstrip()
-            i = i.rstrip(".")
-            if i in abreviaturas:
-                print(i)
-                abrv.append(i)
-        print(abrv)
-        print((len(abrv) * 100) / len(words))'''
-        abrv = []
-        siglas = []
-        homo = []
-        for i in words:
-            if i in dic_abreviaturas:
-                abrv.append(i)
-            if i in dic_siglas:
-                siglas.append(i)
-            if i in dic_hom:
-                homo.append(i)
-        print(abrv)
-        print((len(abrv) * 100) / len(words))
-        print(siglas)
-        print((len(siglas) * 100) / len(words))
-        print(homo)
-        print((len(homo) * 100) / len(words))
+        print("\nAnalisis")
+        print(analisis)
 
         ajson = self.directory + '/' + titulo + '.json'
+
         with open(ajson, 'w') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
 
-        print("THE END")
+        print("Fin")

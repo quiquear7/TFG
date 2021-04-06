@@ -2,6 +2,7 @@ from urllib.request import Request, urlopen
 from tkinter import *
 from tkinter import filedialog, messagebox
 import validators
+import ntpath
 from bs4 import BeautifulSoup
 
 from pln import Pln
@@ -67,21 +68,17 @@ def send_text(archivo, directorio, t):
         messagebox.showerror(title="Error", message="No se puede procesar hasta que seleccione ambos parámetros")
     else:
         if t == "1":
-            print(archivo)
             f = open(archivo, 'r', encoding="utf8", errors="ignore")
             text = f.read()
-            print(text)
-            process_text(text, directorio, "")
+            title = ntpath.basename(archivo).split(".")
+            process_text(text, directorio, title[0])
         else:
-            print(archivo)
             if validators.url(archivo):
                 req = Request(archivo, headers={'User-Agent': 'Mozilla/5.0'})
                 webpage = urlopen(req).read()
                 soup = BeautifulSoup(webpage, "html.parser")
                 text = soup.get_text(strip=True)
                 title = soup.title.string
-                print(text)
-                print("\n")
                 process_text(text, directorio, title)
             else:
                 messagebox.showerror(title="Error", message="Url incorrecta")
