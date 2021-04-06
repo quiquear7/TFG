@@ -187,6 +187,13 @@ class Pln:
         date = []
         interjection = []
         desconocidas = []
+
+        entrada = open('etiquetador-spa.pkl', 'rb')
+        etiquetador = pickle.load(entrada)
+        entrada.close()
+        analisis = etiquetador.tag(words)
+        print(analisis)
+
         for forma in words:
             if forma.lower() in palabras:
                 if forma.lower() in diccionario:
@@ -223,10 +230,9 @@ class Pln:
                     if et[1][0] == "S":
                         preposition.append(et[0])
                 else:
-                    info = "DESCONOCIDA"
+                    desconocidas.append(forma)
             else:
                 desconocidas.append(forma)
-
 
         fjson['Readability_Analysis_Set'] = ({
             "Sentences_number": len(frases),
@@ -245,6 +251,7 @@ class Pln:
             "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
         })
         # print(desconocidas)
+
         abrv = []
         siglas = []
         homo = []
@@ -285,13 +292,6 @@ class Pln:
         print("Porcentaje de Siglas: ", (len(siglas) * 100) / len(words))
         print(homo)
         print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
-
-        entrada = open('etiquetador-spa.pkl', 'rb')
-        etiquetador = pickle.load(entrada)
-        entrada.close()
-        analisis = etiquetador.tag(words)
-        print("\nAnalisis")
-        print(analisis)
 
         ajson = self.directory + '/' + titulo + '.json'
 
