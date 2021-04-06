@@ -90,6 +90,18 @@ class Pln:
             print(spanish_stemmer.stem(i), end='\n')
             print("\n")'''
 
+        entrada = open('etiquetador-spa.pkl', 'rb')
+        etiquetador = pickle.load(entrada)
+        entrada.close()
+        analisis = etiquetador.tag(words)
+        print(analisis)
+
+        abrv = []
+        siglas = []
+        homo = []
+        sinonimos_usados = {}
+
+        numeros = []
         upper = []
         errores = []
         large = []
@@ -100,17 +112,37 @@ class Pln:
         indeterminate = []
         numbers = []
         date = []
+        comillas = []
+        con_complex = []
+
+        adjective = []
+        conjunction = []
+        determiner = []
+        noun = []
+        pronoun = []
+        adverb = []
+        preposition = []
+        verbi = []
+        verbg = []
+        verbp = []
+        number = []
+        date = []
+        interjection = []
+        desconocidas = []
+
         cont = 0
-        for i in words:
-            if i.isupper():
+        for x in analisis:
+            i = x[0]
+            j = x[1]
+            if i.isupper() and i not in dic_siglas:
                 upper.append(i)
             if i == ";" or i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
                 errores.append((i, cont))
-            if len(i) > 15:
+            if len(i) > 13:
                 large.append((i, cont))
-            if "ísimo" in i:
+            if j[0] == "A" and ("ísimo" in i or "érrimo" in i):
                 superlative.append((i, cont))
-            if "mente" in i:
+            if j[0] == "R" and "mente" in i:
                 adverbs.append((i, cont))
             if "@" in i:
                 arroba.append((i, cont))
@@ -119,8 +151,77 @@ class Pln:
                     title.append((words[cont + 1], cont))
             if i == "cosa" or i == "algo" or i == "asunto":
                 indeterminate.append((i, cont))
-            if "º" in i or "ª" in i:
+            if ("º" in i or "ª" in i) or (j[0] == "M" and j[1] == "O"):
                 numbers.append((i, cont))
+            if '"' == i:
+                comillas.append((i, cont))
+            if i.isdigit():
+                numeros.append((i, cont))
+            if i == "por " and words[cont + 1] == "lo" and words[cont + 2] == "tanto":
+                con_complex.append((i, cont))
+            if i == "no " and words[cont + 1] == "obstante":
+                con_complex.append((i, cont))
+            if i == "por " and words[cont + 1] == "consiguiente":
+                con_complex.append((i, cont))
+            if i == "sin " and words[cont+1] == "embargo":
+                con_complex.append((i, cont))
+
+            if i in dic_abreviaturas:
+                abrv.append(i)
+            if i in dic_siglas:
+                siglas.append(i)
+            if i in dic_hom:
+                homo.append(i)
+
+            i = i.lower()
+            if i not in sinonimos_usados:
+                if i in dic_sinonimos:
+                    x = dic_sinonimos[i]
+                    usado = 0
+                    for t in x:
+                        t = t.replace(",", "")
+                        if t in sinonimos_usados:
+                            usado = 1
+                            sinonimos_usados[t] += i + ", "
+                    if usado == 0:
+                        sinonimos_usados[i] = ""
+            else:
+                sinonimos_usados[i] = ""
+
+            if i.lower() in palabras or i.lower in diccionario:
+                info = diccionario[i.lower()]
+                et = info.split()
+
+                if et[1][0] == "A":
+                    adjective.append(et[0])
+                if et[1][0] == "C":
+                    conjunction.append(et[0])
+                if et[1][0] == "D":
+                    determiner.append(et[0])
+                if et[1][0] == "N":
+                    noun.append(et[0])
+                if et[1][0] == "P":
+                    pronoun.append(et[0])
+                if et[1][0] == "R":
+                    adverb.append(et[0])
+                if et[1][0] == "V":
+                    if et[1][2] == "N":
+                        verbi.append(et[0])
+                    if et[1][2] == "G":
+                        verbg.append(et[0])
+                    if et[1][2] == "P":
+                        verbp.append(et[0])
+                if et[1][0] == "Z":
+                    number.append(et[0])
+                if et[1][0] == "W":
+                    date.append(et[0])
+                if et[1][0] == "Yo":
+                    interjection.append(et[0])
+                if et[1][0] == "S":
+                    preposition.append(et[0])
+            else:
+                desconocidas.append(i)
+
 
             cont += 1
         print(upper)
@@ -173,67 +274,6 @@ class Pln:
 
             sentence += 1
 
-        adjective = []
-        conjunction = []
-        determiner = []
-        noun = []
-        pronoun = []
-        adverb = []
-        preposition = []
-        verbi = []
-        verbg = []
-        verbp = []
-        number = []
-        date = []
-        interjection = []
-        desconocidas = []
-
-        entrada = open('etiquetador-spa.pkl', 'rb')
-        etiquetador = pickle.load(entrada)
-        entrada.close()
-        analisis = etiquetador.tag(words)
-        print(analisis)
-
-        for forma in words:
-            if forma.lower() in palabras:
-                if forma.lower() in diccionario:
-                    info = diccionario[forma.lower()]
-                    et = info.split()
-
-                    if et[1][0] == "A":
-                        adjective.append(et[0])
-                    if et[1][0] == "C":
-                        conjunction.append(et[0])
-                    if et[1][0] == "D":
-                        determiner.append(et[0])
-                    if et[1][0] == "N":
-                        noun.append(et[0])
-                    if et[1][0] == "P":
-                        pronoun.append(et[0])
-                    if et[1][0] == "R":
-                        adverb.append(et[0])
-                    if et[1][0] == "V":
-                        if et[1][2] == "N":
-                            verbi.append(et[0])
-                        if et[1][2] == "G":
-                            verbg.append(et[0])
-                        if et[1][2] == "P":
-                            verbp.append(et[0])
-                    if et[1][0] == "Z":
-                        number.append(et[0])
-                    if et[1][0] == "W":
-                        date.append(et[0])
-                    if et[1][0] == "Yo":
-                        interjection.append(et[0])
-                    if et[1][0] == "Z":
-                        number.append(et[0])
-                    if et[1][0] == "S":
-                        preposition.append(et[0])
-                else:
-                    desconocidas.append(forma)
-            else:
-                desconocidas.append(forma)
-
         fjson['Readability_Analysis_Set'] = ({
             "Sentences_number": len(frases),
             "Words_number": len(words),
@@ -250,34 +290,6 @@ class Pln:
             "Own_name_number": len(noun),
             "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
         })
-        # print(desconocidas)
-
-        abrv = []
-        siglas = []
-        homo = []
-        sinonimos_usados = {}
-        for i in words:
-            if i in dic_abreviaturas:
-                abrv.append(i)
-            if i in dic_siglas:
-                siglas.append(i)
-            if i in dic_hom:
-                homo.append(i)
-
-            i = i.lower()
-            if i not in sinonimos_usados:
-                if i in dic_sinonimos:
-                    x = dic_sinonimos[i]
-                    usado = 0
-                    for t in x:
-                        t = t.replace(",", "")
-                        if t in sinonimos_usados:
-                            usado = 1
-                            sinonimos_usados[t] += i + ", "
-                    if usado == 0:
-                        sinonimos_usados[i] = ""
-            else:
-                sinonimos_usados[i] = ""
 
         n_sin = 0
         for i in sinonimos_usados.values():
@@ -295,7 +307,7 @@ class Pln:
 
         ajson = self.directory + '/' + titulo + '.json'
 
-        with open(ajson, 'w') as file:
+        with open(ajson, 'w', encoding='utf8') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
 
         print("Fin")
