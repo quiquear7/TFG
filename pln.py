@@ -163,7 +163,7 @@ class Pln:
                 con_complex.append((i, cont))
             if i == "por " and words[cont + 1] == "consiguiente":
                 con_complex.append((i, cont))
-            if i == "sin " and words[cont+1] == "embargo":
+            if i == "sin " and words[cont + 1] == "embargo":
                 con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
@@ -221,7 +221,6 @@ class Pln:
                     preposition.append(et[0])
             else:
                 desconocidas.append(i)
-
 
             cont += 1
         print(upper)

@@ -1,107 +1,76 @@
+from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
+from qt_material import apply_stylesheet
 from urllib.request import Request, urlopen
-from tkinter import *
-from tkinter import filedialog, messagebox
 import validators
 import ntpath
 from bs4 import BeautifulSoup
-
 from pln import Pln
+from ventana_ui import *
 
-window = Tk()
-file = ""
-directory = ""
-tipo = ""
-entry = ""
-label = ""
-r1 = ""
-r2 = ""
-button = ""
-boutput = ""
+app = ""
 
 
 def process_text(text, directorio, titulo):
-    window.destroy()
     x = Pln(text, directorio, titulo)
     x.process()
-    window2 = Tk()
-    window2.title("Analizador")
-    window2.geometry("400x200")
-    window2.resizable(width=0, height=0)
-    window2.configure(background="white")
-    Label(window2, text="Análisis Terminado", bg="white").pack(anchor=CENTER)
 
 
-def open_file():
-    Label(window, text=" ", bg="white", width=10000).place(x=110, y=40)
-    global file
-    file = ""
-    file = filedialog.askopenfilename(initialdir="/", title="Seleccione archivo",
-                                      filetypes=(("txt files", "*.txt"), ("All files", "*.*")))
-    global tipo
-    tipo = "1"
-    global label
-    label = Label(window, text=file, bg="white").place(x=110, y=10)
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    archivos = []
+    dir = ""
 
+    def __init__(self, *args, **kwargs):
+        QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
+        self.setupUi(self)
+        self.barchivo.clicked.connect(self.openFileNamesDialog)
+        self.bdir.clicked.connect(self.openDir)
+        self.burl.clicked.connect(self.openUrl)
+        self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
 
-def open_url():
-    global label
-    label = Label(window, text=" ", bg="white", width=10000).place(x=110, y=10)
-    global file
-    file = ""
-    global tipo
-    tipo = "2"
-    global entry
-    entry = Entry(window, width=40, bg="aquamarine")
-    entry.place(x=110, y=40)
+    def openFileNamesDialog(self):
+        files, _ = QFileDialog.getOpenFileNames(self, "Selecciona Archivos", "", "txt Files (*.txt)")
+        if files:
+            for i in files:
+                self.list_archivo.addItem(ntpath.basename(i))
+                self.archivos.append((i, 0))
 
+    def openDir(self):
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selecciona Directorio"))
+        self.label_dir.setText(directorio)
+        self.dir = directorio
 
-def save_file():
-    global directory
-    directory = filedialog.askdirectory()
-    Label(window, text=directory, bg="white").place(x=110, y=90)
+    def openUrl(self):
+        text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            self.list_url.addItem(text)
+            self.archivos.append((text, 1))
 
-
-def send_text(archivo, directorio, t):
-    if archivo == "" and entry != "":
-        archivo = entry.get()
-    if archivo == "" or directorio == "" or t == "":
-        messagebox.showerror(title="Error", message="No se puede procesar hasta que seleccione ambos parámetros")
-    else:
-        if t == "1":
-            f = open(archivo, 'r', encoding="utf8", errors="ignore")
-            text = f.read()
-            title = ntpath.basename(archivo).split(".")
-            process_text(text, directorio, title[0])
+    def aceptar(self, file, ruta):
+        if len(file) > 2 or ruta == "":
+            QMessageBox.about(self, "Error", "No hay más de dos archivos o no se ha seleccionado directorio")
         else:
-            if validators.url(archivo):
-                req = Request(archivo, headers={'User-Agent': 'Mozilla/5.0'})
-                webpage = urlopen(req).read()
-                soup = BeautifulSoup(webpage, "html.parser")
-                text = soup.get_text(strip=True)
-                title = soup.title.string
-                process_text(text, directorio, title)
-            else:
-                messagebox.showerror(title="Error", message="Url incorrecta")
+            #app.closeAllWindows()
+            for i in file:
+                if i[1] == 0:
+                    ftemp = open(i[0], 'r', encoding="utf8", errors="ignore")
+                    text = ftemp.read()
+                    title = ntpath.basename(i[0]).split(".")
+                    process_text(text, ruta, title[0])
+                if i[1] == 1:
+                    if validators.url(i[0]):
+                        req = Request(i[0], headers={'User-Agent': 'Mozilla/5.0'})
+                        webpage = urlopen(req).read()
+                        soup = BeautifulSoup(webpage, "html.parser")
+                        text = soup.get_text(strip=True)
+                        title = soup.title.string
+                        process_text(text, ruta, title)
+                    else:
+                        QMessageBox.about(self, "Error", "URL incorrecta")
 
 
 if __name__ == "__main__":
-    window.title("Analizador")
-    window.geometry("400x200")
-    window.resizable(width=1, height=0)
-    window.configure(background="white")
-
-    option = IntVar()
-
-    r1 = Radiobutton(window, text="Archivo", variable=option, bg="white",
-                     value=1, command=lambda: open_file()).place(x=10, y=10)
-
-    r2 = Radiobutton(window, text="URL", variable=option, bg="white",
-                     value=2, command=lambda: open_url()).place(x=10, y=40)
-
-    boutput = Button(window, text="Directorio", bg="aquamarine", width=11, height=1,
-                     command=lambda: save_file()).place(x=10, y=90)
-
-    button = Button(window, text="Aceptar", bg="aquamarine", width=11, height=1,
-                    command=lambda: send_text(file, directory, tipo)).pack(anchor=CENTER, side=BOTTOM, pady=10)
-
-    window.mainloop()
+    app = QtWidgets.QApplication([])
+    window = MainWindow()
+    apply_stylesheet(app, theme='dark_teal.xml')
+    window.show()
+    app.exec_()
