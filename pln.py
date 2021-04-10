@@ -4,6 +4,7 @@ import string
 
 import nltk
 import nltk.data
+import pymongo
 
 import dic as dic
 from nltk.tokenize import sent_tokenize
@@ -27,6 +28,12 @@ class Pln:
         self.title = title
 
     def process(self):
+
+        """Conectamos con la base de datos"""
+        client = pymongo.MongoClient(
+            "mongodb+srv://quiquear7:tfg2021uc3m@tfg.ickp8.mongodb.net/BD_TFG?retryWrites=true&w=majority")
+        db = client.BD_TFG
+        collection = db.Docs
 
         """obtenemos el título del documento"""
         punct = string.punctuation
@@ -90,7 +97,7 @@ class Pln:
             print(spanish_stemmer.stem(i), end='\n')
             print("\n")'''
 
-        entrada = open('etiquetador-spa.pkl', 'rb')
+        entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
         entrada.close()
         analisis = etiquetador.tag(words)
@@ -304,8 +311,10 @@ class Pln:
         print(homo)
         print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
 
-        ajson = self.directory + '/' + titulo + '.json'
+        collection.insert_one(fjson)
+        client.close()
 
+        ajson = self.directory + '/' + titulo + '.json'
         with open(ajson, 'w', encoding='utf8') as file:
             json.dump(fjson, file, ensure_ascii=False, indent=4)
 

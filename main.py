@@ -1,13 +1,113 @@
+import csv
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
 from qt_material import apply_stylesheet
 from urllib.request import Request, urlopen
 import validators
 import ntpath
+import os
 from bs4 import BeautifulSoup
+from entrenar import EntrenarCsv
 from pln import Pln
 from ventana_ui import *
+import fitz
 
 app = ""
+
+
+def crearcsv():
+    with open('final_v5.csv', 'w', newline='') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['Title',
+                             'Mu',
+                             'Flesch',
+                             'Por_Sinonimos',
+                             'Por_Abreviaturas',
+                             'Por_Siglas',
+                             "Infinitive_Verbs_number",
+                             "Gerund_Verbs_number",
+                             "Participle_Verbs_number",
+                             "Articles_number",
+                             "Preposition_number",
+                             "Noun",
+                             "Por_Desconocidas",
+                             "Por_Largas",
+                             "Por_Superlativos",
+                             "Por_Adverbios",
+                             "Por_Simbolos",
+                             "Mayusuculas_NoSiglas",
+                             "Por_Inderterminados",
+                             "Por_numeros",
+                             "Por_complex",
+                             "Por_muy_frecuentes",
+                             "Por_frecuentes",
+                             "Por_poco_frecuentes",
+                             "Por_comillas",
+                             "Por_Homo",
+                             'Tipo'])
+
+
+def entrenar(win, direccion):
+    if dir == "":
+        QMessageBox.about(win, "Error", "Seleccione ruta")
+    else:
+        app.closeAllWindows()
+        crearcsv()
+
+        contenido = os.listdir('GigaBDCorpus-master/Dificiles')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Dificiles/' + name
+            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
+            text = ftemp.read()
+            title = name.split(".")
+            x = EntrenarCsv(text, direccion, title[0], "Dificil")
+            x.process()
+
+        contenido = os.listdir('GigaBDCorpus-master/Originales')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Originales/' + name
+            doc = fitz.open(ruta)
+            textPDF = ""
+            for i in range(1, doc.page_count):
+                page = doc.loadPage(i)
+                textPDF += page.getText("text")
+            title = name.split(".")
+            if textPDF != "":
+                x = EntrenarCsv(textPDF, direccion, title[0], "Dificil")
+                x.process()
+            else:
+                print('vacio')
+
+        print("Fin PDF")
+
+        contenido = os.listdir('GigaBDCorpus-master/Faciles')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Faciles/' + name
+            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
+            text = ftemp.read()
+            title = name.split(".")
+            x = EntrenarCsv(text, direccion, title[0], "Facil")
+            x.process()
+
+        contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Adaptadas/' + name
+            doc = fitz.open(ruta)
+            textPDF = ""
+            for i in range(1, doc.page_count):
+                page = doc.loadPage(i)
+                textPDF += page.getText("text")
+            title = name.split(".")
+            if textPDF != "":
+                x = EntrenarCsv(textPDF, direccion, title[0], "Facil")
+                x.process()
+            else:
+                print('vacio')
+
+        print("Fin PDF")
 
 
 def process_text(text, directorio, titulo):
@@ -26,6 +126,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
+        self.bentrenar.clicked.connect(lambda: entrenar(self, self.dir))
 
     def openFileNamesDialog(self):
         files, _ = QFileDialog.getOpenFileNames(self, "Selecciona Archivos", "", "txt Files (*.txt)")
@@ -46,10 +147,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.archivos.append((text, 1))
 
     def aceptar(self, file, ruta):
-        if len(file) > 2 or ruta == "":
+        if len(file) < 2 or ruta == "":
             QMessageBox.about(self, "Error", "No hay más de dos archivos o no se ha seleccionado directorio")
         else:
-            #app.closeAllWindows()
+            app.closeAllWindows()
             for i in file:
                 if i[1] == 0:
                     ftemp = open(i[0], 'r', encoding="utf8", errors="ignore")
