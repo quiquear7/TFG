@@ -15,7 +15,7 @@ app = ""
 
 
 def crearcsv():
-    with open('final_v5.csv', 'w', newline='') as csvfile:
+    with open('final_v6.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Mu',
@@ -63,7 +63,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
 
-        contenido = os.listdir('GigaBDCorpus-master/Originales')
+        '''contenido = os.listdir('GigaBDCorpus-master/Originales')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Originales/' + name
@@ -79,7 +79,7 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")
+        print("Fin PDF")'''
 
         contenido = os.listdir('GigaBDCorpus-master/Faciles')
         for name in contenido:
@@ -91,7 +91,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
 
-        contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
+        '''contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Adaptadas/' + name
@@ -107,7 +107,7 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")
+        print("Fin PDF")'''
 
 
 def process_text(text, directorio, titulo):

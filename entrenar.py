@@ -373,7 +373,7 @@ class EntrenarCsv:
                                  'Tipo'])
             spamwriter.writerow(valores)
 
-            with open('final_v4.csv', 'a', newline='') as csvfile:
+            with open('final_v6.csv', 'a', newline='') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 spamwriter.writerow(valores)
 
