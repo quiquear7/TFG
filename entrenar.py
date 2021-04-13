@@ -91,7 +91,7 @@ class EntrenarCsv:
         etiquetador = pickle.load(entrada)
         entrada.close()
         analisis = etiquetador.tag(words)
-        # print(analisis)
+        #print(analisis)
 
         abrv = []
         siglas = []
@@ -118,6 +118,7 @@ class EntrenarCsv:
         pronoun = []
         adverb = []
         preposition = []
+        verbs = []
         verbi = []
         verbg = []
         verbp = []
@@ -126,11 +127,12 @@ class EntrenarCsv:
         interjection = []
         desconocidas = []
         sinonimos = []
-
+        caracteres = 0
         cont = 0
         for x in analisis:
             i = x[0]
             j = x[1]
+            caracteres += len(i)
             if i.isupper() and i not in dic_siglas:
                 upper.append(i)
             if i == ";" or i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
@@ -186,40 +188,37 @@ class EntrenarCsv:
             else:
                 sinonimos_usados[i] = ""
 
-            if i.lower in diccionario:
-                info = diccionario[i.lower()]
-                et = info.split()
-
-                if et[1][0] == "A":
-                    adjective.append(et[0])
-                if et[1][0] == "C":
-                    conjunction.append(et[0])
-                if et[1][0] == "D":
-                    determiner.append(et[0])
-                if et[1][0] == "N":
-                    noun.append(et[0])
-                if et[1][0] == "P":
-                    pronoun.append(et[0])
-                if et[1][0] == "R":
-                    adverb.append(et[0])
-                if et[1][0] == "V":
-                    if et[1][2] == "N":
-                        verbi.append(et[0])
-                    if et[1][2] == "G":
-                        verbg.append(et[0])
-                    if et[1][2] == "P":
-                        verbp.append(et[0])
-                if et[1][0] == "Z":
-                    number.append(et[0])
-                if et[1][0] == "W":
-                    date.append(et[0])
-                if et[1][0] == "Yo":
-                    interjection.append(et[0])
-                if et[1][0] == "S":
-                    preposition.append(et[0])
+            if (i.lower() in dic_frecuencia) or (i.lower() in string.punctuation):
+                if j[0] == "A":
+                    adjective.append(i)
+                if j[0] == "C":
+                    conjunction.append(i)
+                if j[0] == "D":
+                    determiner.append(i)
+                if j[0] == "N":
+                    noun.append(i)
+                if j[0] == "P":
+                    pronoun.append(i)
+                if j[0] == "R":
+                    adverb.append(i)
+                if j[0] == "V":
+                    verbs.append(i)
+                    if j[2] == "N":
+                        verbi.append(i)
+                    if j[2] == "G":
+                        verbg.append(i)
+                    if j[2] == "P":
+                        verbp.append(i)
+                if j[0] == "Z":
+                    number.append(i)
+                if j[0] == "W":
+                    date.append(i)
+                if j[0] == "Yo":
+                    interjection.append(i)
+                if j[0] == "S":
+                    preposition.append(i)
             else:
-                if i.lower() not in palabras:
-                    desconocidas.append(i)
+                desconocidas.append(i)
 
             cont += 1
         # (upper)
@@ -313,17 +312,16 @@ class EntrenarCsv:
         # collection.insert_one(fjson)
         # client.close()
         valores = [self.title,
-                   legibilidad.mu(self.text),
-                   textstat.flesch_kincaid_grade(self.text),
                    (len(sinonimos) * 100) / len(words),
                    (len(abrv) * 100) / len(words),
                    (len(siglas) * 100) / len(words),
-                   len(verbi),
-                   len(verbg),
-                   len(verbp),
-                   len(determiner),
-                   len(preposition),
-                   len(noun),
+                   (len(verbs) * 100) / len(words),
+                   (len(verbi) * 100) / len(words),
+                   (len(verbg) * 100) / len(words),
+                   (len(verbp) * 100) / len(words),
+                   (len(determiner) * 100) / len(words),
+                   (len(preposition) * 100) / len(words),
+                   (len(noun) * 100) / len(words),
                    (len(desconocidas) * 100) / len(words),
                    (len(large) * 100) / len(words),
                    (len(superlative) * 100) / len(words),
@@ -338,6 +336,8 @@ class EntrenarCsv:
                    (len(poco_frecuentes) * 100) / len(words),
                    (len(comillas) * 100) / len(words),
                    (len(homo) * 100) / len(words),
+                   (len(words)/len(frases)),
+                   (caracteres / len(words)),
                    self.tipo]
 
         acsv = self.directory + '/' + self.title + '.csv'
@@ -345,11 +345,10 @@ class EntrenarCsv:
         with open(acsv, 'w', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(['Title',
-                                 'Mu',
-                                 'Flesch',
                                  'Por_Sinonimos',
                                  'Por_Abreviaturas',
                                  'Por_Siglas',
+                                 "Por_verbs",
                                  "Infinitive_Verbs_number",
                                  "Gerund_Verbs_number",
                                  "Participle_Verbs_number",
@@ -370,10 +369,12 @@ class EntrenarCsv:
                                  "Por_poco_frecuentes",
                                  "Por_comillas",
                                  "Por_Homo",
+                                 "Ratio_Palabra_Frases",
+                                 "Ratio_Caracteres_Palabra",
                                  'Tipo'])
             spamwriter.writerow(valores)
 
-            with open('final_v6.csv', 'a', newline='') as csvfile:
+            with open('GigaBDCorpus-master/CSV/final_v8.csv', 'a', newline='') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 spamwriter.writerow(valores)
 

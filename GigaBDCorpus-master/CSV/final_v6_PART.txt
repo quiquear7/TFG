@@ -1,0 +1,89 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.PART -C 0.25 -M 2
+Relation:     final_v6
+Instances:    249
+Attributes:   27
+              Title
+              Mu
+              Flesch
+              Por_Sinonimos
+              Por_Abreviaturas
+              Por_Siglas
+              Infinitive_Verbs_number
+              Gerund_Verbs_number
+              Participle_Verbs_number
+              Articles_number
+              Preposition_number
+              Noun
+              Por_Desconocidas
+              Por_Largas
+              Por_Superlativos
+              Por_Adverbios
+              Por_Simbolos
+              Mayusuculas_NoSiglas
+              Por_Inderterminados
+              Por_numeros
+              Por_complex
+              Por_muy_frecuentes
+              Por_frecuentes
+              Por_poco_frecuentes
+              Por_comillas
+              Por_Homo
+              Tipo
+Test mode:    evaluate on training data
+
+=== Classifier model (full training set) ===
+
+PART decision list
+------------------
+
+Mayusuculas_NoSiglas > 0.556328 AND
+Por_Simbolos <= 1.801966 AND
+Mu <= 50.92: Dificil (50.0)
+
+Por_Sinonimos > 0.840336 AND
+Mu > 44.67 AND
+Flesch <= 25.8 AND
+Por_Desconocidas > 26.460481 AND
+Por_Abreviaturas <= 1.950806: Facil (108.0/4.0)
+
+Mayusuculas_NoSiglas > 1.247401: Dificil (20.0)
+
+Mu > 49.74 AND
+Por_Sinonimos > 1.798202: Facil (16.0)
+
+: Dificil (55.0/14.0)
+
+Number of Rules  : 	5
+
+
+Time taken to build model: 0.03 seconds
+
+=== Evaluation on training set ===
+
+Time taken to test model on training data: 0.01 seconds
+
+=== Summary ===
+
+Correctly Classified Instances         231               92.7711 %
+Incorrectly Classified Instances        18                7.2289 %
+Kappa statistic                          0.8555
+Mean absolute error                      0.1148
+Root mean squared error                  0.2395
+Relative absolute error                 23.0863 %
+Root relative squared error             48.0493 %
+Total Number of Instances              249     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0,965    0,104    0,888      0,965    0,925      0,858    0,964     0,942     Dificil
+                 0,896    0,035    0,968      0,896    0,930      0,858    0,964     0,949     Facil
+Weighted Avg.    0,928    0,067    0,931      0,928    0,928      0,858    0,964     0,946     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 111   4 |   a = Dificil
+  14 120 |   b = Facil

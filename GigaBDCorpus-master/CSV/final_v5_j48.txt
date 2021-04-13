@@ -1,0 +1,103 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     final_v5
+Instances:    270
+Attributes:   27
+              Title
+              Mu
+              Flesch
+              Por_Sinonimos
+              Por_Abreviaturas
+              Por_Siglas
+              Infinitive_Verbs_number
+              Gerund_Verbs_number
+              Participle_Verbs_number
+              Articles_number
+              Preposition_number
+              Noun
+              Por_Desconocidas
+              Por_Largas
+              Por_Superlativos
+              Por_Adverbios
+              Por_Simbolos
+              Mayusuculas_NoSiglas
+              Por_Inderterminados
+              Por_numeros
+              Por_complex
+              Por_muy_frecuentes
+              Por_frecuentes
+              Por_poco_frecuentes
+              Por_comillas
+              Por_Homo
+              Tipo
+Test mode:    evaluate on training data
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+Mu <= 45.73
+|   Mayusuculas_NoSiglas <= 0.531915
+|   |   Flesch <= 17.3: Facil (4.0)
+|   |   Flesch > 17.3: Dificil (25.0/6.0)
+|   Mayusuculas_NoSiglas > 0.531915: Dificil (45.0/1.0)
+Mu > 45.73
+|   Por_Sinonimos <= 0.840336: Dificil (14.0)
+|   Por_Sinonimos > 0.840336
+|   |   Por_Desconocidas <= 26.460481
+|   |   |   Flesch <= 19.6
+|   |   |   |   Por_Simbolos <= 0.342466: Dificil (5.0)
+|   |   |   |   Por_Simbolos > 0.342466
+|   |   |   |   |   Mu <= 48.55: Dificil (5.0/1.0)
+|   |   |   |   |   Mu > 48.55: Facil (9.0)
+|   |   |   Flesch > 19.6: Dificil (14.0)
+|   |   Por_Desconocidas > 26.460481
+|   |   |   Mayusuculas_NoSiglas <= 0.573066: Facil (113.0/10.0)
+|   |   |   Mayusuculas_NoSiglas > 0.573066
+|   |   |   |   Por_poco_frecuentes <= 2.298851
+|   |   |   |   |   Por_poco_frecuentes <= 1.006036
+|   |   |   |   |   |   Por_Sinonimos <= 5.829228
+|   |   |   |   |   |   |   Por_Sinonimos <= 3.20442
+|   |   |   |   |   |   |   |   Mu <= 56.3: Dificil (7.0)
+|   |   |   |   |   |   |   |   Mu > 56.3: Facil (2.0)
+|   |   |   |   |   |   |   Por_Sinonimos > 3.20442: Facil (11.0)
+|   |   |   |   |   |   Por_Sinonimos > 5.829228: Dificil (4.0)
+|   |   |   |   |   Por_poco_frecuentes > 1.006036: Facil (8.0)
+|   |   |   |   Por_poco_frecuentes > 2.298851: Dificil (4.0)
+
+Number of Leaves  : 	15
+
+Size of the tree : 	29
+
+
+Time taken to build model: 0.02 seconds
+
+=== Evaluation on training set ===
+
+Time taken to test model on training data: 0 seconds
+
+=== Summary ===
+
+Correctly Classified Instances         252               93.3333 %
+Incorrectly Classified Instances        18                6.6667 %
+Kappa statistic                          0.8658
+Mean absolute error                      0.1145
+Root mean squared error                  0.2392
+Relative absolute error                 23.0184 %
+Root relative squared error             47.9785 %
+Total Number of Instances              270     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0,920    0,055    0,935      0,920    0,927      0,866    0,960     0,948     Dificil
+                 0,945    0,080    0,932      0,945    0,938      0,866    0,960     0,941     Facil
+Weighted Avg.    0,933    0,069    0,933      0,933    0,933      0,866    0,960     0,944     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 115  10 |   a = Dificil
+   8 137 |   b = Facil

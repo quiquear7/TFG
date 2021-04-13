@@ -1,0 +1,102 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.rules.PART -C 0.25 -M 2
+Relation:     final_v5
+Instances:    270
+Attributes:   27
+              Title
+              Mu
+              Flesch
+              Por_Sinonimos
+              Por_Abreviaturas
+              Por_Siglas
+              Infinitive_Verbs_number
+              Gerund_Verbs_number
+              Participle_Verbs_number
+              Articles_number
+              Preposition_number
+              Noun
+              Por_Desconocidas
+              Por_Largas
+              Por_Superlativos
+              Por_Adverbios
+              Por_Simbolos
+              Mayusuculas_NoSiglas
+              Por_Inderterminados
+              Por_numeros
+              Por_complex
+              Por_muy_frecuentes
+              Por_frecuentes
+              Por_poco_frecuentes
+              Por_comillas
+              Por_Homo
+              Tipo
+Test mode:    evaluate on training data
+
+=== Classifier model (full training set) ===
+
+PART decision list
+------------------
+
+Mu <= 45.73 AND
+Mayusuculas_NoSiglas > 0.531915: Dificil (45.0/1.0)
+
+Por_Sinonimos > 0.840336 AND
+Por_Desconocidas > 23.913043 AND
+Flesch <= 25.8 AND
+Mu > 44.54 AND
+Mayusuculas_NoSiglas <= 0.573066 AND
+Por_Abreviaturas <= 1.886792: Facil (105.0/5.0)
+
+Por_muy_frecuentes <= 88.481675 AND
+Por_Sinonimos > 0.840336 AND
+Mu > 48.72 AND
+Por_poco_frecuentes <= 2.298851 AND
+Por_Superlativos <= 0.003678 AND
+Por_Largas <= 1.181102 AND
+Por_Siglas > 0.724638: Facil (26.0)
+
+Por_Largas > 0.456621 AND
+Por_muy_frecuentes > 85.819071: Dificil (32.0/3.0)
+
+Por_Largas <= 0.456621: Dificil (23.0)
+
+Por_Sinonimos > 1.863354 AND
+Por_Sinonimos <= 6.149546 AND
+Por_Homo > 1.667484 AND
+Por_Siglas > 0.456621: Facil (15.0/1.0)
+
+: Dificil (24.0/1.0)
+
+Number of Rules  : 	7
+
+
+Time taken to build model: 0.04 seconds
+
+=== Evaluation on training set ===
+
+Time taken to test model on training data: 0 seconds
+
+=== Summary ===
+
+Correctly Classified Instances         259               95.9259 %
+Incorrectly Classified Instances        11                4.0741 %
+Kappa statistic                          0.918 
+Mean absolute error                      0.0767
+Root mean squared error                  0.1958
+Relative absolute error                 15.4175 %
+Root relative squared error             39.2659 %
+Total Number of Instances              270     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0,952    0,034    0,960      0,952    0,956      0,918    0,972     0,961     Dificil
+                 0,966    0,048    0,959      0,966    0,962      0,918    0,972     0,961     Facil
+Weighted Avg.    0,959    0,042    0,959      0,959    0,959      0,918    0,972     0,961     
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 119   6 |   a = Dificil
+   5 140 |   b = Facil

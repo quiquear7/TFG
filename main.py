@@ -15,14 +15,13 @@ app = ""
 
 
 def crearcsv():
-    with open('final_v6.csv', 'w', newline='') as csvfile:
+    with open('GigaBDCorpus-master/CSV/final_v8.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
-                             'Mu',
-                             'Flesch',
                              'Por_Sinonimos',
                              'Por_Abreviaturas',
                              'Por_Siglas',
+                             "Por_verbs",
                              "Infinitive_Verbs_number",
                              "Gerund_Verbs_number",
                              "Participle_Verbs_number",
@@ -43,6 +42,8 @@ def crearcsv():
                              "Por_poco_frecuentes",
                              "Por_comillas",
                              "Por_Homo",
+                             "Ratio_Palabra_Frases",
+                             "Ratio_Caracteres_Palabra",
                              'Tipo'])
 
 
