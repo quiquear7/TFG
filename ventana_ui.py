@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui.ui'
+# Form implementation generated from reading ui file 'ui2.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,29 +11,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(587, 463)
-        MainWindow.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
+class Ui_TFG(object):
+    def setupUi(self, TFG):
+        TFG.setObjectName("TFG")
+        TFG.resize(587, 463)
+        TFG.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
 "    QMainWindow{\n"
 "        background-color: #FFFFFF;\n"
 "    }\n"
 "\n"
 "    /*Estilos para el botón*/\n"
-"    QPushButton{\n"
-"        text-transform: none;\n"
-"        border-radius: 4px;\n"
-"        font-family: \'Roboto\';\n"
-"        font-size: 11px;\n"
-"    }\n"
+"\n"
 "    \n"
 "    /*Definimos el estilo para un efecto hover sobre el botón,\n"
 "    este cambiará su background cuando pasemos el mouse por\n"
 "    encima*/\n"
-"    QPushButton:hover{\n"
-"    background-color: #018786;\n"
-"    }\n"
 "\n"
 "    /*Definimos los estilos para los QLineEdit*/\n"
 "    QLineEdit{\n"
@@ -63,63 +55,62 @@ class Ui_MainWindow(object):
 "    /*Estilo para el QLable cuyo nombre es #label_login*/\n"
 "    #label_titulo{\n"
 "        font-size:15px;\n"
-"        color: #FFFFFF;\n"
-"    }")
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+"        color: #000000;\n"
+"    }\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"")
+        self.centralwidget = QtWidgets.QWidget(TFG)
         self.centralwidget.setObjectName("centralwidget")
         self.baceptar = QtWidgets.QPushButton(self.centralwidget)
-        self.baceptar.setGeometry(QtCore.QRect(180, 390, 81, 31))
+        self.baceptar.setGeometry(QtCore.QRect(240, 250, 96, 31))
         self.baceptar.setObjectName("baceptar")
-        self.bentrenar = QtWidgets.QPushButton(self.centralwidget)
-        self.bentrenar.setGeometry(QtCore.QRect(320, 390, 81, 31))
-        self.bentrenar.setObjectName("bentrenar")
-        self.label_titulo = QtWidgets.QLabel(self.centralwidget)
-        self.label_titulo.setGeometry(QtCore.QRect(240, 20, 121, 20))
-        self.label_titulo.setObjectName("label_titulo")
         self.barchivo = QtWidgets.QPushButton(self.centralwidget)
-        self.barchivo.setGeometry(QtCore.QRect(90, 70, 91, 31))
+        self.barchivo.setGeometry(QtCore.QRect(140, 120, 96, 31))
         self.barchivo.setObjectName("barchivo")
         self.burl = QtWidgets.QPushButton(self.centralwidget)
-        self.burl.setGeometry(QtCore.QRect(400, 70, 91, 31))
+        self.burl.setGeometry(QtCore.QRect(240, 120, 96, 31))
         self.burl.setObjectName("burl")
         self.bdir = QtWidgets.QPushButton(self.centralwidget)
-        self.bdir.setGeometry(QtCore.QRect(20, 330, 81, 31))
+        self.bdir.setGeometry(QtCore.QRect(140, 210, 96, 31))
         self.bdir.setObjectName("bdir")
-        self.list_archivo = QtWidgets.QListWidget(self.centralwidget)
-        self.list_archivo.setGeometry(QtCore.QRect(10, 110, 256, 192))
-        self.list_archivo.setObjectName("list_archivo")
-        self.list_url = QtWidgets.QListWidget(self.centralwidget)
-        self.list_url.setGeometry(QtCore.QRect(320, 110, 256, 192))
-        self.list_url.setObjectName("list_url")
         self.label_dir = QtWidgets.QLabel(self.centralwidget)
-        self.label_dir.setGeometry(QtCore.QRect(110, 340, 371, 13))
+        self.label_dir.setGeometry(QtCore.QRect(240, 220, 191, 13))
         self.label_dir.setText("")
         self.label_dir.setObjectName("label_dir")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.bentrenar = QtWidgets.QPushButton(self.centralwidget)
+        self.bentrenar.setGeometry(QtCore.QRect(340, 120, 91, 31))
+        self.bentrenar.setObjectName("bentrenar")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(140, 160, 291, 49))
+        self.listWidget.setObjectName("listWidget")
+        TFG.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(TFG)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 587, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
+        TFG.setMenuBar(self.menubar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(TFG)
+        QtCore.QMetaObject.connectSlotsByName(TFG)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, TFG):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.baceptar.setText(_translate("MainWindow", "Aceptar"))
-        self.bentrenar.setText(_translate("MainWindow", "Entrenar"))
-        self.label_titulo.setText(_translate("MainWindow", "Ingrese 2 o más"))
-        self.barchivo.setText(_translate("MainWindow", "Archivo"))
-        self.burl.setText(_translate("MainWindow", "URL"))
-        self.bdir.setText(_translate("MainWindow", "Ruta"))
+        TFG.setWindowTitle(_translate("TFG", "MainWindow"))
+        self.baceptar.setText(_translate("TFG", "Comenzar"))
+        self.barchivo.setText(_translate("TFG", "Archivo"))
+        self.burl.setText(_translate("TFG", "URL"))
+        self.bdir.setText(_translate("TFG", "Ruta"))
+        self.bentrenar.setText(_translate("TFG", "Entrenar"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    TFG = QtWidgets.QMainWindow()
+    ui = Ui_TFG()
+    ui.setupUi(TFG)
+    TFG.show()
     sys.exit(app.exec_())

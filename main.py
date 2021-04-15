@@ -116,58 +116,79 @@ def process_text(text, directorio, titulo):
     x.process()
 
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    archivos = []
+class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
+    archivos = ""
     dir = ""
 
     def __init__(self, *args, **kwargs):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
+        self.bdir.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
-        self.bentrenar.clicked.connect(lambda: entrenar(self, self.dir))
+        self.bentrenar.clicked.connect(self.preEntreno)
+
+    def preEntreno(self):
+        self.limpiarArchivo()
+        self.archivos = ("", 2)
+        self.listWidget.clear()
+        self.listWidget.addItem("Entrenar Documentos")
+        self.bdir.show()
 
     def openFileNamesDialog(self):
-        files, _ = QFileDialog.getOpenFileNames(self, "Selecciona Archivos", "", "txt Files (*.txt)")
-        if files:
-            for i in files:
-                self.list_archivo.addItem(ntpath.basename(i))
-                self.archivos.append((i, 0))
+        self.limpiarArchivo()
+        self.bdir.hide()
+        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
+        if file:
+            self.listWidget.clear()
+            self.listWidget.addItem(file)
+            self.archivos = (file, 0)
 
     def openDir(self):
-        directorio = str(QFileDialog.getExistingDirectory(self, "Selecciona Directorio"))
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
         self.label_dir.setText(directorio)
         self.dir = directorio
 
     def openUrl(self):
+        self.limpiarArchivo()
+        self.bdir.hide()
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
         if okPressed and text != '':
-            self.list_url.addItem(text)
-            self.archivos.append((text, 1))
+            self.listWidget.clear()
+            self.listWidget.addItem(text)
+            self.archivos = (text, 1)
 
     def aceptar(self, file, ruta):
-        if len(file) < 2 or ruta == "":
-            QMessageBox.about(self, "Error", "No hay más de dos archivos o no se ha seleccionado directorio")
+        if file == "":
+            QMessageBox.about(self, "Error", "No se ha seleccionado archivo")
         else:
             app.closeAllWindows()
-            for i in file:
-                if i[1] == 0:
-                    ftemp = open(i[0], 'r', encoding="utf8", errors="ignore")
-                    text = ftemp.read()
-                    title = ntpath.basename(i[0]).split(".")
-                    process_text(text, ruta, title[0])
-                if i[1] == 1:
-                    if validators.url(i[0]):
-                        req = Request(i[0], headers={'User-Agent': 'Mozilla/5.0'})
-                        webpage = urlopen(req).read()
-                        soup = BeautifulSoup(webpage, "html.parser")
-                        text = soup.get_text(strip=True)
-                        title = soup.title.string
-                        process_text(text, ruta, title)
-                    else:
-                        QMessageBox.about(self, "Error", "URL incorrecta")
+            if file[1] == 0:
+                ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
+                text = ftemp.read()
+                title = ntpath.basename(file[0]).split(".")
+                process_text(text, ruta, title[0])
+            if file[1] == 1:
+                if validators.url(file[0]):
+                    req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
+                    webpage = urlopen(req).read()
+                    soup = BeautifulSoup(webpage, "html.parser")
+                    text = soup.get_text(strip=True)
+                    title = soup.title.string
+                    process_text(text, ruta, title)
+                else:
+                    QMessageBox.about(self, "Error", "URL incorrecta")
+            if file[1] == 2:
+                if ruta != "":
+                    entrenar(self, ruta)
+                else:
+                    QMessageBox.about(self, "Error", "Ruta Necesaria")
+
+    def limpiarArchivo(self):
+        self.archivos = ""
+        self.listWidget.clear()
 
 
 if __name__ == "__main__":
