@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui2.ui'
+# Form implementation generated from reading ui file 'ui3.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -12,10 +12,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_TFG(object):
-
     def setupUi(self, TFG):
         TFG.setObjectName("TFG")
-        TFG.setFixedSize(587, 360)
+        TFG.resize(587, 463)
         TFG.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
 "    QMainWindow{\n"
 "        background-color: #FFFFFF;\n"
@@ -23,7 +22,11 @@ class Ui_TFG(object):
 "\n"
 "    /*Estilos para el botón*/\n"
 "    QPushButton{\n"
-"        font-size: 11px;\n"
+"        background-color: #4db6ac;\n"
+"        border-radius: 4px;\n"
+"        color: #fff;\n"
+"        font-family: \'Roboto\';\n"
+"        font-size: 15px;\n"
 "    }\n"
 "    \n"
 "    /*Definimos el estilo para un efecto hover sobre el botón,\n"
@@ -67,7 +70,7 @@ class Ui_TFG(object):
         self.centralwidget = QtWidgets.QWidget(TFG)
         self.centralwidget.setObjectName("centralwidget")
         self.baceptar = QtWidgets.QPushButton(self.centralwidget)
-        self.baceptar.setGeometry(QtCore.QRect(240, 220, 96, 31))
+        self.baceptar.setGeometry(QtCore.QRect(240, 250, 96, 31))
         self.baceptar.setObjectName("baceptar")
         self.barchivo = QtWidgets.QPushButton(self.centralwidget)
         self.barchivo.setGeometry(QtCore.QRect(140, 120, 96, 31))
@@ -76,17 +79,17 @@ class Ui_TFG(object):
         self.burl.setGeometry(QtCore.QRect(240, 120, 96, 31))
         self.burl.setObjectName("burl")
         self.bdir = QtWidgets.QPushButton(self.centralwidget)
-        self.bdir.setGeometry(QtCore.QRect(140, 220, 96, 31))
+        self.bdir.setGeometry(QtCore.QRect(140, 210, 96, 31))
         self.bdir.setObjectName("bdir")
         self.label_dir = QtWidgets.QLabel(self.centralwidget)
-        self.label_dir.setGeometry(QtCore.QRect(240, 220, 191, 13))
+        self.label_dir.setGeometry(QtCore.QRect(240, 220, 331, 16))
         self.label_dir.setText("")
         self.label_dir.setObjectName("label_dir")
         self.bentrenar = QtWidgets.QPushButton(self.centralwidget)
         self.bentrenar.setGeometry(QtCore.QRect(340, 120, 91, 31))
         self.bentrenar.setObjectName("bentrenar")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.listWidget.setGeometry(QtCore.QRect(140, 160, 291, 49))
+        self.listWidget.setGeometry(QtCore.QRect(140, 160, 291, 31))
         self.listWidget.setObjectName("listWidget")
         TFG.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(TFG)
@@ -103,7 +106,7 @@ class Ui_TFG(object):
         self.baceptar.setText(_translate("TFG", "Comenzar"))
         self.barchivo.setText(_translate("TFG", "Archivo"))
         self.burl.setText(_translate("TFG", "URL"))
-        self.bdir.setText(_translate("TFG", "Ruta"))
+        self.bdir.setText(_translate("TFG", "Directorio"))
         self.bentrenar.setText(_translate("TFG", "Entrenar"))
 
 

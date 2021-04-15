@@ -116,6 +116,9 @@ def process_text(text, directorio, titulo):
     x.process()
 
 
+
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
     archivos = ""
     dir = ""
@@ -125,19 +128,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.setupUi(self)
         self.bdir.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
-        self.bdir.clicked.connect(self.openDir)
+        # self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
         self.bentrenar.clicked.connect(self.preEntreno)
 
     def preEntreno(self):
+        self.pintarButton(self.bentrenar)
         self.limpiarArchivo()
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
+        self.dir = directorio
         self.archivos = ("", 2)
         self.listWidget.clear()
-        self.listWidget.addItem("Entrenar Documentos")
-        self.bdir.show()
+        self.listWidget.addItem(directorio)
 
     def openFileNamesDialog(self):
+        self.pintarButton(self.barchivo)
         self.limpiarArchivo()
         self.bdir.hide()
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
@@ -146,12 +152,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             self.listWidget.addItem(file)
             self.archivos = (file, 0)
 
-    def openDir(self):
-        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
-        self.label_dir.setText(directorio)
-        self.dir = directorio
-
     def openUrl(self):
+        self.pintarButton(self.burl)
         self.limpiarArchivo()
         self.bdir.hide()
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
@@ -169,6 +171,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
                 text = ftemp.read()
                 title = ntpath.basename(file[0]).split(".")
+                self.limpiarVentana()
                 process_text(text, ruta, title[0])
             if file[1] == 1:
                 if validators.url(file[0]):
@@ -177,11 +180,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
                     title = soup.title.string
+                    self.limpiarVentana()
                     process_text(text, ruta, title)
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
                 if ruta != "":
+                    self.limpiarVentana()
                     entrenar(self, ruta)
                 else:
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
@@ -189,6 +194,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
     def limpiarArchivo(self):
         self.archivos = ""
         self.listWidget.clear()
+
+    def limpiarVentana(self):
+        self.burl.hide()
+        self.barchivo.hide()
+        self.bentrenar.hide()
+        self.listWidget.hide()
+        self.baceptar.hide()
+
+    def pintarButton(self, button):
+        self.barchivo.setStyleSheet('QPushButton {background-color: #31363b; }')
+        self.burl.setStyleSheet('QPushButton {background-color: #31363b; }')
+        self.bentrenar.setStyleSheet('QPushButton {background-color: #31363b; }')
+        button.setStyleSheet('QPushButton {background-color: #232629; }')
 
 
 if __name__ == "__main__":

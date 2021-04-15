@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\venv\Lib\site-packages\qt_material\themes\dark_teal.xml">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

@@ -315,7 +315,7 @@ class Pln:
         client.close()
 
         ajson = self.directory + '/' + titulo + '.json'
-        with open(ajson, 'w', encoding='utf8') as file:
-            json.dump(fjson, file, ensure_ascii=False, indent=4)
+        #with open(ajson, 'w', encoding='utf8') as file:
+            #json.dump(fjson, file, ensure_ascii=False, indent=4)
 
         print("Fin")
