@@ -26,7 +26,8 @@ class Pln:
         self.text = text
         self.directory = directory
         self.title = title
-
+        self.json = ""
+        self.titulo = ""
     def process(self):
 
         """Conectamos con la base de datos"""
@@ -45,6 +46,7 @@ class Pln:
         for i in palabras:
             if i[0].isalnum():
                 titulo += i[0].capitalize()
+        self.titulo = titulo
 
         '''Rellenamos json'''
         fjson = {
@@ -313,7 +315,7 @@ class Pln:
 
         collection.insert_one(fjson)
         client.close()
-
+        self.json = fjson
         ajson = self.directory + '/' + titulo + '.json'
         #with open(ajson, 'w', encoding='utf8') as file:
             #json.dump(fjson, file, ensure_ascii=False, indent=4)

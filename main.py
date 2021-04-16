@@ -1,3 +1,5 @@
+from bson import json_util
+
 import csv
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
 from qt_material import apply_stylesheet
@@ -6,12 +8,17 @@ import validators
 import ntpath
 import os
 from bs4 import BeautifulSoup
+from bson.objectid import ObjectId
+from analisis_ui import Ui_Analisis
 from entrenar import EntrenarCsv
 from pln import Pln
 from ventana_ui import *
 import fitz
+import json
 
 app = ""
+fileJson = ""
+nameJson = ""
 
 
 def crearcsv():
@@ -111,12 +118,17 @@ def entrenar(win, direccion):
         print("Fin PDF")'''
 
 
-def process_text(text, directorio, titulo):
+def process_text(self, text, directorio, titulo):
+    app.closeAllWindows()
     x = Pln(text, directorio, titulo)
     x.process()
-
-
-
+    global fileJson
+    fileJson = x.json
+    global nameJson
+    nameJson = x.titulo
+    self.w = AnalisisWindow()
+    self.w.show()
+    self.hide()
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
@@ -166,13 +178,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         if file == "":
             QMessageBox.about(self, "Error", "No se ha seleccionado archivo")
         else:
-            app.closeAllWindows()
             if file[1] == 0:
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
                 text = ftemp.read()
                 title = ntpath.basename(file[0]).split(".")
-                self.limpiarVentana()
-                process_text(text, ruta, title[0])
+                process_text(self, text, ruta, title[0])
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
@@ -180,13 +190,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
                     title = soup.title.string
-                    self.limpiarVentana()
-                    process_text(text, ruta, title)
+                    process_text(self, text, ruta, title)
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
                 if ruta != "":
-                    self.limpiarVentana()
                     entrenar(self, ruta)
                 else:
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
@@ -207,6 +215,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.burl.setStyleSheet('QPushButton {background-color: #31363b; }')
         self.bentrenar.setStyleSheet('QPushButton {background-color: #31363b; }')
         button.setStyleSheet('QPushButton {background-color: #232629; }')
+
+
+def parse_json(data):
+    return json.loads(json_util.dumps(data))
+
+
+class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
+    def __init__(self, *args, **kwargs):
+        QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
+        self.setupUi(self)
+        self.bjson.clicked.connect(self.saveJson)
+
+    def saveJson(self):
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
+        ajson = directorio + '/' + nameJson + '.json'
+        with open(ajson, 'w', encoding='utf8') as file:
+            json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
