@@ -8,12 +8,10 @@ import validators
 import ntpath
 import os
 from bs4 import BeautifulSoup
-from bson.objectid import ObjectId
-from analisis_ui import Ui_Analisis
+from ui.analisis_ui import Ui_Analisis
 from entrenar import EntrenarCsv
 from pln import Pln
-from ventana_ui import *
-import fitz
+from ui.ventana_ui import *
 import json
 
 app = ""
@@ -22,7 +20,7 @@ nameJson = ""
 
 
 def crearcsv():
-    with open('GigaBDCorpus-master/CSV/final_v8.csv', 'w', newline='') as csvfile:
+    with open('GigaBDCorpus-master/CSV/final_v10.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -32,7 +30,7 @@ def crearcsv():
                              "Infinitive_Verbs_number",
                              "Gerund_Verbs_number",
                              "Participle_Verbs_number",
-                             "Articles_number",
+                             "Determiners_number",
                              "Preposition_number",
                              "Noun",
                              "Por_Desconocidas",
@@ -51,6 +49,9 @@ def crearcsv():
                              "Por_Homo",
                              "Ratio_Palabra_Frases",
                              "Ratio_Caracteres_Palabra",
+                             "Comas",
+                             "puntos",
+                             "punto_y_coma"
                              'Tipo'])
 
 

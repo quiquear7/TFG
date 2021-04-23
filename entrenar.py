@@ -54,9 +54,8 @@ class EntrenarCsv:
         frases = tokenizer.tokenize(self.text)
         frases2 = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
-
         freq = nltk.FreqDist(words)
-        # print("freq: ", freq.items())
+        #print("freq: ", freq.items())
 
         clean = frases[:]
         sr = stopwords.words('spanish')
@@ -76,10 +75,11 @@ class EntrenarCsv:
         sigla = []
         f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
         for i in freq.items():
-            if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 5:
-                if i[0] not in dic_abreviaturas:
+            if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 7:
+                if i[0] not in dic_siglas:
                     f.write(i[0] + ':' + i[0] + '\n')
                     sigla.append(i[0])
+                    dic_siglas = dic.diccionario_siglas()
         f.close()
 
         '''spanish_stemmer = SnowballStemmer('spanish')
@@ -90,8 +90,8 @@ class EntrenarCsv:
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
         entrada.close()
-        analisis = etiquetador.tag(words)
-        #print(analisis)
+        # analisis = etiquetador.tag(words)
+        analisis, lenwords = dic.freeling(self.text)
 
         abrv = []
         siglas = []
@@ -128,14 +128,21 @@ class EntrenarCsv:
         desconocidas = []
         sinonimos = []
         caracteres = 0
+
+        puntos = []
+        comas = []
+        punto_coma = []
+
         cont = 0
         for x in analisis:
+
             i = x[0]
             j = x[1]
+
             caracteres += len(i)
             if i.isupper() and i not in dic_siglas:
                 upper.append(i)
-            if i == ";" or i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
+            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
                 errores.append((i, cont))
             if len(i) > 13:
                 large.append((i, cont))
@@ -188,7 +195,21 @@ class EntrenarCsv:
             else:
                 sinonimos_usados[i] = ""
 
-            if (i.lower() in dic_frecuencia) or (i.lower() in string.punctuation):
+            if j == "Fc":
+                comas.append(j)
+            if j == "Fp":
+                puntos.append(j)
+            if j == "Fx":
+                punto_coma.append(j)
+
+            existe = 1
+            if "_" in i:
+                z = i.split("_")
+                for t in z:
+                    if t not in dic_frecuencia:
+                        existe = 0
+
+            if (dic_frecuencia.get(i.lower())) or ("_" in i and existe == 1) or j[0] == "F":
                 if j[0] == "A":
                     adjective.append(i)
                 if j[0] == "C":
@@ -215,12 +236,13 @@ class EntrenarCsv:
                     date.append(i)
                 if j[0] == "Yo":
                     interjection.append(i)
-                if j[0] == "S":
+                if j == "SP":
                     preposition.append(i)
             else:
                 desconocidas.append(i)
 
             cont += 1
+
         # (upper)
         # print(errores)
         # print(large)
@@ -312,32 +334,35 @@ class EntrenarCsv:
         # collection.insert_one(fjson)
         # client.close()
         valores = [self.title,
-                   (len(sinonimos) * 100) / len(words),
-                   (len(abrv) * 100) / len(words),
-                   (len(siglas) * 100) / len(words),
-                   (len(verbs) * 100) / len(words),
-                   (len(verbi) * 100) / len(words),
-                   (len(verbg) * 100) / len(words),
-                   (len(verbp) * 100) / len(words),
-                   (len(determiner) * 100) / len(words),
-                   (len(preposition) * 100) / len(words),
-                   (len(noun) * 100) / len(words),
-                   (len(desconocidas) * 100) / len(words),
-                   (len(large) * 100) / len(words),
-                   (len(superlative) * 100) / len(words),
-                   (len(adverbs) * 100) / len(words),
-                   (len(errores) * 100) / len(words),
-                   (len(upper) * 100) / len(words),
-                   (len(indeterminate) * 100) / len(words),
-                   (len(numeros) * 100) / len(words),
-                   (len(con_complex) * 100) / len(words),
-                   (len(muy_frecuentes) * 100) / len(words),
-                   (len(frecuentes) * 100) / len(words),
-                   (len(poco_frecuentes) * 100) / len(words),
-                   (len(comillas) * 100) / len(words),
-                   (len(homo) * 100) / len(words),
-                   (len(words)/len(frases)),
-                   (caracteres / len(words)),
+                   (len(sinonimos) * 100) / lenwords,
+                   (len(abrv) * 100) / lenwords,
+                   (len(siglas) * 100) / lenwords,
+                   (len(verbs) * 100) / lenwords,
+                   (len(verbi) * 100) / lenwords,
+                   (len(verbg) * 100) / lenwords,
+                   (len(verbp) * 100) / lenwords,
+                   (len(determiner) * 100) / lenwords,
+                   (len(preposition) * 100) / lenwords,
+                   (len(noun) * 100) / lenwords,
+                   (len(desconocidas) * 100) / lenwords,
+                   (len(large) * 100) / lenwords,
+                   (len(superlative) * 100) / lenwords,
+                   (len(adverbs) * 100) / lenwords,
+                   (len(errores) * 100) / lenwords,
+                   (len(upper) * 100) / lenwords,
+                   (len(indeterminate) * 100) / lenwords,
+                   (len(numeros) * 100) / lenwords,
+                   (len(con_complex) * 100) / lenwords,
+                   (len(muy_frecuentes) * 100) / lenwords,
+                   (len(frecuentes) * 100) / lenwords,
+                   (len(poco_frecuentes) * 100) / lenwords,
+                   (len(comillas) * 100) / lenwords,
+                   (len(homo) * 100) / lenwords,
+                   (len(words)) / lenwords,
+                   caracteres / lenwords,
+                   (len(comas)) / lenwords,
+                   (len(puntos)) / lenwords,
+                   (len(punto_coma)) / lenwords,
                    self.tipo]
 
         acsv = self.directory + '/' + self.title + '.csv'
@@ -352,7 +377,7 @@ class EntrenarCsv:
                                  "Infinitive_Verbs_number",
                                  "Gerund_Verbs_number",
                                  "Participle_Verbs_number",
-                                 "Articles_number",
+                                 "Determiners_number",
                                  "Preposition_number",
                                  "Noun",
                                  "Por_Desconocidas",
@@ -371,10 +396,13 @@ class EntrenarCsv:
                                  "Por_Homo",
                                  "Ratio_Palabra_Frases",
                                  "Ratio_Caracteres_Palabra",
+                                 "Comas",
+                                 "puntos",
+                                 "punto_y_coma"
                                  'Tipo'])
             spamwriter.writerow(valores)
 
-            with open('GigaBDCorpus-master/CSV/final_v8.csv', 'a', newline='') as csvfile:
+            with open('GigaBDCorpus-master/CSV/final_v10.csv', 'a', newline='') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 spamwriter.writerow(valores)
 

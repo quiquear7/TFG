@@ -28,13 +28,13 @@ class Pln:
         self.title = title
         self.json = ""
         self.titulo = ""
+
     def process(self):
 
         """Conectamos con la base de datos"""
-        client = pymongo.MongoClient(
-            "mongodb+srv://quiquear7:tfg2021uc3m@tfg.ickp8.mongodb.net/BD_TFG?retryWrites=true&w=majority")
-        db = client.BD_TFG
-        collection = db.Docs
+        # client = pymongo.MongoClient("mongodb+srv://quiquear7:tfg2021uc3m@tfg.ickp8.mongodb.net/BD_TFG?retryWrites=true&w=majority")
+        # db = client.BD_TFG
+        # collection = db.Docs
 
         """obtenemos el título del documento"""
         punct = string.punctuation
@@ -64,7 +64,7 @@ class Pln:
 
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
         frases = tokenizer.tokenize(self.text)
-        frases2 = sent_tokenize(self.text, "spanish")
+        frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
 
         freq = nltk.FreqDist(words)
@@ -84,6 +84,7 @@ class Pln:
         dic_siglas = dic.diccionario_siglas()
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
+        dic.freeling(self.text)
 
         sigla = []
         f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
@@ -102,8 +103,9 @@ class Pln:
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
         entrada.close()
-        analisis = etiquetador.tag(words)
-        print(analisis)
+        #analisis = etiquetador.tag(words)
+        analisis = dic.freeling(self.text)
+
 
         abrv = []
         siglas = []
@@ -136,6 +138,7 @@ class Pln:
         verbp = []
         number = []
         date = []
+        verbs = []
         interjection = []
         desconocidas = []
 
@@ -143,6 +146,7 @@ class Pln:
         for x in analisis:
             i = x[0]
             j = x[1]
+            print(j)
             if i.isupper() and i not in dic_siglas:
                 upper.append(i)
             if i == ";" or i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
@@ -198,36 +202,34 @@ class Pln:
                 sinonimos_usados[i] = ""
 
             if i.lower() in palabras or i.lower in diccionario:
-                info = diccionario[i.lower()]
-                et = info.split()
-
-                if et[1][0] == "A":
-                    adjective.append(et[0])
-                if et[1][0] == "C":
-                    conjunction.append(et[0])
-                if et[1][0] == "D":
-                    determiner.append(et[0])
-                if et[1][0] == "N":
-                    noun.append(et[0])
-                if et[1][0] == "P":
-                    pronoun.append(et[0])
-                if et[1][0] == "R":
-                    adverb.append(et[0])
-                if et[1][0] == "V":
-                    if et[1][2] == "N":
-                        verbi.append(et[0])
-                    if et[1][2] == "G":
-                        verbg.append(et[0])
-                    if et[1][2] == "P":
-                        verbp.append(et[0])
-                if et[1][0] == "Z":
-                    number.append(et[0])
-                if et[1][0] == "W":
-                    date.append(et[0])
-                if et[1][0] == "Yo":
-                    interjection.append(et[0])
-                if et[1][0] == "S":
-                    preposition.append(et[0])
+                if j[0] == "A":
+                    adjective.append(j[0])
+                if j[0] == "C":
+                    conjunction.append(j[0])
+                if j[0] == "D":
+                    determiner.append(j[0])
+                if j[0] == "N":
+                    noun.append(j[0])
+                if j[0] == "P":
+                    pronoun.append(j[0])
+                if j[0] == "R":
+                    adverb.append(j[0])
+                if j[0] == "V":
+                    verbs.append(j[0])
+                    if j[1] == "N":
+                        verbi.append(j[1])
+                    if j[1] == "G":
+                        verbg.append(j[1])
+                    if j[1] == "P":
+                        verbp.append(j[1])
+                if j[0] == "Z":
+                    number.append(j[0])
+                if j[0] == "W":
+                    date.append(j[0])
+                if j[0] == "Yo":
+                    interjection.append(j[0])
+                if j == "SP":
+                    preposition.append(j)
             else:
                 desconocidas.append(i)
 
@@ -313,11 +315,11 @@ class Pln:
         print(homo)
         print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
 
-        collection.insert_one(fjson)
-        client.close()
+        # collection.insert_one(fjson)
+        # client.close()
         self.json = fjson
         ajson = self.directory + '/' + titulo + '.json'
-        #with open(ajson, 'w', encoding='utf8') as file:
-            #json.dump(fjson, file, ensure_ascii=False, indent=4)
+        # with open(ajson, 'w', encoding='utf8') as file:
+        # json.dump(fjson, file, ensure_ascii=False, indent=4)
 
         print("Fin")
