@@ -1,3 +1,4 @@
+import fitz
 from bson import json_util
 
 import csv
@@ -17,10 +18,11 @@ import json
 app = ""
 fileJson = ""
 nameJson = ""
-
+resumenDoc = ""
+resultados = ""
 
 def crearcsv():
-    with open('GigaBDCorpus-master/CSV/final_v10.csv', 'w', newline='') as csvfile:
+    with open('GigaBDCorpus-master/CSV/final_v12.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -51,7 +53,8 @@ def crearcsv():
                              "Ratio_Caracteres_Palabra",
                              "Comas",
                              "puntos",
-                             "punto_y_coma"
+                             "punto_y_coma",
+                             "N_sentences",
                              'Tipo'])
 
 
@@ -72,7 +75,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
 
-        '''contenido = os.listdir('GigaBDCorpus-master/Originales')
+        contenido = os.listdir('GigaBDCorpus-master/Originales')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Originales/' + name
@@ -88,7 +91,7 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")'''
+        print("Fin PDF")
 
         contenido = os.listdir('GigaBDCorpus-master/Faciles')
         for name in contenido:
@@ -100,7 +103,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
 
-        '''contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
+        contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Adaptadas/' + name
@@ -116,17 +119,20 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")'''
+        print("Fin PDF")
 
 
-def process_text(self, text, directorio, titulo):
+def process_text(self, text, directorio, titulo, url):
     app.closeAllWindows()
-    x = Pln(text, directorio, titulo)
-    x.process()
+    x = Pln(text, directorio, titulo, url)
+    global resultados
+    resultados = x.process()
     global fileJson
     fileJson = x.json
     global nameJson
-    nameJson = x.titulo
+    nameJson = x.title
+    global resumenDoc
+    resumenDoc = x.resumen
     self.w = AnalisisWindow()
     self.w.show()
     self.hide()
@@ -140,6 +146,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
         self.bdir.hide()
+        # self.setWindowIcon(QtGui.QIcon('logo.png'))
+        # set the title
+        self.setWindowTitle("Análisis")
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         # self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
@@ -183,7 +192,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
                 text = ftemp.read()
                 title = ntpath.basename(file[0]).split(".")
-                process_text(self, text, ruta, title[0])
+                process_text(self, text, ruta, title[0], "")
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
@@ -191,7 +200,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
                     title = soup.title.string
-                    process_text(self, text, ruta, title)
+                    process_text(self, text, ruta, title, file[0])
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
@@ -226,13 +235,26 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
     def __init__(self, *args, **kwargs):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
+        self.setWindowTitle("Resumen Análisis")
         self.bjson.clicked.connect(self.saveJson)
+        self.rellenarAnalisis()
+
+    def rellenarAnalisis(self):
+        self.listWidget.addItem(resumenDoc)
+        for i in resultados:
+            self.listWidget.addItem(i[0]+": "+i[1]+"")
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
         ajson = directorio + '/' + nameJson + '.json'
+
         with open(ajson, 'w', encoding='utf8') as file:
             json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
+
+        if os.path.exists(ajson):
+            QMessageBox.about(self, "JSON", "JSON Guardado")
+        else:
+            QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
 
 
 if __name__ == "__main__":

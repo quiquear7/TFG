@@ -267,8 +267,7 @@ def freeling(text):
 
     # process input text
     lin = text
-
-    print("Text language is: " + la.identify_language(lin) + "\n")
+    print("Text language is: " + la.identify_language(lin))
 
     l = tk.tokenize(lin)
     ls = sp.split(sid, l, False)
@@ -285,7 +284,8 @@ def freeling(text):
         ws = s.get_words()
         words += len(ws)
         for w in ws:
-            # print(w.get_form() + " " + w.get_lemma() + " " + w.get_tag() + " " + w.get_senses_string())
+
+            #print(w.get_form() + " " + w.get_lemma() + " " + w.get_tag() + " " + w.get_senses_string())
             analisis.append((w.get_form(), w.get_tag()))
 
         # tr = s.get_parse_tree()
@@ -297,3 +297,6 @@ def freeling(text):
     # clean up
     sp.close_session(sid)
     return analisis, words
+
+
+

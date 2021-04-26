@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Analisis(object):
     def setupUi(self, Analisis):
         Analisis.setObjectName("Analisis")
-        Analisis.resize(800, 600)
+        Analisis.setFixedSize(800, 600)
         Analisis.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
 "    QMainWindow{\n"
 "        background-color: #FFFFFF;\n"
@@ -69,7 +69,7 @@ class Ui_Analisis(object):
         self.centralwidget = QtWidgets.QWidget(Analisis)
         self.centralwidget.setObjectName("centralwidget")
         self.titulo = QtWidgets.QLabel(self.centralwidget)
-        self.titulo.setGeometry(QtCore.QRect(350, 10, 91, 20))
+        self.titulo.setGeometry(QtCore.QRect(350, 10, 150, 20))
         self.titulo.setObjectName("titulo")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setGeometry(QtCore.QRect(10, 40, 771, 471))

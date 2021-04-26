@@ -90,14 +90,16 @@ class EntrenarCsv:
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
         entrada.close()
-        # analisis = etiquetador.tag(words)
         analisis, lenwords = dic.freeling(self.text)
+        if lenwords == 0:
+            print("error len words")
+            analisis = etiquetador.tag(words)
+            lenwords = len(words)
 
         abrv = []
         siglas = []
         homo = []
         sinonimos_usados = {}
-
         numeros = []
         upper = []
         errores = []
@@ -269,13 +271,13 @@ class EntrenarCsv:
             for p in words_temp:
                 if p.lower() in dic_frecuencia:
                     valor = ""
-                    if dic_frecuencia[p.lower()] >= 0.3:
+                    if dic_frecuencia[p.lower()] >= 0.45:
                         muy_frecuentes.append(p.lower())
                         valor = "es muy frecuente"
-                    if 0.3 > dic_frecuencia[p.lower()] > 0.1:
+                    if 0.45 > dic_frecuencia[p.lower()] > 0.25:
                         frecuentes.append(p.lower())
                         valor = "es frecuente"
-                    if dic_frecuencia[p.lower()] <= 0.1:
+                    if dic_frecuencia[p.lower()] <= 0.25:
                         poco_frecuentes.append(p.lower())
                         valor = "es poco frecuente"
                     wordsjson.append({
@@ -317,20 +319,6 @@ class EntrenarCsv:
             "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
         })
 
-        n_sin = 0
-        for i in sinonimos_usados.values():
-            if i != "":
-                n_sin += 1
-
-        # print(sinonimos_usados)
-        # print("Porcentaje de Sinonimos: ", (n_sin * 100) / len(words))
-        # print(abrv)
-        # print("Porcentaje de Abreviaturas: ", (len(abrv) * 100) / len(words))
-        # print(siglas)
-        # print("Porcentaje de Siglas: ", (len(siglas) * 100) / len(words))
-        # print(homo)
-        # print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
-
         # collection.insert_one(fjson)
         # client.close()
         valores = [self.title,
@@ -358,11 +346,12 @@ class EntrenarCsv:
                    (len(poco_frecuentes) * 100) / lenwords,
                    (len(comillas) * 100) / lenwords,
                    (len(homo) * 100) / lenwords,
-                   (len(words)) / lenwords,
+                   (len(words)) / len(frases),
                    caracteres / lenwords,
-                   (len(comas)) / lenwords,
-                   (len(puntos)) / lenwords,
-                   (len(punto_coma)) / lenwords,
+                   (len(comas)) / len(frases),
+                   (len(puntos)) / len(frases),
+                   (len(punto_coma)) / len(frases),
+                   len(frases),
                    self.tipo]
 
         acsv = self.directory + '/' + self.title + '.csv'
@@ -398,12 +387,13 @@ class EntrenarCsv:
                                  "Ratio_Caracteres_Palabra",
                                  "Comas",
                                  "puntos",
-                                 "punto_y_coma"
+                                 "punto_y_coma",
+                                 "N_sentences",
                                  'Tipo'])
             spamwriter.writerow(valores)
 
-            with open('GigaBDCorpus-master/CSV/final_v10.csv', 'a', newline='') as csvfile:
+            with open('GigaBDCorpus-master/CSV/final_v12.csv', 'a', newline='') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 spamwriter.writerow(valores)
 
-        print("Fin")
+        print("Fin\n")
