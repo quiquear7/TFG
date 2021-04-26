@@ -21,6 +21,7 @@ nameJson = ""
 resumenDoc = ""
 resultados = ""
 
+
 def crearcsv():
     with open('GigaBDCorpus-master/CSV/final_v12.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -125,14 +126,8 @@ def entrenar(win, direccion):
 def process_text(self, text, directorio, titulo, url):
     app.closeAllWindows()
     x = Pln(text, directorio, titulo, url)
-    global resultados
-    resultados = x.process()
-    global fileJson
-    fileJson = x.json
-    global nameJson
-    nameJson = x.title
-    global resumenDoc
-    resumenDoc = x.resumen
+    global resultados, fileJson, nameJson
+    resultados, fileJson, nameJson = x.process()
     self.w = AnalisisWindow()
     self.w.show()
     self.hide()
@@ -242,7 +237,7 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
     def rellenarAnalisis(self):
         self.listWidget.addItem(resumenDoc)
         for i in resultados:
-            self.listWidget.addItem(i[0]+": "+i[1]+"")
+            self.listWidget.addItem(i[0] + ": " + i[1] + "")
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
