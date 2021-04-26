@@ -235,9 +235,8 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
         self.rellenarAnalisis()
 
     def rellenarAnalisis(self):
-        self.listWidget.addItem(resumenDoc)
         for i in resultados:
-            self.listWidget.addItem(i[0] + ": " + i[1] + "")
+            self.listWidget.addItem(i[0] + ": " + str(i[1]))
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))

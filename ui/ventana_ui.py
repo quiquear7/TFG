@@ -104,7 +104,7 @@ class Ui_TFG(object):
         self.barchivo.setText(_translate("TFG", "Archivo"))
         self.burl.setText(_translate("TFG", "URL"))
         self.bdir.setText(_translate("TFG", "Ruta"))
-        self.bentrenar.setText(_translate("TFG", "Entrenar"))
+        self.bentrenar.setText(_translate("TFG", "Texto"))
 
 
 if __name__ == "__main__":
