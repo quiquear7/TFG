@@ -15,55 +15,55 @@ class Ui_TFG(object):
 
     def setupUi(self, TFG):
         TFG.setObjectName("TFG")
-        TFG.setFixedSize(587, 360)
+        TFG.setFixedSize(587, 400)
         TFG.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
-"    QMainWindow{\n"
-"        background-color: #FFFFFF;\n"
-"    }\n"
-"\n"
-"    /*Estilos para el botón*/\n"
-"    QPushButton{\n"
-"        font-size: 11px;\n"
-"    }\n"
-"    \n"
-"    /*Definimos el estilo para un efecto hover sobre el botón,\n"
-"    este cambiará su background cuando pasemos el mouse por\n"
-"    encima*/\n"
-"    QPushButton:hover{\n"
-"    background-color: #018786;\n"
-"    }\n"
-"\n"
-"    /*Definimos los estilos para los QLineEdit*/\n"
-"    QLineEdit{\n"
-"        border-radius: 3px;\n"
-"        border: 2px solid #00796b;\n"
-"    }\n"
-"\n"
-"\n"
-"    \n"
-"    /*Definimos el estilo para un efecto hover sobre el botón,\n"
-"    este cambiará su background cuando pasemos el mouse por\n"
-"    encima*/\n"
-"    \n"
-"\n"
-"    /*Definimos los estilos para los QLabel*/\n"
-"    QLabel{\n"
-"        font-family: \'Roboto\';\n"
-"    }\n"
-"\n"
-"    /*Definimos los estilos para los QLabels cuyos nombres son\n"
-"    \'label_usuario\' y \'label-password\'*/\n"
-"    #label_usuario, #label_password{\n"
-"        font-size: 17px;\n"
-"        color: #212121;\n"
-"    }\n"
-"    \n"
-"    /*Estilo para el QLable cuyo nombre es #label_login*/\n"
-"    #label_titulo{\n"
-"        font-size:15px;\n"
-"        color: #000000;\n"
-"    }\n"
-"")
+                          "    QMainWindow{\n"
+                          "        background-color: #FFFFFF;\n"
+                          "    }\n"
+                          "\n"
+                          "    /*Estilos para el botón*/\n"
+                          "    QPushButton{\n"
+                          "        font-size: 11px;\n"
+                          "    }\n"
+                          "    \n"
+                          "    /*Definimos el estilo para un efecto hover sobre el botón,\n"
+                          "    este cambiará su background cuando pasemos el mouse por\n"
+                          "    encima*/\n"
+                          "    QPushButton:hover{\n"
+                          "    background-color: #018786;\n"
+                          "    }\n"
+                          "\n"
+                          "    /*Definimos los estilos para los QLineEdit*/\n"
+                          "    QLineEdit{\n"
+                          "        border-radius: 3px;\n"
+                          "        border: 2px solid #00796b;\n"
+                          "    }\n"
+                          "\n"
+                          "\n"
+                          "    \n"
+                          "    /*Definimos el estilo para un efecto hover sobre el botón,\n"
+                          "    este cambiará su background cuando pasemos el mouse por\n"
+                          "    encima*/\n"
+                          "    \n"
+                          "\n"
+                          "    /*Definimos los estilos para los QLabel*/\n"
+                          "    QLabel{\n"
+                          "        font-family: \'Roboto\';\n"
+                          "    }\n"
+                          "\n"
+                          "    /*Definimos los estilos para los QLabels cuyos nombres son\n"
+                          "    \'label_usuario\' y \'label-password\'*/\n"
+                          "    #label_usuario, #label_password{\n"
+                          "        font-size: 17px;\n"
+                          "        color: #212121;\n"
+                          "    }\n"
+                          "    \n"
+                          "    /*Estilo para el QLable cuyo nombre es #label_login*/\n"
+                          "    #label_titulo{\n"
+                          "        font-size:15px;\n"
+                          "        color: #000000;\n"
+                          "    }\n"
+                          "")
         self.centralwidget = QtWidgets.QWidget(TFG)
         self.centralwidget.setObjectName("centralwidget")
         self.baceptar = QtWidgets.QPushButton(self.centralwidget)
@@ -82,8 +82,11 @@ class Ui_TFG(object):
         self.label_dir.setGeometry(QtCore.QRect(240, 220, 191, 13))
         self.label_dir.setText("")
         self.label_dir.setObjectName("label_dir")
+        self.btexto = QtWidgets.QPushButton(self.centralwidget)
+        self.btexto.setGeometry(QtCore.QRect(340, 120, 91, 31))
+        self.btexto.setObjectName("btexto")
         self.bentrenar = QtWidgets.QPushButton(self.centralwidget)
-        self.bentrenar.setGeometry(QtCore.QRect(340, 120, 91, 31))
+        self.bentrenar.setGeometry(QtCore.QRect(440, 120, 91, 31))
         self.bentrenar.setObjectName("bentrenar")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setGeometry(QtCore.QRect(140, 160, 291, 49))
@@ -104,11 +107,13 @@ class Ui_TFG(object):
         self.barchivo.setText(_translate("TFG", "Archivo"))
         self.burl.setText(_translate("TFG", "URL"))
         self.bdir.setText(_translate("TFG", "Ruta"))
-        self.bentrenar.setText(_translate("TFG", "Texto"))
+        self.btexto.setText(_translate("TFG", "Texto"))
+        self.bentrenar.setText(_translate("TFG", "Entrenar"))
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     TFG = QtWidgets.QMainWindow()
     ui = Ui_TFG()

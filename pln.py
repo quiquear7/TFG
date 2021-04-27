@@ -22,9 +22,8 @@ import json
 
 class Pln:
 
-    def __init__(self, text, directory, title, url):
+    def __init__(self, text, title, url):
         self.text = text
-        self.directory = directory
         self.title = title
         self.url = url
 

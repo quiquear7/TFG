@@ -123,9 +123,9 @@ def entrenar(win, direccion):
         print("Fin PDF")
 
 
-def process_text(self, text, directorio, titulo, url):
+def process_text(self, text, titulo, url):
     app.closeAllWindows()
-    x = Pln(text, directorio, titulo, url)
+    x = Pln(text, titulo, url)
     global resultados, fileJson, nameJson
     resultados, fileJson, nameJson = x.process()
     self.w = AnalisisWindow()
@@ -143,11 +143,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.bdir.hide()
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
+        self.bentrenar.hide()
         self.setWindowTitle("Análisis")
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         # self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
+        self.btexto.clicked.connect(self.openText)
         self.bentrenar.clicked.connect(self.preEntreno)
 
     def preEntreno(self):
@@ -158,26 +160,42 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.archivos = ("", 2)
         self.listWidget.clear()
         self.listWidget.addItem(directorio)
+        self.resizeLW(0)
 
     def openFileNamesDialog(self):
         self.pintarButton(self.barchivo)
-        self.limpiarArchivo()
-        self.bdir.hide()
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
         if file:
-            self.listWidget.clear()
+            self.limpiarArchivo()
             self.listWidget.addItem(file)
             self.archivos = (file, 0)
+            self.resizeLW(0)
 
     def openUrl(self):
         self.pintarButton(self.burl)
-        self.limpiarArchivo()
-        self.bdir.hide()
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
         if okPressed and text != '':
-            self.listWidget.clear()
+            self.limpiarArchivo()
             self.listWidget.addItem(text)
             self.archivos = (text, 1)
+            self.resizeLW(0)
+
+    def openText(self):
+        self.pintarButton(self.btexto)
+        text, okPressed = QInputDialog.getText(self, "Ingrese Texto", "Texto:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            self.limpiarArchivo()
+            self.listWidget.addItem(text)
+            self.archivos = (text, 3)
+            self.resizeLW(1)
+
+    def resizeLW(self, tipo):
+        if tipo == 1:
+            self.listWidget.resize(291, 140)
+            self.baceptar.setGeometry(QtCore.QRect(240, 310, 96, 31))
+        else:
+            self.listWidget.resize(291, 49)
+            self.baceptar.setGeometry(QtCore.QRect(240, 220, 96, 31))
 
     def aceptar(self, file, ruta):
         if file == "":
@@ -187,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
                 text = ftemp.read()
                 title = ntpath.basename(file[0]).split(".")
-                process_text(self, text, ruta, title[0], "")
+                process_text(self, text, title[0], "")
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
@@ -195,7 +213,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
                     title = soup.title.string
-                    process_text(self, text, ruta, title, file[0])
+                    process_text(self, text, title, file[0])
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
@@ -203,6 +221,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     entrenar(self, ruta)
                 else:
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
+            if file[1] == 3:
+                tt, okPressed = QInputDialog.getText(self, "Ingrese Nombre", "Nombre:", QLineEdit.Normal, "")
+                if okPressed and tt != '':
+                    process_text(self, file[0], tt, "")
+                else:
+                    QMessageBox.about(self, "Error", "Nombre Necesario")
 
     def limpiarArchivo(self):
         self.archivos = ""
@@ -210,15 +234,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
 
     def limpiarVentana(self):
         self.burl.hide()
+        self.btexto.hide()
         self.barchivo.hide()
         self.bentrenar.hide()
         self.listWidget.hide()
         self.baceptar.hide()
 
     def pintarButton(self, button):
-        self.barchivo.setStyleSheet('QPushButton {background-color: #31363b; }')
-        self.burl.setStyleSheet('QPushButton {background-color: #31363b; }')
-        self.bentrenar.setStyleSheet('QPushButton {background-color: #31363b; }')
+        qss = '''
+        QPushButton{
+            background-color: #31363b;
+        }
+        QPushButton:hover{
+            background-color: #018786;
+        }
+        '''
+
+        self.barchivo.setStyleSheet(qss)
+        self.burl.setStyleSheet(qss)
+        self.bentrenar.setStyleSheet(qss)
+        self.btexto.setStyleSheet(qss)
         button.setStyleSheet('QPushButton {background-color: #232629; }')
 
 
@@ -240,15 +275,16 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
-        ajson = directorio + '/' + nameJson + '.json'
+        if directorio != "":
+            ajson = directorio + '/' + nameJson + '.json'
 
-        with open(ajson, 'w', encoding='utf8') as file:
-            json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
+            with open(ajson, 'w', encoding='utf8') as file:
+                json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
 
-        if os.path.exists(ajson):
-            QMessageBox.about(self, "JSON", "JSON Guardado")
-        else:
-            QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
+            if os.path.exists(ajson):
+                QMessageBox.about(self, "JSON", "JSON Guardado")
+            else:
+                QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
 
 
 if __name__ == "__main__":
