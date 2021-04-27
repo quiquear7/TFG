@@ -17,7 +17,7 @@ class Ui_TFG(object):
 
     def setupUi(self, TFG):
         TFG.setObjectName("TFG")
-        TFG.setFixedSize(587, 400)
+        TFG.setFixedSize(587, 340)
         TFG.setStyleSheet("/*Cambiamos el color de la ventana*/\n"
                           "    QMainWindow{\n"
                           "        background-color: #FFFFFF;\n"

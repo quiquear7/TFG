@@ -157,7 +157,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.archivos = ("", 2)
         self.listWidget.clear()
         self.listWidget.addItem(directorio)
-        self.resizeLW(0)
 
     def openFileNamesDialog(self):
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
@@ -166,7 +165,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             self.limpiarArchivo()
             self.listWidget.addItem(file)
             self.archivos = (file, 0)
-            self.resizeLW(0)
 
     def openUrl(self):
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
@@ -175,7 +173,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             self.limpiarArchivo()
             self.listWidget.addItem(text)
             self.archivos = (text, 1)
-            self.resizeLW(0)
 
     def aceptar(self, file, ruta):
         if file == "":
