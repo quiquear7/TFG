@@ -9,6 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QScrollBar, QScrollArea
 
 
 class Ui_TFG(object):
@@ -70,21 +72,15 @@ class Ui_TFG(object):
         self.baceptar.setGeometry(QtCore.QRect(240, 220, 96, 31))
         self.baceptar.setObjectName("baceptar")
         self.barchivo = QtWidgets.QPushButton(self.centralwidget)
-        self.barchivo.setGeometry(QtCore.QRect(140, 120, 96, 31))
+        self.barchivo.setGeometry(QtCore.QRect(160, 120, 96, 31))
         self.barchivo.setObjectName("barchivo")
         self.burl = QtWidgets.QPushButton(self.centralwidget)
-        self.burl.setGeometry(QtCore.QRect(240, 120, 96, 31))
+        self.burl.setGeometry(QtCore.QRect(320, 120, 96, 31))
         self.burl.setObjectName("burl")
-        self.bdir = QtWidgets.QPushButton(self.centralwidget)
-        self.bdir.setGeometry(QtCore.QRect(140, 220, 96, 31))
-        self.bdir.setObjectName("bdir")
         self.label_dir = QtWidgets.QLabel(self.centralwidget)
         self.label_dir.setGeometry(QtCore.QRect(240, 220, 191, 13))
         self.label_dir.setText("")
         self.label_dir.setObjectName("label_dir")
-        self.btexto = QtWidgets.QPushButton(self.centralwidget)
-        self.btexto.setGeometry(QtCore.QRect(340, 120, 91, 31))
-        self.btexto.setObjectName("btexto")
         self.bentrenar = QtWidgets.QPushButton(self.centralwidget)
         self.bentrenar.setGeometry(QtCore.QRect(440, 120, 91, 31))
         self.bentrenar.setObjectName("bentrenar")
@@ -106,8 +102,6 @@ class Ui_TFG(object):
         self.baceptar.setText(_translate("TFG", "Comenzar"))
         self.barchivo.setText(_translate("TFG", "Archivo"))
         self.burl.setText(_translate("TFG", "URL"))
-        self.bdir.setText(_translate("TFG", "Ruta"))
-        self.btexto.setText(_translate("TFG", "Texto"))
         self.bentrenar.setText(_translate("TFG", "Entrenar"))
 
 

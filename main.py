@@ -2,7 +2,7 @@ import fitz
 from bson import json_util
 
 import csv
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox, QScrollBar
 from qt_material import apply_stylesheet
 from urllib.request import Request, urlopen
 import validators
@@ -140,16 +140,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
     def __init__(self, *args, **kwargs):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
-        self.bdir.hide()
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
-        self.bentrenar.hide()
         self.setWindowTitle("Análisis")
+        self.bentrenar.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
-        # self.bdir.clicked.connect(self.openDir)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
-        self.btexto.clicked.connect(self.openText)
         self.bentrenar.clicked.connect(self.preEntreno)
 
     def preEntreno(self):
@@ -163,39 +160,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.resizeLW(0)
 
     def openFileNamesDialog(self):
-        self.pintarButton(self.barchivo)
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
         if file:
+            self.pintarButton(self.barchivo)
             self.limpiarArchivo()
             self.listWidget.addItem(file)
             self.archivos = (file, 0)
             self.resizeLW(0)
 
     def openUrl(self):
-        self.pintarButton(self.burl)
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
         if okPressed and text != '':
+            self.pintarButton(self.burl)
             self.limpiarArchivo()
             self.listWidget.addItem(text)
             self.archivos = (text, 1)
             self.resizeLW(0)
-
-    def openText(self):
-        self.pintarButton(self.btexto)
-        text, okPressed = QInputDialog.getText(self, "Ingrese Texto", "Texto:", QLineEdit.Normal, "")
-        if okPressed and text != '':
-            self.limpiarArchivo()
-            self.listWidget.addItem(text)
-            self.archivos = (text, 3)
-            self.resizeLW(1)
-
-    def resizeLW(self, tipo):
-        if tipo == 1:
-            self.listWidget.resize(291, 140)
-            self.baceptar.setGeometry(QtCore.QRect(240, 310, 96, 31))
-        else:
-            self.listWidget.resize(291, 49)
-            self.baceptar.setGeometry(QtCore.QRect(240, 220, 96, 31))
 
     def aceptar(self, file, ruta):
         if file == "":
@@ -221,12 +201,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
                     entrenar(self, ruta)
                 else:
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
-            if file[1] == 3:
-                tt, okPressed = QInputDialog.getText(self, "Ingrese Nombre", "Nombre:", QLineEdit.Normal, "")
-                if okPressed and tt != '':
-                    process_text(self, file[0], tt, "")
-                else:
-                    QMessageBox.about(self, "Error", "Nombre Necesario")
 
     def limpiarArchivo(self):
         self.archivos = ""
@@ -234,7 +208,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
 
     def limpiarVentana(self):
         self.burl.hide()
-        self.btexto.hide()
         self.barchivo.hide()
         self.bentrenar.hide()
         self.listWidget.hide()
@@ -249,11 +222,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             background-color: #018786;
         }
         '''
-
         self.barchivo.setStyleSheet(qss)
         self.burl.setStyleSheet(qss)
         self.bentrenar.setStyleSheet(qss)
-        self.btexto.setStyleSheet(qss)
         button.setStyleSheet('QPushButton {background-color: #232629; }')
 
 
