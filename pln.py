@@ -1,23 +1,13 @@
 import codecs
 import pickle
 import string
-
 import nltk
 import nltk.data
-import pymongo
-
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
-from nltk.corpus import wordnet
-from nltk.stem import SnowballStemmer
-from nltk.corpus import stopwords
-from nltk.corpus import cess_esp
-from nltk.corpus.reader import XMLCorpusReader
-from datetime import datetime
 from legibilidad import legibilidad
 import textstat
-import json
 
 
 class Pln:
@@ -54,41 +44,20 @@ class Pln:
         }
 
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
-        frases = tokenizer.tokenize(self.text)
+        frases2 = tokenizer.tokenize(self.text)
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
-
         freq = nltk.FreqDist(words)
         # print("freq: ", freq.items())
 
-        clean = frases[:]
-        sr = stopwords.words('spanish')
-        for token in frases:
-            if token in sr:
-                clean.remove(token)
-
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
-        palabras = dic.diccionario_palabras()
+
         dic_frecuencia = dic.diccionario_frecuencia()
         dic_sinonimos = dic.diccionario_sinonimos()
         dic_abreviaturas = dic.diccionario_abreviaturas()
         dic_siglas = dic.diccionario_siglas()
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
-
-        sigla = []
-        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
-        for i in freq.items():
-            if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 5:
-                if i[0] not in dic_abreviaturas:
-                    f.write(i[0] + ':' + i[0] + '\n')
-                    sigla.append(i[0])
-        f.close()
-
-        '''spanish_stemmer = SnowballStemmer('spanish')
-        for i in words:
-            print(spanish_stemmer.stem(i), end='\n')
-            print("\n")'''
 
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
@@ -138,14 +107,17 @@ class Pln:
         punto_coma = []
 
         cont = 0
+        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+
         for x in analisis:
 
             i = x[0]
             j = x[1]
-
+            k = x[2]
             caracteres += len(i)
-            if i.isupper() and i not in dic_siglas:
-                upper.append(i)
+            if i.isupper() and i not in dic_siglas and 2 <= len(i[0]) <= 7 and i.lower() not in diccionario:
+                f.write(i + ':' + i + '\n')
+                siglas.append((i, cont))
             if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
                 errores.append((i, cont))
             if len(i) > 13:
@@ -156,7 +128,7 @@ class Pln:
                 adverbs.append((i, cont))
             if "@" in i:
                 errores.append((i, cont))
-            if cont < len(words) - 1:
+            if cont < lenwords - 1:
                 if i == "." and words[cont + 1].istitle() is False and words[cont + 1].isdigit() is False:
                     title.append((words[cont + 1], cont))
             if i == "cosa" or i == "algo" or i == "asunto":
@@ -183,17 +155,20 @@ class Pln:
             if i in dic_hom:
                 homo.append(i)
 
-            i = i.lower()
-            if i not in sinonimos_usados:
-                if i in dic_sinonimos:
-                    x = dic_sinonimos[i]
+            if k not in sinonimos_usados:
+                if k in dic_sinonimos:
+                    x = dic_sinonimos[k]
+                    usado = 0
                     for t in x:
                         t = t.replace(",", "")
                         if t in sinonimos_usados:
+                            usado = 1
                             sinonimos_usados[t] += i + ", "
-                            sinonimos.append(i)
+                            sinonimos.append(k)
+                    if usado == 0:
+                        sinonimos_usados[k] = ""
             else:
-                sinonimos_usados[i] = ""
+                sinonimos_usados[k] = ""
 
             if j == "Fc":
                 comas.append(j)
@@ -208,6 +183,10 @@ class Pln:
                 for t in z:
                     if t not in dic_frecuencia:
                         existe = 0
+                    if t in dic_abreviaturas:
+                        abrv.append(i)
+                    if t in dic_siglas:
+                        siglas.append(i)
 
             if (dic_frecuencia.get(i.lower())) or ("_" in i and existe == 1) or j[0] == "F":
                 if j[0] == "A":
@@ -243,22 +222,9 @@ class Pln:
 
             cont += 1
 
-        # print(upper)
-        # print(errores)
-        # print(large)
-        # print(superlative)
-        # print(adverbs)
-        # print(title)
-        # print(indeterminate)
-        # print(numbers)
-
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
-
-        '''for i in clean:
-            for syn in wordnet.synsets(i):
-                print("significado:" + i + " ----" + syn.definition())'''
 
         sentence = 1
         fjson["Sentences_Set"] = []
@@ -268,13 +234,13 @@ class Pln:
             for p in words_temp:
                 if p.lower() in dic_frecuencia:
                     valor = ""
-                    if dic_frecuencia[p.lower()] >= 0.4:
+                    if dic_frecuencia[p.lower()] >= 1:
                         muy_frecuentes.append(p.lower())
                         valor = "es muy frecuente"
-                    if 0.4 > dic_frecuencia[p.lower()] > 0.2:
+                    if 1 > dic_frecuencia[p.lower()] > 0.3:
                         frecuentes.append(p.lower())
                         valor = "es frecuente"
-                    if dic_frecuencia[p.lower()] <= 0.2:
+                    if dic_frecuencia[p.lower()] <= 0.3:
                         poco_frecuentes.append(p.lower())
                         valor = "es poco frecuente"
                     wordsjson.append({
@@ -300,107 +266,104 @@ class Pln:
 
             sentence += 1
 
-        resultados = []
-
-        resultados.append(("Resultado: ", ""))
+        resultados = [("Resultado: ", "")]
 
         N_sentences = len(frases)
-        resultados.append(("N_sentences", N_sentences))
-
         Comas = (len(comas)) / len(frases)
-        resultados.append(("Comas", Comas))
-
         Participle_Verbs_number = (len(verbp) * 100) / lenwords
-        resultados.append(("Participle_Verbs_number", Participle_Verbs_number))
-
         Por_Abreviaturas = (len(abrv) * 100) / lenwords
-        resultados.append(("Por_Abreviaturas", Por_Abreviaturas))
-
         Ratio_Caracteres_Palabra = caracteres / lenwords
-        resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
-
         Por_Simbolos = (len(errores) * 100) / lenwords
-        resultados.append(("Por_Simbolos", Por_Simbolos))
-
         Preposition_number = (len(preposition) * 100) / lenwords
-        resultados.append(("Preposition_number", Preposition_number))
-
         Infinitive_Verbs_number = (len(verbi) * 100) / lenwords
-        resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number))
-
         Determiners_number = (len(determiner) * 100) / lenwords
-        resultados.append(("Determiners_number", Determiners_number))
-
         Por_Sinonimos = (len(sinonimos) * 100) / lenwords
-        resultados.append(("Por_Sinonimos", Por_Sinonimos))
-
         Por_comillas = (len(comillas) * 100) / lenwords
-        resultados.append(("Por_comillas", Por_comillas))
-
         Por_verbs = (len(verbs) * 100) / lenwords
-        resultados.append(("Por_verbs", Por_verbs))
-
         N_puntos = (len(puntos)) / len(frases)
-        resultados.append(("N_puntos", N_puntos))
-
         documento = "vacio"
 
         if N_sentences <= 24:
+            resultados.append(("N_sentences", N_sentences))
             if Comas <= 0.6:
+                resultados.append(("Comas", Comas))
                 documento = "Dificil"
             if Comas > 0.6:
+                resultados.append(("Comas", Comas))
                 if N_sentences <= 5:
                     documento = "Dificil"
                 if N_sentences > 5:
                     if Participle_Verbs_number <= 1.183432:
+                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number))
                         if Por_Abreviaturas <= 2.287582:
+                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas))
                             documento = "Facil"
                         if Por_Abreviaturas > 2.287582:
+                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas))
                             documento = "Dificil"
                     if Participle_Verbs_number > 1.183432:
+                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number))
                         if Ratio_Caracteres_Palabra <= 4.760141:
+                            resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
                             if Por_Simbolos <= 0.93633:
+                                resultados.append(("Por_Simbolos", Por_Simbolos))
                                 documento = "Dificil"
                             if Por_Simbolos > 0.93633:
+                                resultados.append(("Por_Simbolos", Por_Simbolos))
                                 documento = "Facil"
                         if Ratio_Caracteres_Palabra > 4.760141:
+                            resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
                             if Participle_Verbs_number <= 2.754237:
                                 if Participle_Verbs_number <= 1.731602:
                                     documento = "Dificil"
                                 if Participle_Verbs_number > 1.731602:
                                     if Preposition_number <= 14.814815:
+                                        resultados.append(("Preposition_number", Preposition_number))
                                         documento = "Facil"
                                     if Preposition_number > 14.814815:
+                                        resultados.append(("Preposition_number", Preposition_number))
                                         if Infinitive_Verbs_number <= 4.850746:
+                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number))
                                             if Determiners_number <= 12.418906:
+                                                resultados.append(("Determiners_number", Determiners_number))
                                                 if Por_Sinonimos <= 2.517623:
+                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos))
                                                     documento = "Facil"
                                                 if Por_Sinonimos > 2.517623:
+                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos))
                                                     documento = "Dificil"
                                             if Determiners_number > 12.418906:
+                                                resultados.append(("Determiners_number", Determiners_number))
                                                 documento = "Dificil"
                                         if Infinitive_Verbs_number > 4.850746:
+                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number))
                                             documento = "Facil"
                                 if Participle_Verbs_number > 2.754237:
                                     documento = "Dificil"
         if N_sentences > 24:
+            resultados.append(("N_sentences", N_sentences))
             if Por_comillas <= 0:
+                resultados.append(("Por_comillas", Por_comillas))
                 if Por_verbs <= 9.968354:
+                    resultados.append(("Por_verbs", Por_verbs))
                     if N_puntos <= 0.942857:
+                        resultados.append(("N_puntos", N_puntos))
                         documento = "Facil"
                     if N_puntos > 0.942857:
+                        resultados.append(("N_puntos", N_puntos))
                         documento = "Dificil"
                 if Por_verbs > 9.968354:
+                    resultados.append(("Por_verbs", Por_verbs))
                     documento = "Facil"
             if Por_comillas > 0:
+                resultados.append(("Por_comillas", Por_comillas))
                 documento = "Dificil"
-        print(documento)
 
         resultados[0] = ("Resumen", documento)
 
         fjson['Readability_Analysis_Set'] = ({
             "Sentences_number": len(frases),
-            "Words_number": len(words),
+            "Words_number": lenwords,
             "Verbs_Number_set": [
                 {
                     "Infinitive_Verbs_number": len(verbi),
@@ -412,29 +375,12 @@ class Pln:
             "Preposition_number": len(preposition),
             "Dates_number": len(date),
             "Own_name_number": len(noun),
-            "Percentage_desconocidas": (len(desconocidas) * 100) / len(words),
+            "Percentage_desconocidas": (len(desconocidas) * 100) / lenwords,
             "Resumen": documento
         })
 
-        n_sin = 0
-        for i in sinonimos_usados.values():
-            if i != "":
-                n_sin += 1
-
-        # print(sinonimos_usados)
-        # print("Porcentaje de Sinonimos: ", (n_sin * 100) / len(words))
-        # print(abrv)
-        # print("Porcentaje de Abreviaturas: ", (len(abrv) * 100) / len(words))
-        # print(siglas)
-        # print("Porcentaje de Siglas: ", (len(siglas) * 100) / len(words))
-        # print(homo)
-        # print("Porcentaje de Homonimas: ", (len(homo) * 100) / len(words))
-
         # collection.insert_one(fjson)
         # client.close()
-        ajson = self.directory + '/' + self.title + '.json'
-        # with open(ajson, 'w', encoding='utf8') as file:
-        # json.dump(fjson, file, ensure_ascii=False, indent=4)
 
         print("Fin\n")
         return resultados, fjson, self.title

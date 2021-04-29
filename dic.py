@@ -58,14 +58,6 @@ def diccionario_homonimas():
     return dic_hom
 
 
-def diccionario_palabras():
-    palabras = []
-    dic = codecs.open("diccionarios/0_palabras_todas.txt", "r", encoding="utf-8")
-    for i in dic:
-        palabras.append(i.rstrip())
-    return palabras
-
-
 def diccionario_freeling():
     diccionario = {}
     archivo_diccionario = codecs.open("diccionarios/diccionario-freeling-spa.txt", "r", encoding="utf-8")
@@ -279,24 +271,14 @@ def freeling(text):
     ls = dep.analyze(ls)
     analisis = []
     words = 0
+
     ## output results
     for s in ls:
         ws = s.get_words()
         words += len(ws)
         for w in ws:
-
-            #print(w.get_form() + " " + w.get_lemma() + " " + w.get_tag() + " " + w.get_senses_string())
-            analisis.append((w.get_form(), w.get_tag()))
-
-        # tr = s.get_parse_tree()
-        # printTree(tr, 0)
-
-        # dp = s.get_dep_tree()
-        # printDepTree(dp, 0)
+            analisis.append((w.get_form(), w.get_tag(), w.get_lemma()))
 
     # clean up
     sp.close_session(sid)
     return analisis, words
-
-
-

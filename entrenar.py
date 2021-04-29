@@ -1,21 +1,12 @@
 import codecs
 import pickle
-import string
 import nltk
 import nltk.data
-import pymongo
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
-from nltk.corpus import wordnet
-from nltk.stem import SnowballStemmer
-from nltk.corpus import stopwords
-from nltk.corpus import cess_esp
-from nltk.corpus.reader import XMLCorpusReader
-from datetime import datetime
 from legibilidad import legibilidad
 import textstat
-import json
 import csv
 
 
@@ -51,20 +42,14 @@ class EntrenarCsv:
         }
 
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
-        frases = tokenizer.tokenize(self.text)
-        frases2 = sent_tokenize(self.text, "spanish")
+        frases2 = tokenizer.tokenize(self.text)
+        frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
-        #print("freq: ", freq.items())
-
-        clean = frases[:]
-        sr = stopwords.words('spanish')
-        for token in frases:
-            if token in sr:
-                clean.remove(token)
+        # print("freq: ", freq.items())
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
-        palabras = dic.diccionario_palabras()
+
         dic_frecuencia = dic.diccionario_frecuencia()
         dic_sinonimos = dic.diccionario_sinonimos()
         dic_abreviaturas = dic.diccionario_abreviaturas()
@@ -72,29 +57,13 @@ class EntrenarCsv:
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
 
-        sigla = []
-        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
-        for i in freq.items():
-            if i[0].isupper() and int(i[1]) > 1 and 2 <= len(i[0]) <= 7:
-                if i[0] not in dic_siglas:
-                    f.write(i[0] + ':' + i[0] + '\n')
-                    sigla.append(i[0])
-                    dic_siglas = dic.diccionario_siglas()
-        f.close()
-
-        '''spanish_stemmer = SnowballStemmer('spanish')
-        for i in words:
-            print(spanish_stemmer.stem(i), end='\n')
-            print("\n")'''
-
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
-        entrada.close()
         analisis, lenwords = dic.freeling(self.text)
         if lenwords == 0:
-            print("error len words")
             analisis = etiquetador.tag(words)
             lenwords = len(words)
+        entrada.close()
 
         abrv = []
         siglas = []
@@ -136,14 +105,20 @@ class EntrenarCsv:
         punto_coma = []
 
         cont = 0
+        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+
         for x in analisis:
 
             i = x[0]
             j = x[1]
+            k = i
+            if len(x) == 3:
+                k = x[2]
 
             caracteres += len(i)
-            if i.isupper() and i not in dic_siglas:
-                upper.append(i)
+            if i.isupper() and i not in dic_siglas and 2 <= len(i[0]) <= 7 and i.lower() not in diccionario:
+                f.write(i + ':' + i + '\n')
+                siglas.append((i, cont))
             if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
                 errores.append((i, cont))
             if len(i) > 13:
@@ -154,9 +129,9 @@ class EntrenarCsv:
                 adverbs.append((i, cont))
             if "@" in i:
                 errores.append((i, cont))
-            if cont < len(words) - 1:
-                if i == "." and words[cont + 1].istitle() is False and words[cont + 1].isdigit() is False:
-                    title.append((words[cont + 1], cont))
+            '''if cont < lenwords - 1:
+                if i == "." and analisis[cont + 1][0].istitle() is False and analisis[cont + 1][0].isdigit() is False:
+                    title.append((words[cont + 1], cont))'''
             if i == "cosa" or i == "algo" or i == "asunto":
                 indeterminate.append((i, cont))
             if ("º" in i or "ª" in i) or (j[0] == "M" and j[1] == "O"):
@@ -181,21 +156,20 @@ class EntrenarCsv:
             if i in dic_hom:
                 homo.append(i)
 
-            i = i.lower()
-            if i not in sinonimos_usados:
-                if i in dic_sinonimos:
-                    x = dic_sinonimos[i]
+            if k not in sinonimos_usados:
+                if k in dic_sinonimos:
+                    x = dic_sinonimos[k]
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
                         if t in sinonimos_usados:
                             usado = 1
                             sinonimos_usados[t] += i + ", "
-                            sinonimos.append(i)
+                            sinonimos.append(k)
                     if usado == 0:
-                        sinonimos_usados[i] = ""
+                        sinonimos_usados[k] = ""
             else:
-                sinonimos_usados[i] = ""
+                sinonimos_usados[k] = ""
 
             if j == "Fc":
                 comas.append(j)
@@ -210,6 +184,10 @@ class EntrenarCsv:
                 for t in z:
                     if t not in dic_frecuencia:
                         existe = 0
+                    if t in dic_abreviaturas:
+                        abrv.append(i)
+                    if t in dic_siglas:
+                        siglas.append(i)
 
             if (dic_frecuencia.get(i.lower())) or ("_" in i and existe == 1) or j[0] == "F":
                 if j[0] == "A":
@@ -244,7 +222,7 @@ class EntrenarCsv:
                 desconocidas.append(i)
 
             cont += 1
-
+        f.close()
         # (upper)
         # print(errores)
         # print(large)
@@ -271,13 +249,13 @@ class EntrenarCsv:
             for p in words_temp:
                 if p.lower() in dic_frecuencia:
                     valor = ""
-                    if dic_frecuencia[p.lower()] >= 0.45:
+                    if dic_frecuencia[p.lower()] >= 1:
                         muy_frecuentes.append(p.lower())
                         valor = "es muy frecuente"
-                    if 0.45 > dic_frecuencia[p.lower()] > 0.25:
+                    if 1 > dic_frecuencia[p.lower()] > 0.3:
                         frecuentes.append(p.lower())
                         valor = "es frecuente"
-                    if dic_frecuencia[p.lower()] <= 0.25:
+                    if dic_frecuencia[p.lower()] <= 0.3:
                         poco_frecuentes.append(p.lower())
                         valor = "es poco frecuente"
                     wordsjson.append({
@@ -289,7 +267,8 @@ class EntrenarCsv:
                     wordsjson.append({
                         "Word": p + "",
                         "Frequency_value": None,
-                        "Results": "no se encuentra en nuestro archivo. Valora que no exista o que sea una errata o un signo de puntuación"
+                        "Results": "no se encuentra en nuestro archivo. Valora que no exista o que sea una errata o "
+                                   "un signo de puntuación "
                     })
 
             fjson['Sentences_Set'].append({
@@ -304,7 +283,7 @@ class EntrenarCsv:
 
         fjson['Readability_Analysis_Set'] = ({
             "Sentences_number": len(frases),
-            "Words_number": len(words),
+            "Words_number": lenwords,
             "Verbs_Number_set": [
                 {
                     "Infinitive_Verbs_number": len(verbi),
@@ -316,7 +295,7 @@ class EntrenarCsv:
             "Preposition_number": len(preposition),
             "Dates_number": len(date),
             "Own_name_number": len(noun),
-            "Percentage_desconocidas": (len(desconocidas) * 100) / len(words)
+            "Percentage_desconocidas": (len(desconocidas) * 100) / lenwords
         })
 
         # collection.insert_one(fjson)
@@ -346,7 +325,7 @@ class EntrenarCsv:
                    (len(poco_frecuentes) * 100) / lenwords,
                    (len(comillas) * 100) / lenwords,
                    (len(homo) * 100) / lenwords,
-                   (len(words)) / len(frases),
+                   lenwords / len(frases),
                    caracteres / lenwords,
                    (len(comas)) / len(frases),
                    (len(puntos)) / len(frases),
@@ -354,46 +333,8 @@ class EntrenarCsv:
                    len(frases),
                    self.tipo]
 
-        acsv = self.directory + '/' + self.title + '.csv'
-
-        with open(acsv, 'w', newline='') as csvfile:
+        with open(self.directory+'/final_v18.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            spamwriter.writerow(['Title',
-                                 'Por_Sinonimos',
-                                 'Por_Abreviaturas',
-                                 'Por_Siglas',
-                                 "Por_verbs",
-                                 "Infinitive_Verbs_number",
-                                 "Gerund_Verbs_number",
-                                 "Participle_Verbs_number",
-                                 "Determiners_number",
-                                 "Preposition_number",
-                                 "Noun",
-                                 "Por_Desconocidas",
-                                 "Por_Largas",
-                                 "Por_Superlativos",
-                                 "Por_Adverbios",
-                                 "Por_Simbolos",
-                                 "Mayusuculas_NoSiglas",
-                                 "Por_Inderterminados",
-                                 "Por_numeros",
-                                 "Por_complex",
-                                 "Por_muy_frecuentes",
-                                 "Por_frecuentes",
-                                 "Por_poco_frecuentes",
-                                 "Por_comillas",
-                                 "Por_Homo",
-                                 "Ratio_Palabra_Frases",
-                                 "Ratio_Caracteres_Palabra",
-                                 "Comas",
-                                 "puntos",
-                                 "punto_y_coma",
-                                 "N_sentences",
-                                 'Tipo'])
             spamwriter.writerow(valores)
-
-            with open('GigaBDCorpus-master/CSV/final_v12.csv', 'a', newline='') as csvfile:
-                spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                spamwriter.writerow(valores)
 
         print("Fin\n")

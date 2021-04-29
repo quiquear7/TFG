@@ -22,8 +22,8 @@ resumenDoc = ""
 resultados = ""
 
 
-def crearcsv():
-    with open('GigaBDCorpus-master/CSV/final_v12.csv', 'w', newline='') as csvfile:
+def crearcsv(directory):
+    with open(directory+'/final_v18.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -64,7 +64,7 @@ def entrenar(win, direccion):
         QMessageBox.about(win, "Error", "Seleccione ruta")
     else:
         app.closeAllWindows()
-        crearcsv()
+        crearcsv(direccion)
 
         contenido = os.listdir('GigaBDCorpus-master/Dificiles')
         for name in contenido:
@@ -76,7 +76,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
 
-        contenido = os.listdir('GigaBDCorpus-master/Originales')
+        '''contenido = os.listdir('GigaBDCorpus-master/Originales')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Originales/' + name
@@ -92,7 +92,7 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")
+        print("Fin PDF")'''
 
         contenido = os.listdir('GigaBDCorpus-master/Faciles')
         for name in contenido:
@@ -104,7 +104,7 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
 
-        contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
+        '''contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
         for name in contenido:
             print(name)
             ruta = 'GigaBDCorpus-master/Adaptadas/' + name
@@ -120,7 +120,7 @@ def entrenar(win, direccion):
             else:
                 print('vacio')
 
-        print("Fin PDF")
+        print("Fin PDF")'''
 
 
 def process_text(self, text, titulo, url):
@@ -143,7 +143,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
         self.setWindowTitle("Análisis")
-        self.bentrenar.hide()
+        #self.bentrenar.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
@@ -176,7 +176,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
 
     def aceptar(self, file, ruta):
         if file == "":
-            QMessageBox.about(self, "Error", "No se ha seleccionado archivo")
+            QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
         else:
             if file[1] == 0:
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
