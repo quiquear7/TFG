@@ -128,14 +128,14 @@ class Pln:
                 adverbs.append((i, cont))
             if "@" in i:
                 errores.append((i, cont))
-            if cont < lenwords - 1:
+            '''if cont < lenwords - 1:
                 if i == "." and words[cont + 1].istitle() is False and words[cont + 1].isdigit() is False:
-                    title.append((words[cont + 1], cont))
+                    title.append((words[cont + 1], cont))'''
             if i == "cosa" or i == "algo" or i == "asunto":
                 indeterminate.append((i, cont))
             if ("º" in i or "ª" in i) or (j[0] == "M" and j[1] == "O"):
                 numbers.append((i, cont))
-            if '"' == i:
+            if '"' == i or i == "'":
                 comillas.append((i, cont))
             if i.isdigit():
                 numeros.append((i, cont))
@@ -149,11 +149,11 @@ class Pln:
                 con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
-                abrv.append(i)
+                abrv.append((i, cont))
             if i in dic_siglas:
-                siglas.append(i)
+                siglas.append((i, cont))
             if i in dic_hom:
-                homo.append(i)
+                homo.append((i, cont))
 
             if k not in sinonimos_usados:
                 if k in dic_sinonimos:
@@ -164,18 +164,18 @@ class Pln:
                         if t in sinonimos_usados:
                             usado = 1
                             sinonimos_usados[t] += i + ", "
-                            sinonimos.append(k)
+                            sinonimos.append((i, cont))
                     if usado == 0:
                         sinonimos_usados[k] = ""
             else:
                 sinonimos_usados[k] = ""
 
             if j == "Fc":
-                comas.append(j)
+                comas.append(cont)
             if j == "Fp":
-                puntos.append(j)
+                puntos.append(cont)
             if j == "Fx":
-                punto_coma.append(j)
+                punto_coma.append(cont)
 
             existe = 1
             if "_" in i:
@@ -184,41 +184,41 @@ class Pln:
                     if t not in dic_frecuencia:
                         existe = 0
                     if t in dic_abreviaturas:
-                        abrv.append(i)
+                        abrv.append((i, cont))
                     if t in dic_siglas:
-                        siglas.append(i)
+                        siglas.append((i, cont))
 
             if (dic_frecuencia.get(i.lower())) or ("_" in i and existe == 1) or j[0] == "F":
                 if j[0] == "A":
-                    adjective.append(i)
+                    adjective.append((i, cont))
                 if j[0] == "C":
-                    conjunction.append(i)
+                    conjunction.append((i, cont))
                 if j[0] == "D":
-                    determiner.append(i)
+                    determiner.append((i, cont))
                 if j[0] == "N":
-                    noun.append(i)
+                    noun.append((i, cont))
                 if j[0] == "P":
-                    pronoun.append(i)
+                    pronoun.append((i, cont))
                 if j[0] == "R":
-                    adverb.append(i)
+                    adverb.append((i, cont))
                 if j[0] == "V":
-                    verbs.append(i)
+                    verbs.append((i, cont))
                     if j[2] == "N":
-                        verbi.append(i)
+                        verbi.append((i, cont))
                     if j[2] == "G":
-                        verbg.append(i)
+                        verbg.append((i, cont))
                     if j[2] == "P":
-                        verbp.append(i)
+                        verbp.append((i, cont))
                 if j[0] == "Z":
-                    number.append(i)
+                    number.append((i, cont))
                 if j[0] == "W":
-                    date.append(i)
+                    date.append((i, cont))
                 if j[0] == "Yo":
-                    interjection.append(i)
+                    interjection.append((i, cont))
                 if j == "SP":
-                    preposition.append(i)
+                    preposition.append((i, cont))
             else:
-                desconocidas.append(i)
+                desconocidas.append((i, cont))
 
             cont += 1
 
@@ -235,13 +235,13 @@ class Pln:
                 if p.lower() in dic_frecuencia:
                     valor = ""
                     if dic_frecuencia[p.lower()] >= 1:
-                        muy_frecuentes.append(p.lower())
+                        muy_frecuentes.append((p.lower(), cont))
                         valor = "es muy frecuente"
                     if 1 > dic_frecuencia[p.lower()] > 0.3:
-                        frecuentes.append(p.lower())
+                        frecuentes.append((p.lower(), cont))
                         valor = "es frecuente"
                     if dic_frecuencia[p.lower()] <= 0.3:
-                        poco_frecuentes.append(p.lower())
+                        poco_frecuentes.append((p.lower(), cont))
                         valor = "es poco frecuente"
                     wordsjson.append({
                         "Word": p + "",
@@ -294,22 +294,22 @@ class Pln:
                     documento = "Dificil"
                 if N_sentences > 5:
                     if Participle_Verbs_number <= 1.183432:
-                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number))
+                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number, verbp))
                         if Por_Abreviaturas <= 2.287582:
-                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas))
+                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas, abrv))
                             documento = "Facil"
                         if Por_Abreviaturas > 2.287582:
-                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas))
+                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas, abrv))
                             documento = "Dificil"
                     if Participle_Verbs_number > 1.183432:
-                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number))
+                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number, verbp))
                         if Ratio_Caracteres_Palabra <= 4.760141:
                             resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
                             if Por_Simbolos <= 0.93633:
-                                resultados.append(("Por_Simbolos", Por_Simbolos))
+                                resultados.append(("Por_Simbolos", Por_Simbolos, errores))
                                 documento = "Dificil"
                             if Por_Simbolos > 0.93633:
-                                resultados.append(("Por_Simbolos", Por_Simbolos))
+                                resultados.append(("Por_Simbolos", Por_Simbolos, errores))
                                 documento = "Facil"
                         if Ratio_Caracteres_Palabra > 4.760141:
                             resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
@@ -318,34 +318,34 @@ class Pln:
                                     documento = "Dificil"
                                 if Participle_Verbs_number > 1.731602:
                                     if Preposition_number <= 14.814815:
-                                        resultados.append(("Preposition_number", Preposition_number))
+                                        resultados.append(("Preposition_number", Preposition_number, preposition))
                                         documento = "Facil"
                                     if Preposition_number > 14.814815:
                                         resultados.append(("Preposition_number", Preposition_number))
                                         if Infinitive_Verbs_number <= 4.850746:
-                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number))
+                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number, verbi))
                                             if Determiners_number <= 12.418906:
-                                                resultados.append(("Determiners_number", Determiners_number))
+                                                resultados.append(("Determiners_number", Determiners_number, determiner))
                                                 if Por_Sinonimos <= 2.517623:
-                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos))
+                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos, sinonimos_usados))
                                                     documento = "Facil"
                                                 if Por_Sinonimos > 2.517623:
-                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos))
+                                                    resultados.append(("Por_Sinonimos", Por_Sinonimos, sinonimos_usados))
                                                     documento = "Dificil"
                                             if Determiners_number > 12.418906:
-                                                resultados.append(("Determiners_number", Determiners_number))
+                                                resultados.append(("Determiners_number", Determiners_number, determiner))
                                                 documento = "Dificil"
                                         if Infinitive_Verbs_number > 4.850746:
-                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number))
+                                            resultados.append(("Infinitive_Verbs_number", Infinitive_Verbs_number, verbi))
                                             documento = "Facil"
                                 if Participle_Verbs_number > 2.754237:
                                     documento = "Dificil"
         if N_sentences > 24:
             resultados.append(("N_sentences", N_sentences))
             if Por_comillas <= 0:
-                resultados.append(("Por_comillas", Por_comillas))
+                resultados.append(("Por_comillas", Por_comillas, comillas))
                 if Por_verbs <= 9.968354:
-                    resultados.append(("Por_verbs", Por_verbs))
+                    resultados.append(("Por_verbs", Por_verbs, verbs))
                     if N_puntos <= 0.942857:
                         resultados.append(("N_puntos", N_puntos))
                         documento = "Facil"
@@ -353,10 +353,10 @@ class Pln:
                         resultados.append(("N_puntos", N_puntos))
                         documento = "Dificil"
                 if Por_verbs > 9.968354:
-                    resultados.append(("Por_verbs", Por_verbs))
+                    resultados.append(("Por_verbs", Por_verbs, verbs))
                     documento = "Facil"
             if Por_comillas > 0:
-                resultados.append(("Por_comillas", Por_comillas))
+                resultados.append(("Por_comillas", Por_comillas, comillas))
                 documento = "Dificil"
 
         resultados[0] = ("Resumen", documento)

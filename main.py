@@ -1,8 +1,7 @@
 import fitz
 from bson import json_util
-
 import csv
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox, QScrollBar
+from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
 from qt_material import apply_stylesheet
 from urllib.request import Request, urlopen
 import validators
@@ -239,7 +238,10 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
 
     def rellenarAnalisis(self):
         for i in resultados:
-            self.listWidget.addItem(i[0] + ": " + str(i[1]))
+            item = i[0] + ": " + str(i[1])
+            if len(i) == 3:
+                item += str(i[2])
+            self.listWidget.addItem(item)
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
