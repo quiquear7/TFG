@@ -383,4 +383,4 @@ class Pln:
         # client.close()
 
         print("Fin\n")
-        return resultados, fjson, self.title
+        return resultados, fjson, self.title, self.text

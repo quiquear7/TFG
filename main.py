@@ -19,10 +19,11 @@ fileJson = ""
 nameJson = ""
 resumenDoc = ""
 resultados = ""
+textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory+'/final_v18.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v18.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -125,8 +126,8 @@ def entrenar(win, direccion):
 def process_text(self, text, titulo, url):
     app.closeAllWindows()
     x = Pln(text, titulo, url)
-    global resultados, fileJson, nameJson
-    resultados, fileJson, nameJson = x.process()
+    global resultados, fileJson, nameJson, textReturn
+    resultados, fileJson, nameJson, textReturn = x.process()
     self.w = AnalisisWindow()
     self.w.show()
     self.hide()
@@ -142,7 +143,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
         self.setWindowTitle("Análisis")
-        #self.bentrenar.hide()
+        # self.bentrenar.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
@@ -234,14 +235,17 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
         self.setupUi(self)
         self.setWindowTitle("Resumen Análisis")
         self.bjson.clicked.connect(self.saveJson)
+        self.banalisis.clicked.connect(lambda: inicio(self))
         self.rellenarAnalisis()
 
     def rellenarAnalisis(self):
         for i in resultados:
+
             item = i[0] + ": " + str(i[1])
             if len(i) == 3:
                 item += str(i[2])
             self.listWidget.addItem(item)
+        self.listWidget.addItem(textReturn)
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
@@ -255,6 +259,14 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
                 QMessageBox.about(self, "JSON", "JSON Guardado")
             else:
                 QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
+
+
+def inicio(self):
+    app.closeAllWindows()
+    apply_stylesheet(app, theme='dark_teal.xml')
+    self.w = MainWindow()
+    self.w.show()
+    self.hide()
 
 
 if __name__ == "__main__":

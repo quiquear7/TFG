@@ -75,8 +75,11 @@ class Ui_Analisis(object):
         self.listWidget.setGeometry(QtCore.QRect(10, 40, 771, 471))
         self.listWidget.setObjectName("listWidget")
         self.bjson = QtWidgets.QPushButton(self.centralwidget)
-        self.bjson.setGeometry(QtCore.QRect(350, 520, 75, 23))
+        self.bjson.setGeometry(QtCore.QRect(320, 520, 75, 23))
         self.bjson.setObjectName("bjson")
+        self.banalisis = QtWidgets.QPushButton(self.centralwidget)
+        self.banalisis.setGeometry(QtCore.QRect(400, 520, 75, 23))
+        self.banalisis.setObjectName("banalisis")
         Analisis.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(Analisis)
@@ -87,6 +90,7 @@ class Ui_Analisis(object):
         Analisis.setWindowTitle(_translate("Analisis", "MainWindow"))
         self.titulo.setText(_translate("Analisis", "Resumen Análisis"))
         self.bjson.setText(_translate("Analisis", "JSON"))
+        self.banalisis.setText(_translate("Analisis", "Inicio"))
 
 
 if __name__ == "__main__":
