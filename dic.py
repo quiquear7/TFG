@@ -2,7 +2,6 @@ import codecs
 import os
 import pickle
 import sys
-
 import nltk
 from freeling import pyfreeling
 
@@ -13,8 +12,17 @@ def diccionario_frecuencia():
     for entrada in archivo_frecuencia:
         entrada = entrada.split()
         word = entrada[1]
-        frequ = entrada[3]
-        dic_frecuencias[word] = float(frequ)
+        dic_frecuencias[word] = float(entrada[3])
+    return dic_frecuencias
+
+
+def diccionario_frecuencia_sub():
+    dic_frecuencias = {}
+    archivo_frecuencia = codecs.open("diccionarios/es_full.txt", "r", encoding="latin-1")
+    for entrada in archivo_frecuencia:
+        entrada = entrada.split()
+        word = entrada[0]
+        dic_frecuencias[word] = int(entrada[1])
     return dic_frecuencias
 
 

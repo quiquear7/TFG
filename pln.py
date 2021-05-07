@@ -48,11 +48,11 @@ class Pln:
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
-        # print("freq: ", freq.items())
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
 
         dic_frecuencia = dic.diccionario_frecuencia()
+        dic_frecuencia_sub = dic.diccionario_frecuencia_sub()
         dic_sinonimos = dic.diccionario_sinonimos()
         dic_abreviaturas = dic.diccionario_abreviaturas()
         dic_siglas = dic.diccionario_siglas()

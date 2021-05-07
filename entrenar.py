@@ -51,6 +51,7 @@ class EntrenarCsv:
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
 
         dic_frecuencia = dic.diccionario_frecuencia()
+        dic_frecuencia_sub = dic.diccionario_frecuencia_sub()
         dic_sinonimos = dic.diccionario_sinonimos()
         dic_abreviaturas = dic.diccionario_abreviaturas()
         dic_siglas = dic.diccionario_siglas()
