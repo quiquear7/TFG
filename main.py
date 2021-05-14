@@ -23,7 +23,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v18.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v29.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -41,7 +41,6 @@ def crearcsv(directory):
                              "Por_Superlativos",
                              "Por_Adverbios",
                              "Por_Simbolos",
-                             "Mayusuculas_NoSiglas",
                              "Por_Inderterminados",
                              "Por_numeros",
                              "Por_complex",
@@ -52,19 +51,39 @@ def crearcsv(directory):
                              "Por_Homo",
                              "Ratio_Palabra_Frases",
                              "Ratio_Caracteres_Palabra",
-                             "Comas",
-                             "puntos",
+                             "Comas/frases",
+                             "%comas",
+                             "%puntos",
                              "punto_y_coma",
-                             "N_sentences",
+                             "date",
+                             "doble_negacion",
+                             "partitivos o porcentajes",
+                             "presente_indicativo",
+                             "subjuntivo",
+                             "condicional",
+                             "nverbseguidos",
+                             "%puntuacion",
                              'Tipo'])
 
 
 def entrenar(win, direccion):
+    long_media = 0
     if dir == "":
         QMessageBox.about(win, "Error", "Seleccione ruta")
     else:
         app.closeAllWindows()
         crearcsv(direccion)
+
+        contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Originales_txt/' + name
+            ftemp = open(ruta, 'r', encoding="utf-8", errors="ignore")
+            text = ftemp.read()
+            long_media += len(text)
+            title = name.split(".")
+            x = EntrenarCsv(text, direccion, title[0], "Dificil")
+            x.process()
 
         contenido = os.listdir('GigaBDCorpus-master/Dificiles')
         for name in contenido:
@@ -72,6 +91,7 @@ def entrenar(win, direccion):
             ruta = 'GigaBDCorpus-master/Dificiles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
+            long_media += len(text)
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
@@ -87,6 +107,7 @@ def entrenar(win, direccion):
                 textPDF += page.getText("text")
             title = name.split(".")
             if textPDF != "":
+                long_media += len(textPDF)
                 x = EntrenarCsv(textPDF, direccion, title[0], "Dificil")
                 x.process()
             else:
@@ -100,6 +121,18 @@ def entrenar(win, direccion):
             ruta = 'GigaBDCorpus-master/Faciles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
+            long_media += len(text)
+            title = name.split(".")
+            x = EntrenarCsv(text, direccion, title[0], "Facil")
+            x.process()
+
+        contenido = os.listdir('GigaBDCorpus-master/Adaptadas_txt')
+        for name in contenido:
+            print(name)
+            ruta = 'GigaBDCorpus-master/Adaptadas_txt/' + name
+            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
+            text = ftemp.read()
+            long_media += len(text)
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
@@ -115,12 +148,15 @@ def entrenar(win, direccion):
                 textPDF += page.getText("text")
             title = name.split(".")
             if textPDF != "":
+                long_media += len(textPDF)
                 x = EntrenarCsv(textPDF, direccion, title[0], "Facil")
                 x.process()
             else:
                 print('vacio')
 
         print("Fin PDF")'''
+        print(long_media)
+        print(long_media / 270)
 
 
 def process_text(self, text, titulo, url):

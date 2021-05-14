@@ -17,13 +17,13 @@ def diccionario_frecuencia():
 
 
 def diccionario_frecuencia_sub():
-    dic_frecuencias = {}
+    '''dic_frecuencias = {}
     archivo_frecuencia = codecs.open("diccionarios/es_full.txt", "r", encoding="latin-1")
     for entrada in archivo_frecuencia:
         entrada = entrada.split()
         word = entrada[0]
         dic_frecuencias[word] = int(entrada[1])
-    return dic_frecuencias
+    return dic_frecuencias'''
 
 
 def diccionario_sinonimos():
