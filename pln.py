@@ -329,9 +329,9 @@ class Pln:
         Por_indeterminate = (len(indeterminate) * 100) / lenwords
         Por_numeros = (len(numeros) * 100) / lenwords
         Por_complex = (len(con_complex) * 100) / lenwords
-        Por_m_frec = (len(muy_frecuentes) * 100) / lenwords
-        Por_frec = (len(frecuentes) * 100) / lenwords
-        Por_poco_frec = (len(poco_frecuentes) * 100) / lenwords
+        Por_m_frec = (len(muy_frecuentes) * 100) / len(words)
+        Por_frec = (len(frecuentes) * 100) / len(words)
+        Por_poco_frec = (len(poco_frecuentes) * 100) / len(words)
         P_F = lenwords / len(frases)
         L_P = caracteres / lenwords
         Por_puntos = (len(puntos) * 100) / lenwords

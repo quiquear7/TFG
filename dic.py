@@ -266,11 +266,8 @@ def freeling(text):
     dep = pyfreeling.dep_txala(DATA + LANG + "/dep_txala/dependences.dat", parser.get_start_symbol())
 
     # process input text
-    lin = text
-    print("Text language is: " + la.identify_language(lin))
-
-    l = tk.tokenize(lin)
-    ls = sp.split(sid, l, False)
+    l = tk.tokenize(text)
+    ls = sp.split(sid, l, True)
 
     ls = mf.analyze(ls)
     ls = tg.analyze(ls)
@@ -280,13 +277,11 @@ def freeling(text):
     analisis = []
     words = 0
 
-    ## output results
     for s in ls:
         ws = s.get_words()
         words += len(ws)
         for w in ws:
             analisis.append((w.get_form(), w.get_tag(), w.get_lemma()))
 
-    # clean up
     sp.close_session(sid)
     return analisis, words

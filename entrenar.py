@@ -5,8 +5,6 @@ import nltk.data
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
-from legibilidad import legibilidad
-import textstat
 import csv
 
 
@@ -26,30 +24,13 @@ class EntrenarCsv:
         # db = client.BD_TFG
         # collection = db.Docs
 
-        """obtenemos el título del documento"""
-        '''Rellenamos json'''
-        fjson = {
-            "Title": self.title,
-            "URL": "",
-            "Format": "csv",
-            "Topic": "",
-            "Aimed_to": "",
-            "Character": "",
-            'Readability_Set': {
-                'mu_Index': legibilidad.mu(self.text),
-                'Flesch-kincaid_index': textstat.flesch_kincaid_grade(self.text)
-            }
-        }
-
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
         frases2 = tokenizer.tokenize(self.text)
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
-        # print("freq: ", freq.items())
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
-
         dic_frecuencia = dic.diccionario_frecuencia()
         dic_frecuencia_sub = dic.diccionario_frecuencia_sub()
         dic_sinonimos = dic.diccionario_sinonimos()
@@ -71,7 +52,6 @@ class EntrenarCsv:
         homo = []
         sinonimos_usados = {}
         numeros = []
-
         errores = []
         large = []
         superlative = []
@@ -79,7 +59,6 @@ class EntrenarCsv:
         title = []
         indeterminate = []
         numbers = []
-        date = []
         comillas = []
         con_complex = []
         presente_indicativo = []
@@ -110,13 +89,14 @@ class EntrenarCsv:
         verbos_seguidos = []
         partitivos = []
         sin = []
-
         cont = 0
         cont_negative = 0
         negative_text = ""
         doble_negacion_array = []
-
         puntuacion = []
+        muy_frecuentes = []
+        frecuentes = []
+        poco_frecuentes = []
 
         f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
 
@@ -181,12 +161,9 @@ class EntrenarCsv:
             else:
                 sinonimos_usados[k] = ""
 
-            existe = 1
             if "_" in i:
                 z = i.split("_")
                 for t in z:
-                    if t not in dic_frecuencia:
-                        existe = 0
                     if t in dic_abreviaturas:
                         abrv.append(i)
                     if t in dic_siglas:
@@ -239,10 +216,6 @@ class EntrenarCsv:
             if j == "SP":
                 preposition.append(i)
 
-            if i.lower() not in dic_frecuencia:
-                desconocidas.append(i.lower())
-
-
             if j == "Fc":
                 comas.append(j)
             if j == "Fp":
@@ -257,71 +230,20 @@ class EntrenarCsv:
 
             if j[0] == "F":
                 puntuacion.append(j)
+
+            if i.lower() in dic_frecuencia:
+                if dic_frecuencia[i.lower()] >= 4:
+                    muy_frecuentes.append(i.lower())
+                if 4 > dic_frecuencia[i.lower()] > 0.3:
+                    frecuentes.append(i.lower())
+                if dic_frecuencia[i.lower()] <= 0.3:
+                    poco_frecuentes.append(i.lower())
+            else:
+                desconocidas.append(i.lower())
+
             cont += 1
         f.close()
 
-        muy_frecuentes = []
-        frecuentes = []
-        poco_frecuentes = []
-
-        sentence = 1
-        fjson["Sentences_Set"] = []
-        for i in frases:
-            wordsjson = []
-            words_temp = word_tokenize(i, "spanish")
-            for p in words_temp:
-                if p.lower() in dic_frecuencia:
-                    valor = ""
-                    if dic_frecuencia[p.lower()] >= 3:
-                        muy_frecuentes.append(p.lower())
-                        valor = "es muy frecuente"
-                    if 3 > dic_frecuencia[p.lower()] > 0.3:
-                        frecuentes.append(p.lower())
-                        valor = "es frecuente"
-                    if dic_frecuencia[p.lower()] <= 0.3:
-                        poco_frecuentes.append(p.lower())
-                        valor = "es poco frecuente"
-                    wordsjson.append({
-                        "Word": p + "",
-                        "Frequency_value": dic_frecuencia[p.lower()],
-                        "Results": valor
-                    })
-                else:
-                    wordsjson.append({
-                        "Word": p + "",
-                        "Frequency_value": None,
-                        "Results": "no se encuentra en nuestro archivo. Valora que no exista o que sea una errata o "
-                                   "un signo de puntuación "
-                    })
-
-            fjson['Sentences_Set'].append({
-                'Sentence_number': sentence,
-                'Sentence': i + "",
-                'mu_Index': legibilidad.mu(i),
-                'Flesch-kincaid_index': textstat.flesch_kincaid_grade(i),
-                'Words': wordsjson
-            })
-
-            sentence += 1
-
-        fjson['Readability_Analysis_Set'] = ({
-            "Sentences_number": len(frases),
-            "Words_number": lenwords,
-            "Verbs_Number_set": [
-                {
-                    "Infinitive_Verbs_number": len(verbi),
-                    "Gerund_Verbs_number": len(verbg),
-                    "Participle_Verbs_number": len(verbp)
-                }
-            ],
-            "Articles_number": len(determiner),
-            "Preposition_number": len(preposition),
-            "Dates_number": len(date),
-            "Own_name_number": len(noun),
-            "Percentage_desconocidas": (len(desconocidas) * 100) / lenwords
-        })
-
-        # collection.insert_one(fjson)
         # client.close()
         valores = [self.title,
                    (len(sinonimos) * 100) / lenwords,
@@ -361,10 +283,9 @@ class EntrenarCsv:
                    (len(condicional) * 100) / lenwords,
                    (nverbseguidos * 100) / lenwords,
                    (len(puntuacion) * 100) / lenwords,
-
                    self.tipo]
 
-        with open(self.directory + '/final_v29.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v31.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

@@ -8,6 +8,8 @@ import validators
 import ntpath
 import os
 from bs4 import BeautifulSoup
+
+import dic
 from ui.analisis_ui import Ui_Analisis
 from entrenar import EntrenarCsv
 from pln import Pln
@@ -23,7 +25,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v29.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v31.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -73,6 +75,9 @@ def entrenar(win, direccion):
     else:
         app.closeAllWindows()
         crearcsv(direccion)
+
+
+        print("Diccionarios creados\n")
 
         contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
         for name in contenido:
@@ -156,7 +161,7 @@ def entrenar(win, direccion):
 
         print("Fin PDF")'''
         print(long_media)
-        print(long_media / 270)
+        print(long_media / 267)
 
 
 def process_text(self, text, titulo, url):
@@ -217,16 +222,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             if file[1] == 0:
                 ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
                 text = ftemp.read()
-                title = ntpath.basename(file[0]).split(".")
-                process_text(self, text, title[0], "")
+                if len(text) == 0:
+                    QMessageBox.about(self, "Error", "No se puede obtener texto")
+                else:
+                    title = ntpath.basename(file[0]).split(".")
+                    process_text(self, text, title[0], "")
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
                     webpage = urlopen(req).read()
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
-                    title = soup.title.string
-                    process_text(self, text, title, file[0])
+                    if len(text) == 0:
+                        QMessageBox.about(self, "Error", "No se puede obtener texto")
+                    else:
+                        title = soup.title.string
+                        process_text(self, text, title, file[0])
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
