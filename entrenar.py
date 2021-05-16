@@ -18,12 +18,6 @@ class EntrenarCsv:
 
     def process(self):
 
-        """Conectamos con la base de datos"""
-        # client = pymongo.MongoClient(
-        # "mongodb+srv://quiquear7:tfg2021uc3m@tfg.ickp8.mongodb.net/BD_TFG?retryWrites=true&w=majority")
-        # db = client.BD_TFG
-        # collection = db.Docs
-
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
         frases2 = tokenizer.tokenize(self.text)
         frases = sent_tokenize(self.text, "spanish")
@@ -244,7 +238,6 @@ class EntrenarCsv:
             cont += 1
         f.close()
 
-        # client.close()
         valores = [self.title,
                    (len(sinonimos) * 100) / lenwords,
                    (len(abrv) * 100) / lenwords,
@@ -285,7 +278,7 @@ class EntrenarCsv:
                    (len(puntuacion) * 100) / lenwords,
                    self.tipo]
 
-        with open(self.directory + '/final_v31.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v32.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

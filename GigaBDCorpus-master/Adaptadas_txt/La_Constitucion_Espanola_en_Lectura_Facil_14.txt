@@ -1,122 +1,226 @@
-EN LECTURA FÁCIL
-La Constitución
-española
-La Constitución española en lectura fácil
-Adaptación a lectura fácil:
-Óscar García Muñoz. Dilofácil
-Validación de textos:
-Altavoz Sociedad Cooperativa Madrileña
-Revisión jurídica:
-Red de juristas de Plena Inclusión España
-1ª edición: diciembre de 2015
-Con la colaboración de:
-Plena Inclusión España
-Diseño y maquetación:
-Concetta Probanza
-Imagen de portada:
-Logotipo europeo de lectura fácil en la portada: © Inclusion Europe.
-Más información en www.inclusion-europe.org/etr
-Edita:
-Real Patronato sobre Discapacidad
-http://www.rpd.es
-Ministerio de Sanidad, Servicios Sociales e Igualdad
-http://www.msssi.es
-Cuidado de la edición y distribución:
-Centro Español de Documentación sobre Discapacidad (CEDD)
-http://www.cedd.net
-Serrano, 140. 28006 Madrid.
-Tel. 91 745 24 49
-Fax. 91 411 55 02
-cedd@cedd.net
-NIPO (papel): 689-15-017-9
-NIPO (en línea): 689-15-018-4
-Depósito legal: M-37426-2015
-5
-Prólogo
-En tus manos tienes la norma más importante para todos los ciudadanos
-españoles, la Constitución de 1978, que garantiza nuestra convivencia en
-igualdad y lo hace declarando que España es un Estado social y democrático
-de Derecho.
-Una democracia que tiene como valores superiores la libertad, la justicia,
-la igualdad y el pluralismo político, y que ha supuesto el periodo de mayor
-crecimiento e igualdad de toda nuestra historia.
-Efectivamente, entre los principios fundamentales que recoge nuestra
-Carta Magna, y que guían la actuación de los poderes públicos, están los de
-promover la igualdad real y efectiva de todos los individuos e impulsar su
-participación en la vida política, económica, cultural y social de nuestro país.
-Para lograr la plena inclusión de todos los ciudadanos y ciudadanas,
-entre los que se incluyen las personas con discapacidad, es esencial
-eliminar los obstáculos que se lo impiden o dificultan y trabajar
-por lograr la accesibilidad universal y el diseño accesible para todos.
-Una de las herramientas más eficaces para favorecer la accesibilidad de
-conocimientos es la redacción de textos y contenidos en lectura fácil,
-simplificando y adaptando la información para hacerla más fácilmente
-comprensible por todas las personas, en especial por quienes tienen
-dificultades de comprensión lectora.
-Una labor de mucha importancia en este momento, en el que existe una gran
-abundancia de información escrita en los distintos medios, y particularmente
-necesaria en los textos legales, en los que el lenguaje altamente especializado
-puede suponer un obstáculo para su comprensión.
-6
-En este sentido, el Real Patronato sobre Discapacidad, en colaboración con
-entidades como el Grupo Diles de la Universidad Autónoma de Madrid,
-el Instituto de Lectura Fácil o Plena Inclusión España, antes conocido como
-FEAPS, promociona y difunde desde hace algunos años los textos redactados
-en lectura fácil como instrumento básico de accesibilidad.
-En la actualidad están disponibles la Convención Internacional de Naciones
-Unidas sobre los Derechos de las Personas con Discapacidad en fácil lectura
-y el manual Lectura fácil: métodos de redacción y evaluación, que incluye
-pautas básicas para la redacción y evaluación de textos en lectura fácil.
-Esta nueva publicación, La Constitución española en lectura fácil, supone una
-apuesta decidida por la innovación social, ya que es capaz de reunir en un
-solo texto democracia y accesibilidad. Y no está únicamente destinada a las
-personas con discapacidad, sino a cualquier persona interesada en conocer
-lo esencial de nuestro sistema constitucional, las cuestiones básicas que
-organizan nuestra vida en común.
-Quiero por ello felicitar al autor de la adaptación, Óscar García Muñoz, y a
-los miembros de Altavoz Sociedad Cooperativa Madrileña —cooperativa
-integrada por personas con discapacidad intelectual que han validado los
-textos— por su excelente trabajo, que sin duda contribuirá decisivamente
-a que las personas con discapacidad intelectual puedan conocer y ejercer
-sus derechos fundamentales. Y que es un paso más en nuestro objetivo
-de construir una sociedad más democrática y comprometida con nuestros
-valores constitucionales.
-Esperamos que esta publicación, escrita “para vosotros, con vosotros”, se
-convierta en un texto útil e imprescindible para las asociaciones de personas
-con discapacidad intelectual y sus familias.
-Susana Camarero Benítez
-Secretaria de Estado de Servicios Sociales e Igualdad
-Secretaria General del Real Patronato sobre Discapacidad
-7
-Introducción técnica
-La presente versión de la Constitución española es un documento adaptado
-a lectura fácil. La lectura fácil es una técnica de redacción y publicación que
-permite la comprensión textual a personas con dificultades lectoras. Desde
-hace más de 40 años empezó a aplicarse en Suecia y Estados Unidos para
-múltiples tipos de textos, tanto literarios, como jurídicos o informativos.
-La metodología de la lectura fácil incluye dos procesos fundamentales.
-Por una parte, se aplican una serie de pautas de redacción y diseño, que
-han sido tratadas en diversas obras. El Real Patronato sobre Discapacidad
-publicó un manual sistemático titulado «Lectura fácil: métodos de redacción
-y evaluación», que organiza estas pautas para su consulta. Por otra
-parte, se llevan a cabo pruebas de contraste con lectores con dificultades
-comprensivas, que permiten tanto tener certeza sobre la adecuación de
-la adaptación como facilitar la participación en el proceso a los principales
-beneficiarios del texto.
-La presente adaptación ha tenido en cuenta un precedente más breve
-publicado por Feaps Murcia en 2012, en el que se hizo una selección de
-algunos artículos. En nuestro caso, se ha optado por adaptar toda la Carta
-Magna artículo por artículo. Para centrar mejor a los lectores, se ha redactado
-una introducción general sobre la Constitución y además una introducción a
-cada título constitucional, que permite explicar mejor los contenidos básicos
-que se desarrollan en los artículos sucesivos. Posteriormente, cada artículo
-tiene un título propio que refuerza la comprensión del mismo. Por último,
-las palabras que son más complejas se han definido de forma sencilla en
-los márgenes, a la misma altura de donde aparecen. Hay que subrayar que
-la lectura fácil pretende también el progreso lector, por lo que se incluye el
-vocabulario dispuesto de este modo.
-8
-Para la validación, se ha contado con los miembros de Altavoz, una
-cooperativa dirigida por personas con discapacidad intelectual, que emitieron
-los correspondientes informes con recomendaciones y propuestas de
-modificación para mejorar la comprensión en algunos puntos.
+Preámbulo
+Don Juan Carlos Primero, Rey de España,
+anuncia a todas las personas:
+El Congreso de los Diputados, el Senado y los ciudadanos
+han votado a favor de esta Constitución.
+Los españoles desean la justicia, la libertad, la seguridad
+y el bien de todos.
+Por eso, han decidido:
+• Vivir en un país democrático
+con una organización justa de la economía y la sociedad.
+• Vivir en un país que respeta la ley.
+• Proteger los derechos humanos, la cultura, las tradiciones,
+los idiomas y las instituciones de todos los pueblos de España.
+• Ayudar a la mejora de la economía y la cultura
+para que todas las personas tengan una buena calidad de vida.
+• Crear una sociedad democrática en la que todos los ciudadanos
+participen en las decisiones más importantes.
+• Trabajar junto con otros países a favor de la paz.
+Organización
+justa: es cuando
+un gobierno
+organiza y
+reparte los
+bienes, el dinero,
+los servicios o
+los derechos
+en igualdad
+para todos los
+ciudadanos.
+14
+15
+El Título Preliminar de la Constitución explica las ideas
+que deben impulsar las normas del país.
+Por ejemplo, la libertad y la igualdad.
+El título preliminar dice que España es:
+• Un país que respeta los derechos de las personas.
+• Una democracia, porque los españoles pueden votar a sus representantes.
+• Una monarquía parlamentaria,
+porque el Rey es el máximo representante de todos los españoles
+y porque hay un Parlamento para debatir, votar y cambiar las leyes.
+Título Preliminar
+Este es el mapa de España con sus comunidades autónomas.
+La bandera de España es roja y amarilla.
+16
+17
+Artículo 1.
+País democrático y monarquía
+España es un país democrático y respetuoso con los derechos
+de las personas.
+Los valores más importantes son la libertad, la justicia,
+la igualdad y el respeto de las distintas ideas políticas.
+El poder de las instituciones en España proviene del pueblo español.
+Esto se llama soberanía del pueblo.
+España es una monarquía parlamentaria.
+España es una monarquía porque el máximo representante del país
+es el Rey.
+España es parlamentaria porque hay un Parlamento para debatir,
+votar y cambiar las leyes.
+Artículo 2.
+España y las autonomías
+España es el país de todos los españoles.
+En España hay regiones y nacionalidades.
+Las regiones y nacionalidades pueden convertirse
+en comunidades autónomas.
+Artículo 3.
+El idioma
+El idioma de los españoles es el castellano.
+Algunas comunidades autónomas tienen otros idiomas
+igual de importantes que el castellano,
+como el catalán, el gallego, el valenciano o el euskera.
+Estos idiomas deben respetarse y cuidarse.
+Instituciones:
+Organizaciones
+que cumplen
+una función de
+importancia
+para el país.
+Por ejemplo,
+el Gobierno, el
+Parlamento, los
+Tribunales, las
+comunidades
+autónomas y los
+ayuntamientos.
+Nacionalidades:
+regiones con una
+historia y una
+cultura propias.
+En España son
+Andalucía,
+Aragón, Canarias,
+Cataluña,
+Comunidad
+Valenciana,
+Galicia, Islas
+Baleares y País
+Vasco.
+Euskera: lengua
+vasca.
+18
+Artículo 4.
+La bandera
+La bandera española tiene tres barras horizontales,
+de colores rojo, amarillo y rojo.
+Las comunidades autónomas tienen también sus propias banderas
+junto con la bandera española.
+Artículo 5.
+La capital
+Madrid es la capital de España.
+Artículo 6.
+Los partidos políticos
+Los partidos políticos muestran la diversidad de ideas
+de los españoles.
+Los españoles participan en la política
+a través de los partidos políticos.
+Los partidos políticos deben respetar las leyes
+y funcionar de forma democrática.
+Artículo 7.
+Los trabajadores y los empresarios
+Los trabajadores defienden sus intereses a través de los sindicatos.
+Las empresas defienden sus intereses a través de sus asociaciones.
+Los sindicatos y las asociaciones de empresas
+deben respetar las leyes y funcionar de forma democrática.
+Capital: ciudad
+donde están las
+instituciones de un
+país.
+Partidos políticos:
+asociaciones de
+personas con unas
+mismas ideas.
+Sindicato:
+Asociaciones que
+defienden los
+derechos de los
+trabajadores.
+19
+Artículo 8.
+Las Fuerzas Armadas
+Las Fuerzas Armadas están encargadas de defender España,
+por ejemplo, de un ataque de otro país.
+Artículo 9.
+La obligación de cumplir con las leyes
+Todos los españoles y todas las instituciones
+deben cumplir con la Constitución y las leyes.
+Las instituciones deben intentar que la libertad,
+la igualdad y la participación de las personas sea de verdad.
+Las leyes deben ser públicas y claras para los ciudadanos.
+Las instituciones deben aplicar la ley a todos los ciudadanos por igual
+y según lo que dice la ley.
+Las instituciones tienen prohibido hacer leyes según sus intereses
+o a su gusto.
+Fuerzas Armadas:
+son los ejércitos
+de Tierra, de Aire y
+la Armada para la
+defensa por mar.
+20
+21
+El Título 1 de la Constitución explica 2 ideas:
+• Los derechos y las libertades.
+Son todas las cosas que una persona puede hacer
+y los demás deben respetar.
+Por ejemplo, tener tus propias tus ideas, seguir tu religión,
+reunirte con otras personas o formar parte de una asociación.
+• Los deberes. Son todas las obligaciones que las personas deben cumplir.
+Por ejemplo, pagar impuestos.
+Título 1
+De los derechos y deberes
+fundamentales
+Los españoles tienen varios derechos.
+Por ejemplo, tienen derecho a votar en las elecciones.
+En la imagen, una persona introduce su voto en la urna.
+Impuestos: los ciudadanos
+pagan al Gobierno una
+parte de sus ingresos para
+gastos como sanidad,
+pensiones, educación o
+carreteras.
+22
+23
+Artículo 10.
+Los derechos de la persona
+La Constitución reconoce el valor que cada persona tiene
+por sí misma, el derecho a ser respetado
+y la posibilidad de que haga su propia vida sin ir contra la ley
+o contra los derechos de los demás.
+Capítulo primero
+De los españoles y los extranjeros
+Artículo 11.
+La nacionalidad
+La ley debe explicar a las personas que pueden tener
+la nacionalidad española.
+Ningún español puede perder la nacionalidad española.
+Algunas personas podrán tener la nacionalidad española
+junto con la del país donde nacieron.
+Por ejemplo, las personas de los países americanos
+que hablan castellano pueden tener la nacionalidad española
+y la de su país de nacimiento.
+Artículo 12.
+La mayoría de edad
+Los españoles son mayores de edad a los 18 años.
+Nacionalidad:
+pertenencia a un
+país.
+Mayor de edad:
+personas que
+tienen todos los
+derechos y deben
+cumplir todas las
+obligaciones.
+24
+Artículo 13.
+Los derechos de los extranjeros
+Los extranjeros tienen en España algunos derechos.
+Hay otros derechos que solo son para los españoles,
+por ejemplo, ser elegido Presidente del Gobierno.
+Algunos extranjeros pueden votar en las elecciones
+para elegir alcaldes de los pueblos y ciudades.
+España puede acoger a extranjeros perseguidos en sus países
+por sus ideas, por su raza o por otro motivo parecido.
+Capítulo segundo
+Derechos y libertades
+Artículo 14.
+La igualdad de la ley para todos
+Las leyes son iguales para todos los españoles.

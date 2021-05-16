@@ -8,8 +8,6 @@ import validators
 import ntpath
 import os
 from bs4 import BeautifulSoup
-
-import dic
 from ui.analisis_ui import Ui_Analisis
 from entrenar import EntrenarCsv
 from pln import Pln
@@ -25,7 +23,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v31.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v32.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -76,9 +74,6 @@ def entrenar(win, direccion):
         app.closeAllWindows()
         crearcsv(direccion)
 
-
-        print("Diccionarios creados\n")
-
         contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
         for name in contenido:
             print(name)
@@ -100,25 +95,6 @@ def entrenar(win, direccion):
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
-
-        '''contenido = os.listdir('GigaBDCorpus-master/Originales')
-        for name in contenido:
-            print(name)
-            ruta = 'GigaBDCorpus-master/Originales/' + name
-            doc = fitz.open(ruta)
-            textPDF = ""
-            for i in range(1, doc.page_count):
-                page = doc.loadPage(i)
-                textPDF += page.getText("text")
-            title = name.split(".")
-            if textPDF != "":
-                long_media += len(textPDF)
-                x = EntrenarCsv(textPDF, direccion, title[0], "Dificil")
-                x.process()
-            else:
-                print('vacio')
-
-        print("Fin PDF")'''
 
         contenido = os.listdir('GigaBDCorpus-master/Faciles')
         for name in contenido:
@@ -142,24 +118,6 @@ def entrenar(win, direccion):
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
 
-        '''contenido = os.listdir('GigaBDCorpus-master/Adaptadas')
-        for name in contenido:
-            print(name)
-            ruta = 'GigaBDCorpus-master/Adaptadas/' + name
-            doc = fitz.open(ruta)
-            textPDF = ""
-            for i in range(1, doc.page_count):
-                page = doc.loadPage(i)
-                textPDF += page.getText("text")
-            title = name.split(".")
-            if textPDF != "":
-                long_media += len(textPDF)
-                x = EntrenarCsv(textPDF, direccion, title[0], "Facil")
-                x.process()
-            else:
-                print('vacio')
-
-        print("Fin PDF")'''
         print(long_media)
         print(long_media / 267)
 
