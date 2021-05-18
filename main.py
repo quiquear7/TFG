@@ -1,3 +1,5 @@
+import codecs
+
 import fitz
 from bson import json_util
 import csv
@@ -23,7 +25,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v32.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v36.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -33,12 +35,14 @@ def crearcsv(directory):
                              "Infinitive_Verbs_number",
                              "Gerund_Verbs_number",
                              "Participle_Verbs_number",
+                             "imperative_Verbs_number",
                              "Determiners_number",
                              "Preposition_number",
                              "Noun",
                              "Por_Desconocidas",
                              "Por_Largas",
                              "Por_Superlativos",
+                             "Por_Adverbios_mente",
                              "Por_Adverbios",
                              "Por_Simbolos",
                              "Por_Inderterminados",
@@ -63,6 +67,8 @@ def crearcsv(directory):
                              "condicional",
                              "nverbseguidos",
                              "%puntuacion",
+                             "%etc",
+                             "%mayus_no_sigla",
                              'Tipo'])
 
 
@@ -158,7 +164,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.listWidget.addItem(directorio)
 
     def openFileNamesDialog(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt)")
+        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "PDF Files (*.pdf);;txt File (*.txt)")
         if file:
             self.pintarButton(self.barchivo)
             self.limpiarArchivo()
@@ -178,8 +184,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
             QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
         else:
             if file[1] == 0:
-                ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
-                text = ftemp.read()
+                extension = file[0].split(".")
+                text = ""
+                if extension[1] == "txt":
+                    ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
+                    text = ftemp.read()
+                if extension[1] == "pdf":
+                    doc = fitz.open(file[0])
+                    for i in range(1, doc.page_count):
+                        page = doc.loadPage(i)
+                        text += page.getText("text")
                 if len(text) == 0:
                     QMessageBox.about(self, "Error", "No se puede obtener texto")
                 else:

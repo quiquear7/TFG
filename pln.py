@@ -67,6 +67,8 @@ class Pln:
             lenwords = len(words)
         entrada.close()
 
+        etc = []
+        imperative = []
         abrv = []
         siglas = []
         homo = []
@@ -110,12 +112,11 @@ class Pln:
         verbos_seguidos = []
         partitivos = []
         sin = []
-        mayus_no_sigla = []
         cont = 0
         cont_negative = 0
         negative_text = ""
         doble_negacion_array = []
-
+        mayus_no_sigla = []
         puntuacion = []
 
         for x in analisis:
@@ -126,14 +127,15 @@ class Pln:
                 k = x[2]
 
             caracteres += len(i)
-            if i.isupper() and i not in dic_siglas:
-                if "_" in i:
-                    mayus_no_sigla.append((i, cont))
+            if i.isupper() and i not in dic_siglas and 2 <= len(i) <= 7:
+                if i.lower() not in diccionario:
+                    siglas.append((i, cont))
                 else:
-                    if 2 <= len(i[0]) <= 7 and i.lower() not in diccionario:
-                        siglas.append((i, cont))
-            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
+                    mayus_no_sigla.append((i, cont))
+            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "...":
                 errores.append((i, cont))
+            if "etc" in i:
+                etc.append((i, cont))
             if len(i) > 10 and "_" not in i:
                 large.append((i, cont))
             if j[0] == "A" and ("ísimo" in i or "érrimo" in i):
@@ -172,22 +174,20 @@ class Pln:
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
+                        t = t.replace("\n", "")
                         if t in sinonimos_usados:
+                            if sinonimos_usados[t] == "" and t not in sinonimos:
+                                sinonimos.append(t)
                             usado = 1
                             sinonimos_usados[t] += i + ", "
                             sinonimos.append(k)
                             sin.append(k)
                     if usado == 0:
                         sinonimos_usados[k] = ""
-            else:
-                sinonimos_usados[k] = ""
 
-            existe = 1
             if "_" in i:
                 z = i.split("_")
                 for t in z:
-                    if t not in dic_frecuencia:
-                        existe = 0
                     if t in dic_abreviaturas:
                         abrv.append(i)
                     if t in dic_siglas:
@@ -228,6 +228,8 @@ class Pln:
                     subjuntivo.append(i)
                 if j[3] == "C":
                     condicional.append(i)
+                if j[2] == "M":
+                    imperative.append(i)
             if j[0] == "Z":
                 number.append(i)
                 if len(j) > 1:
@@ -239,10 +241,6 @@ class Pln:
                 interjection.append(i)
             if j == "SP":
                 preposition.append(i)
-
-            if i.lower() not in dic_frecuencia:
-                desconocidas.append(i.lower())
-                print(i.lower())
 
             if j == "Fc":
                 comas.append(j)
@@ -258,7 +256,6 @@ class Pln:
 
             if j[0] == "F":
                 puntuacion.append(j)
-            cont += 1
 
         muy_frecuentes = []
         frecuentes = []

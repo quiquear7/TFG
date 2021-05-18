@@ -41,6 +41,7 @@ class EntrenarCsv:
             lenwords = len(words)
         entrada.close()
 
+        etc = []
         abrv = []
         siglas = []
         homo = []
@@ -69,6 +70,7 @@ class EntrenarCsv:
         verbi = []
         verbg = []
         verbp = []
+        imperative = []
         number = []
         date = []
         interjection = []
@@ -91,6 +93,7 @@ class EntrenarCsv:
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
+        mayus_no_sigla = []
 
         f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
 
@@ -102,11 +105,16 @@ class EntrenarCsv:
                 k = x[2]
 
             caracteres += len(i)
-            if i.isupper() and i not in dic_siglas and 2 <= len(i[0]) <= 7 and i.lower() not in diccionario:
-                f.write(i + ':' + i + '\n')
-                siglas.append((i, cont))
-            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "etc." or i == "...":
+            if i.isupper() and i not in dic_siglas and 2 <= len(i) <= 7:
+                if i.lower() not in diccionario:
+                    f.write(i + ':' + i + '\n')
+                    siglas.append((i, cont))
+                else:
+                    mayus_no_sigla.append((i, cont))
+            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "...":
                 errores.append((i, cont))
+            if "etc" in i:
+                etc.append((i, cont))
             if len(i) > 10 and "_" not in i:
                 large.append((i, cont))
             if j[0] == "A" and ("ísimo" in i or "érrimo" in i):
@@ -145,15 +153,16 @@ class EntrenarCsv:
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
+                        t = t.replace("\n", "")
                         if t in sinonimos_usados:
+                            if sinonimos_usados[t] == "" and t not in sinonimos:
+                                sinonimos.append(t)
                             usado = 1
                             sinonimos_usados[t] += i + ", "
                             sinonimos.append(k)
                             sin.append(k)
                     if usado == 0:
                         sinonimos_usados[k] = ""
-            else:
-                sinonimos_usados[k] = ""
 
             if "_" in i:
                 z = i.split("_")
@@ -198,6 +207,8 @@ class EntrenarCsv:
                     subjuntivo.append(i)
                 if j[3] == "C":
                     condicional.append(i)
+                if j[2] == "M":
+                    imperative.append(i)
             if j[0] == "Z":
                 number.append(i)
                 if len(j) > 1:
@@ -226,11 +237,11 @@ class EntrenarCsv:
                 puntuacion.append(j)
 
             if i.lower() in dic_frecuencia:
-                if dic_frecuencia[i.lower()] >= 4:
+                if dic_frecuencia[i.lower()] >= 20:
                     muy_frecuentes.append(i.lower())
-                if 4 > dic_frecuencia[i.lower()] > 0.3:
+                if 20 > dic_frecuencia[i.lower()] > 1:
                     frecuentes.append(i.lower())
-                if dic_frecuencia[i.lower()] <= 0.3:
+                if dic_frecuencia[i.lower()] <= 1:
                     poco_frecuentes.append(i.lower())
             else:
                 desconocidas.append(i.lower())
@@ -246,12 +257,14 @@ class EntrenarCsv:
                    (len(verbi) * 100) / lenwords,
                    (len(verbg) * 100) / lenwords,
                    (len(verbp) * 100) / lenwords,
+                   (len(imperative) * 100) / lenwords,
                    (len(determiner) * 100) / lenwords,
                    (len(preposition) * 100) / lenwords,
                    (len(noun) * 100) / lenwords,
                    (len(desconocidas) * 100) / lenwords,
                    (len(large) * 100) / lenwords,
                    (len(superlative) * 100) / lenwords,
+                   (len(adverbs) * 100) / lenwords,
                    (len(adverb) * 100) / lenwords,
                    (len(errores) * 100) / lenwords,
                    (len(indeterminate) * 100) / lenwords,
@@ -276,9 +289,11 @@ class EntrenarCsv:
                    (len(condicional) * 100) / lenwords,
                    (nverbseguidos * 100) / lenwords,
                    (len(puntuacion) * 100) / lenwords,
+                   (len(etc) * 100) / lenwords,
+                   (len(mayus_no_sigla) * 100) / lenwords,
                    self.tipo]
 
-        with open(self.directory + '/final_v32.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v36.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

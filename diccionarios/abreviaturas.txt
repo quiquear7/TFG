@@ -68,6 +68,7 @@ Btá.:Bogotá	Capital de Colombia
 bv.:bulevar	
 blv.:bulevar
 c/:calle
+C:calle
 c.:circa
 ca.:circa
 cca.:circa
@@ -278,7 +279,6 @@ N.ª S.ª:Nuestra Señora
 N. T.:Nuevo Testamento
 Nvo.:Nuevo.
 núm.:número
-o/:orden
 Ob.:obispo
 Obpo.:obispo
 ob. cit.:obra citada
