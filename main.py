@@ -1,5 +1,4 @@
 import codecs
-
 import fitz
 from bson import json_util
 import csv
@@ -25,7 +24,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v36.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v51.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -51,6 +50,9 @@ def crearcsv(directory):
                              "Por_muy_frecuentes",
                              "Por_frecuentes",
                              "Por_poco_frecuentes",
+                             "Por_muy_frecuentes_sub",
+                             "Por_frecuentes_sub",
+                             "Por_poco_frecuentes_sub",
                              "Por_comillas",
                              "Por_Homo",
                              "Ratio_Palabra_Frases",
@@ -60,6 +62,7 @@ def crearcsv(directory):
                              "%puntos",
                              "punto_y_coma",
                              "date",
+                             "%date_mal",
                              "doble_negacion",
                              "partitivos o porcentajes",
                              "presente_indicativo",
@@ -69,6 +72,14 @@ def crearcsv(directory):
                              "%puntuacion",
                              "%etc",
                              "%mayus_no_sigla",
+                             "%sin_palabras",
+                             "%ordinales",
+                             "%romanos",
+                             "%general",
+                             "%especifico",
+                             "%dos_puntos",
+                             "#words",
+                             "#frases",
                              'Tipo'])
 
 
@@ -79,10 +90,11 @@ def entrenar(win, direccion):
     else:
         app.closeAllWindows()
         crearcsv(direccion)
+        cont = 1
 
-        contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
+        '''contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
         for name in contenido:
-            print(name)
+            print(cont, name)
             ruta = 'GigaBDCorpus-master/Originales_txt/' + name
             ftemp = open(ruta, 'r', encoding="utf-8", errors="ignore")
             text = ftemp.read()
@@ -90,10 +102,11 @@ def entrenar(win, direccion):
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
+            cont += 1'''
 
         contenido = os.listdir('GigaBDCorpus-master/Dificiles')
         for name in contenido:
-            print(name)
+            print(cont, name)
             ruta = 'GigaBDCorpus-master/Dificiles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
@@ -101,10 +114,11 @@ def entrenar(win, direccion):
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
+            cont += 1
 
         contenido = os.listdir('GigaBDCorpus-master/Faciles')
         for name in contenido:
-            print(name)
+            print(cont, name)
             ruta = 'GigaBDCorpus-master/Faciles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
@@ -112,20 +126,7 @@ def entrenar(win, direccion):
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
-
-        contenido = os.listdir('GigaBDCorpus-master/Adaptadas_txt')
-        for name in contenido:
-            print(name)
-            ruta = 'GigaBDCorpus-master/Adaptadas_txt/' + name
-            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
-            text = ftemp.read()
-            long_media += len(text)
-            title = name.split(".")
-            x = EntrenarCsv(text, direccion, title[0], "Facil")
-            x.process()
-
-        print(long_media)
-        print(long_media / 267)
+            cont += 1
 
 
 def process_text(self, text, titulo, url):
@@ -164,7 +165,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         self.listWidget.addItem(directorio)
 
     def openFileNamesDialog(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "PDF Files (*.pdf);;txt File (*.txt)")
+        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
         if file:
             self.pintarButton(self.barchivo)
             self.limpiarArchivo()

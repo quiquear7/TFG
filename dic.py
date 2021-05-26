@@ -17,13 +17,14 @@ def diccionario_frecuencia():
 
 
 def diccionario_frecuencia_sub():
-    '''dic_frecuencias = {}
+    dic_frecuencias = {}
     archivo_frecuencia = codecs.open("diccionarios/es_full.txt", "r", encoding="latin-1")
     for entrada in archivo_frecuencia:
         entrada = entrada.split()
-        word = entrada[0]
-        dic_frecuencias[word] = int(entrada[1])
-    return dic_frecuencias'''
+        if len(entrada) == 2:
+            word = entrada[0]
+            dic_frecuencias[word] = int(entrada[1])
+    return dic_frecuencias
 
 
 def diccionario_sinonimos():
@@ -40,8 +41,8 @@ def diccionario_abreviaturas():
     abrv = codecs.open("diccionarios/abreviaturas.txt", "r", encoding="utf-8")
     for entrada in abrv:
         pal = entrada.split(":")
-        dic_abreviaturas[pal[0]] = pal[1]
-    dabreviaturas = codecs.open("diccionarios/abreviatures.txt", "r", encoding="utf-8")
+        dic_abreviaturas[pal[0]] = pal[1].rstrip()
+    dabreviaturas = codecs.open("diccionarios/abr-spa.txt", "r", encoding="utf-8")
     for i in dabreviaturas:
         i = i.rstrip()
         dic_abreviaturas[i] = i
@@ -62,7 +63,7 @@ def diccionario_homonimas():
     hom = codecs.open("diccionarios/homonimas.txt", "r", encoding="utf-8")
     for entrada in hom:
         pal = entrada.split()
-        dic_hom[pal[0]] = pal[1]
+        dic_hom[pal[0]] = pal[1].rstrip()
     return dic_hom
 
 

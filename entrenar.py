@@ -1,5 +1,7 @@
 import codecs
+import math
 import pickle
+import string
 import nltk
 import nltk.data
 import dic as dic
@@ -23,6 +25,29 @@ class EntrenarCsv:
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
+        punct = string.punctuation
+        freq2 = []
+        for i in freq:
+            if i not in punct:
+                freq2.append((i, freq[i]))
+
+        i1 = 0
+        especifico = []
+        general = []
+        for item in freq2:
+            if item[1] == 1:
+                i1 += 1
+        pt = ((math.sqrt(1 + 8 * i1) - 1) / 2)
+        for item in freq2:
+            if item[1] >= pt:
+                general.append(item[0])
+            else:
+                especifico.append(item[0])
+
+        caracteres = 0
+        for i in words:
+            if i not in punct:
+                caracteres += len(i)
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
         dic_frecuencia = dic.diccionario_frecuencia()
@@ -93,9 +118,15 @@ class EntrenarCsv:
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
+        muy_frecuentes_sub = []
+        frecuentes_sub = []
+        poco_frecuentes_sub = []
         mayus_no_sigla = []
-
-        f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+        frecuencia = []
+        ordinales = []
+        date_mal = []
+        romanos = []
+        dos_puntos = []
 
         for x in analisis:
             i = x[0]
@@ -104,20 +135,35 @@ class EntrenarCsv:
             if len(x) == 3:
                 k = x[2]
 
-            caracteres += len(i)
-            if i.isupper() and i not in dic_siglas and 2 <= len(i) <= 7:
-                if i.lower() not in diccionario:
+            if "_" in i:
+                siglas_temp = i.split("_")
+                for sig in siglas_temp:
+                    if sig.isupper() and i not in dic_siglas:
+                        if sig.isupper() not in diccionario and 2 <= len(sig) <= 7:
+                            f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+                            f.write(sig + ':' + sig + '\n')
+                            f.close()
+                            dic_siglas = dic.diccionario_siglas()
+                        else:
+                            if len(i) > 1:
+                                mayus_no_sigla.append((sig, cont))
+
+            if i.isupper() and i not in dic_siglas:
+                if i.lower() not in diccionario and "_" not in i and 2 <= len(i) <= 7:
+                    f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
                     f.write(i + ':' + i + '\n')
-                    siglas.append((i, cont))
+                    f.close()
+                    dic_siglas = dic.diccionario_siglas()
                 else:
-                    mayus_no_sigla.append((i, cont))
-            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "...":
+                    if len(i) > 1:
+                        mayus_no_sigla.append((i, cont))
+            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "..." or i == "ª":
                 errores.append((i, cont))
             if "etc" in i:
                 etc.append((i, cont))
             if len(i) > 10 and "_" not in i:
                 large.append((i, cont))
-            if j[0] == "A" and ("ísimo" in i or "érrimo" in i):
+            if j[0] == "A" and j[2] == "S":
                 superlative.append((i, cont))
             if j[0] == "R" and "mente" in i:
                 adverbs.append((i, cont))
@@ -131,14 +177,15 @@ class EntrenarCsv:
                 comillas.append((i, cont))
             if i.isdigit():
                 numeros.append((i, cont))
-            if i == "por " and analisis[cont + 1][0] == "lo" and analisis[cont + 2][0] == "tanto":
+            if i.lower() == "por_lo_tanto":
                 con_complex.append((i, cont))
-            if i == "no " and analisis[cont + 1][0] == "obstante":
+            if i.lower() == "no_obstante":
                 con_complex.append((i, cont))
-            if i == "por " and analisis[cont + 1][0] == "consiguiente":
+            if i.lower() == "por_consiguiente":
                 con_complex.append((i, cont))
-            if i == "sin " and analisis[cont + 1][0] == "embargo":
-                con_complex.append((i, cont))
+            if cont < len(analisis) - 1:
+                if i.lower() == "sin" and analisis[cont + 1][0].lower() == "embargo":
+                    con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
                 abrv.append(i)
@@ -147,9 +194,9 @@ class EntrenarCsv:
             if i in dic_hom:
                 homo.append(i)
 
-            if k not in sinonimos_usados:
-                if k in dic_sinonimos:
-                    x = dic_sinonimos[k]
+            if i not in sinonimos_usados:
+                if i in dic_sinonimos:
+                    x = dic_sinonimos[i]
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
@@ -159,10 +206,11 @@ class EntrenarCsv:
                                 sinonimos.append(t)
                             usado = 1
                             sinonimos_usados[t] += i + ", "
-                            sinonimos.append(k)
-                            sin.append(k)
+                            if i.lower() not in sinonimos:
+                                sinonimos.append(i.lower())
+                            sin.append(i)
                     if usado == 0:
-                        sinonimos_usados[k] = ""
+                        sinonimos_usados[i] = ""
 
             if "_" in i:
                 z = i.split("_")
@@ -214,8 +262,26 @@ class EntrenarCsv:
                 if len(j) > 1:
                     if j[1] == "p" or j[1] == "d":
                         partitivos.append(i)
+                if "º" in i:
+                    ordinales.append((i, cont))
+                if len(i) == 10:
+                    barras = 0
+                    guiones = 0
+                    for tt in i:
+                        if tt == "/":
+                            barras += 1
+                        if tt == "-":
+                            guiones += 1
+                    if barras == 2 and guiones == 0:
+                        date_mal.append((i, cont))
+                    if barras == 0 and guiones == 2:
+                        date_mal.append((i, cont))
             if j == "W":
                 date.append(i)
+                if "/" in i:
+                    date_mal.append((i, cont))
+                if "I" in i or "V" in i or "X" in i or "L" in i or "C" in i or "D" in i or "M" in i:
+                    romanos.append((i, cont))
             if j[0] == "Yo":
                 interjection.append(i)
             if j == "SP":
@@ -232,25 +298,35 @@ class EntrenarCsv:
                 puntos.append(j)
             if j == "Fx":
                 punto_coma.append(j)
+            if j == "Fd":
+                dos_puntos.append(j)
 
             if j[0] == "F":
                 puntuacion.append(j)
 
+            if j[0] != "F" and i not in frecuencia:
+                frecuencia.append(i)
+
             if i.lower() in dic_frecuencia:
-                if dic_frecuencia[i.lower()] >= 20:
+                if dic_frecuencia[i.lower()] >= 5:
                     muy_frecuentes.append(i.lower())
-                if 20 > dic_frecuencia[i.lower()] > 1:
+                if 5 > dic_frecuencia[i.lower()] > 0.3:
                     frecuentes.append(i.lower())
-                if dic_frecuencia[i.lower()] <= 1:
+                if dic_frecuencia[i.lower()] <= 0.3:
                     poco_frecuentes.append(i.lower())
-            else:
-                desconocidas.append(i.lower())
+
+            if i.lower() in dic_frecuencia_sub:
+                if dic_frecuencia_sub[i.lower()] >= 108:
+                    muy_frecuentes_sub.append(i.lower())
+                if 108 > dic_frecuencia_sub[i.lower()] > 31:
+                    frecuentes_sub.append(i.lower())
+                if dic_frecuencia_sub[i.lower()] <= 31:
+                    poco_frecuentes_sub.append(i.lower())
 
             cont += 1
-        f.close()
 
         valores = [self.title,
-                   (len(sinonimos) * 100) / lenwords,
+                   (len(sin) * 100) / lenwords,
                    (len(abrv) * 100) / lenwords,
                    (len(siglas) * 100) / lenwords,
                    (len(verbs) * 100) / lenwords,
@@ -273,15 +349,19 @@ class EntrenarCsv:
                    (len(muy_frecuentes) * 100) / lenwords,
                    (len(frecuentes) * 100) / lenwords,
                    (len(poco_frecuentes) * 100) / lenwords,
+                   (len(muy_frecuentes_sub) * 100) / lenwords,
+                   (len(frecuentes_sub) * 100) / lenwords,
+                   (len(poco_frecuentes_sub) * 100) / lenwords,
                    (len(comillas) * 100) / lenwords,
                    (len(homo) * 100) / lenwords,
-                   lenwords / len(frases),
-                   caracteres / lenwords,
+                   len(words) / len(frases),
+                   caracteres / len(words),
                    (len(comas)) / len(frases),
                    (len(comas) * 100) / lenwords,
                    (len(puntos) * 100) / lenwords,
                    (len(punto_coma) * 100) / lenwords,
                    (len(date) * 100) / lenwords,
+                   (len(date_mal) * 100) / lenwords,
                    (doble_negacion * 100) / lenwords,
                    (len(partitivos) * 100) / lenwords,
                    (len(presente_indicativo) * 100) / lenwords,
@@ -291,9 +371,17 @@ class EntrenarCsv:
                    (len(puntuacion) * 100) / lenwords,
                    (len(etc) * 100) / lenwords,
                    (len(mayus_no_sigla) * 100) / lenwords,
+                   (len(sinonimos) * 100) / len(freq2),
+                   (len(ordinales) * 100) / lenwords,
+                   (len(romanos) * 100) / lenwords,
+                   (len(general) * 100) / len(freq2),
+                   (len(especifico) * 100) / len(freq2),
+                   (len(dos_puntos) * 100) / lenwords,
+                   len(words),
+                   len(frases),
                    self.tipo]
 
-        with open(self.directory + '/final_v36.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v51.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

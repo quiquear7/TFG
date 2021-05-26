@@ -1,4 +1,5 @@
 import codecs
+import math
 import pickle
 import string
 import nltk
@@ -49,6 +50,26 @@ class Pln:
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
 
+        freq2 = []
+        for i in freq:
+            if i not in punct:
+                freq2.append((i, freq[i]))
+            else:
+                print(i)
+
+        i1 = 0
+        especifico = []
+        general = []
+        for item in freq:
+            if freq[item] == 1:
+                i1 += 1
+        pt = (math.sqrt(1+8*i1)-1)/2
+        for item in freq:
+            if freq[item] >= pt:
+                general.append(item)
+            else:
+                especifico.append(item)
+
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
 
         dic_frecuencia = dic.diccionario_frecuencia()
@@ -68,13 +89,11 @@ class Pln:
         entrada.close()
 
         etc = []
-        imperative = []
         abrv = []
         siglas = []
         homo = []
         sinonimos_usados = {}
         numeros = []
-
         errores = []
         large = []
         superlative = []
@@ -98,6 +117,7 @@ class Pln:
         verbi = []
         verbg = []
         verbp = []
+        imperative = []
         number = []
         date = []
         interjection = []
@@ -116,8 +136,18 @@ class Pln:
         cont_negative = 0
         negative_text = ""
         doble_negacion_array = []
-        mayus_no_sigla = []
         puntuacion = []
+        muy_frecuentes = []
+        frecuentes = []
+        poco_frecuentes = []
+        muy_frecuentes_sub = []
+        frecuentes_sub = []
+        poco_frecuentes_sub = []
+        mayus_no_sigla = []
+        frecuencia = []
+        ordinales = []
+        date_mal = []
+        romanos = []
 
         for x in analisis:
             i = x[0]
@@ -126,19 +156,33 @@ class Pln:
             if len(x) == 3:
                 k = x[2]
 
-            caracteres += len(i)
-            if i.isupper() and i not in dic_siglas and 2 <= len(i) <= 7:
-                if i.lower() not in diccionario:
-                    siglas.append((i, cont))
+            if i not in punct:
+                caracteres += len(i)
+
+            if "_" in i:
+                siglas_temp = i.split("_")
+                for sig in siglas_temp:
+                    if sig.isupper() and i not in dic_siglas:
+                        if sig.lower() not in diccionario and 2 <= len(sig) <= 7:
+                            siglas.append((sig, cont))
+                        else:
+                            if len(i) > 1:
+                                mayus_no_sigla.append((sig, cont))
+
+            if i.isupper() and i not in dic_siglas:
+                if i.lower() not in diccionario and "_" not in i and 2 <= len(i) <= 7:
+                    dic_siglas = dic.diccionario_siglas()
                 else:
-                    mayus_no_sigla.append((i, cont))
-            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "...":
+                    if len(i) > 1:
+                        mayus_no_sigla.append((i, cont))
+
+            if "&" in i or "%" in i or "/" in i or "(" in i or ")" in i or "^" in i or "[" in i or "]" in i or "{" in i or "}" in i or "..." in i or "ª" in i:
                 errores.append((i, cont))
             if "etc" in i:
                 etc.append((i, cont))
             if len(i) > 10 and "_" not in i:
                 large.append((i, cont))
-            if j[0] == "A" and ("ísimo" in i or "érrimo" in i):
+            if j[0] == "A" and j[2] == "S":
                 superlative.append((i, cont))
             if j[0] == "R" and "mente" in i:
                 adverbs.append((i, cont))
@@ -152,13 +196,13 @@ class Pln:
                 comillas.append((i, cont))
             if i.isdigit():
                 numeros.append((i, cont))
-            if i == "por " and analisis[cont + 1][0] == "lo" and analisis[cont + 2][0] == "tanto":
+            if i.lower() == "por_lo_tanto":
                 con_complex.append((i, cont))
-            if i == "no " and analisis[cont + 1][0] == "obstante":
+            if i.lower() == "no_obstante":
                 con_complex.append((i, cont))
-            if i == "por " and analisis[cont + 1][0] == "consiguiente":
+            if i.lower() == "por_consiguiente":
                 con_complex.append((i, cont))
-            if i == "sin " and analisis[cont + 1][0] == "embargo":
+            if i.lower() == "sin" and analisis[cont + 1][0].lower() == "embargo":
                 con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
@@ -180,8 +224,9 @@ class Pln:
                                 sinonimos.append(t)
                             usado = 1
                             sinonimos_usados[t] += i + ", "
-                            sinonimos.append(k)
-                            sin.append(k)
+                            if i.lower() not in sinonimos:
+                                sinonimos.append(i.lower())
+                            sin.append(i)
                     if usado == 0:
                         sinonimos_usados[k] = ""
 
@@ -235,8 +280,26 @@ class Pln:
                 if len(j) > 1:
                     if j[1] == "p" or j[1] == "d":
                         partitivos.append(i)
+                if "º" in i:
+                    ordinales.append((i, cont))
+                if len(i) == 10:
+                    barras = 0
+                    guiones = 0
+                    for tt in i:
+                        if tt == "/":
+                            barras += 1
+                        if tt == "-":
+                            guiones += 1
+                    if barras == 2 and guiones == 0:
+                        date_mal.append((i, cont))
+                    if barras == 0 and guiones == 2:
+                        date_mal.append((i, cont))
             if j == "W":
                 date.append(i)
+                if "/" in i:
+                    date_mal.append((i, cont))
+                if "I" in i or "V" in i or "X" in i or "L" in i or "C" in i or "D" in i or "M" in i:
+                    romanos.append((i, cont))
             if j[0] == "Yo":
                 interjection.append(i)
             if j == "SP":
@@ -257,6 +320,11 @@ class Pln:
             if j[0] == "F":
                 puntuacion.append(j)
 
+            if j[0] != "F" and i not in frecuencia:
+                frecuencia.append(i)
+
+            cont += 1
+
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
@@ -270,10 +338,10 @@ class Pln:
             for p in words_temp:
                 if p.lower() in dic_frecuencia:
                     valor = ""
-                    if dic_frecuencia[p.lower()] >= 3:
+                    if dic_frecuencia[p.lower()] >= 4:
                         muy_frecuentes.append((p.lower(), cont2))
                         valor = "es muy frecuente"
-                    if 3 > dic_frecuencia[p.lower()] > 0.3:
+                    if 4 > dic_frecuencia[p.lower()] > 0.3:
                         frecuentes.append((p.lower(), cont2))
                         valor = "es frecuente"
                     if dic_frecuencia[p.lower()] <= 0.3:
@@ -285,6 +353,7 @@ class Pln:
                         "Results": valor
                     })
                 else:
+                    desconocidas.append((p.lower(), cont2))
                     wordsjson.append({
                         "Word": p + "",
                         "Frequency_value": None,
