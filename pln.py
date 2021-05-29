@@ -2,6 +2,8 @@ import codecs
 import math
 import pickle
 import string
+
+import enchant
 import nltk
 import nltk.data
 import dic as dic
@@ -49,26 +51,28 @@ class Pln:
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
-
+        punct = string.punctuation
         freq2 = []
         for i in freq:
             if i not in punct:
                 freq2.append((i, freq[i]))
-            else:
-                print(i)
 
         i1 = 0
         especifico = []
         general = []
-        for item in freq:
-            if freq[item] == 1:
+        for item in freq2:
+            if item[1] == 1:
                 i1 += 1
-        pt = (math.sqrt(1+8*i1)-1)/2
-        for item in freq:
-            if freq[item] >= pt:
-                general.append(item)
+        pt = ((math.sqrt(1 + 8 * i1) - 1) / 2)
+        for item in freq2:
+            if item[1] >= pt:
+                general.append(item[0])
             else:
-                especifico.append(item)
+                especifico.append(item[0])
+
+        caracteres = 0
+        for i in words:
+            caracteres += len(i)
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
 
@@ -79,6 +83,7 @@ class Pln:
         dic_siglas = dic.diccionario_siglas()
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
+        dicEnchant = enchant.Dict("es_ES")
 
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
@@ -149,6 +154,8 @@ class Pln:
         date_mal = []
         romanos = []
 
+        otro_idioma = []
+
         for x in analisis:
             i = x[0]
             j = x[1]
@@ -156,15 +163,26 @@ class Pln:
             if len(x) == 3:
                 k = x[2]
 
-            if i not in punct:
-                caracteres += len(i)
+            if dicEnchant.check(i.lower()) == False and dicEnchant.check(
+                    j.lower()) == False and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
+                if not any(map(str.isdigit, i)):
+                    if "_" in i:
+                        itemp = i.split("_")
+                        for item2 in itemp:
+                            if not dicEnchant.check(item2):
+                                otro_idioma.append((item2, cont))
+                    else:
+                        otro_idioma.append((i, cont))
 
             if "_" in i:
                 siglas_temp = i.split("_")
                 for sig in siglas_temp:
                     if sig.isupper() and i not in dic_siglas:
-                        if sig.lower() not in diccionario and 2 <= len(sig) <= 7:
-                            siglas.append((sig, cont))
+                        if sig.isupper() not in diccionario and 2 <= len(sig) <= 7:
+                            f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
+                            f.write(sig + ':' + sig + '\n')
+                            f.close()
+                            dic_siglas = dic.diccionario_siglas()
                         else:
                             if len(i) > 1:
                                 mayus_no_sigla.append((sig, cont))
@@ -405,93 +423,65 @@ class Pln:
         Por_fechas = (len(date) * 100) / lenwords
         Por_dn = (doble_negacion * 100) / lenwords
         Por_partitivos = (len(partitivos) * 100) / lenwords
-        Por_presente_indicativo = (len(presente_indicativo) * 100) / lenwords,
-        Por_subjuntivo = (len(subjuntivo) * 100) / lenwords,
-        Por_condicional = (len(condicional) * 100) / lenwords,
-        Por_nverbs = (nverbseguidos * 100) / lenwords,
+        Por_presente_indicativo = (len(presente_indicativo) * 100) / lenwords
+        Por_subjuntivo = (len(subjuntivo) * 100) / lenwords
+        Por_condicional = (len(condicional) * 100) / lenwords
+        Por_nverbs = (nverbseguidos * 100) / lenwords
+        por_comas = (len(comas) * 100) / lenwords
+        por_noun = (len(noun) * 100) / lenwords
+        por_largas = (len(large) * 100) / lenwords
+        por_muy_frecuentes_sub = (len(muy_frecuentes_sub) * 100) / lenwords
         documento = "vacio"
 
-        if N_sentences <= 24:
-            resultados.append(("N_sentences", N_sentences))
-            if Comas <= 0.6:
-                resultados.append(("Comas", Comas))
-                documento = "Dificil"
-            if Comas > 0.6:
-                resultados.append(("Comas", Comas))
-                if N_sentences <= 5:
+        if Por_presente_indicativo <= 3.058824:
+            if Por_comillas <= 0.280767:
+                if len(frases) <= 34:
                     documento = "Dificil"
-                if N_sentences > 5:
-                    if Participle_Verbs_number <= 1.183432:
-                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number, verbp))
-                        if Por_Abreviaturas <= 2.287582:
-                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas, abrv))
-                            documento = "Facil"
-                        if Por_Abreviaturas > 2.287582:
-                            resultados.append(("Por_Abreviaturas", Por_Abreviaturas, abrv))
-                            documento = "Dificil"
-                    if Participle_Verbs_number > 1.183432:
-                        resultados.append(("Participle_Verbs_number", Participle_Verbs_number, verbp))
-                        if Ratio_Caracteres_Palabra <= 4.760141:
-                            resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
-                            if Por_Simbolos <= 0.93633:
-                                resultados.append(("Por_Simbolos", Por_Simbolos, errores))
-                                documento = "Dificil"
-                            if Por_Simbolos > 0.93633:
-                                resultados.append(("Por_Simbolos", Por_Simbolos, errores))
-                                documento = "Facil"
-                        if Ratio_Caracteres_Palabra > 4.760141:
-                            resultados.append(("Ratio_Caracteres_Palabra", Ratio_Caracteres_Palabra))
-                            if Participle_Verbs_number <= 2.754237:
-                                if Participle_Verbs_number <= 1.731602:
-                                    documento = "Dificil"
-                                if Participle_Verbs_number > 1.731602:
-                                    if Preposition_number <= 14.814815:
-                                        resultados.append(("Preposition_number", Preposition_number, preposition))
-                                        documento = "Facil"
-                                    if Preposition_number > 14.814815:
-                                        resultados.append(("Preposition_number", Preposition_number))
-                                        if Infinitive_Verbs_number <= 4.850746:
-                                            resultados.append(
-                                                ("Infinitive_Verbs_number", Infinitive_Verbs_number, verbi))
-                                            if Determiners_number <= 12.418906:
-                                                resultados.append(
-                                                    ("Determiners_number", Determiners_number, determiner))
-                                                if Por_Sinonimos <= 2.517623:
-                                                    resultados.append(
-                                                        ("Por_Sinonimos", Por_Sinonimos, sinonimos_usados))
-                                                    documento = "Facil"
-                                                if Por_Sinonimos > 2.517623:
-                                                    resultados.append(
-                                                        ("Por_Sinonimos", Por_Sinonimos, sinonimos_usados))
-                                                    documento = "Dificil"
-                                            if Determiners_number > 12.418906:
-                                                resultados.append(
-                                                    ("Determiners_number", Determiners_number, determiner))
-                                                documento = "Dificil"
-                                        if Infinitive_Verbs_number > 4.850746:
-                                            resultados.append(
-                                                ("Infinitive_Verbs_number", Infinitive_Verbs_number, verbi))
-                                            documento = "Facil"
-                                if Participle_Verbs_number > 2.754237:
-                                    documento = "Dificil"
-        if N_sentences > 24:
-            resultados.append(("N_sentences", N_sentences))
-            if Por_comillas <= 0:
-                resultados.append(("Por_comillas", Por_comillas, comillas))
-                if Por_verbs <= 9.968354:
-                    resultados.append(("Por_verbs", Por_verbs, verbs))
-                    if N_puntos <= 0.942857:
-                        resultados.append(("N_puntos", N_puntos))
+                if len(frases) > 34:
+                    if len(frases) <= 37:
                         documento = "Facil"
-                    if N_puntos > 0.942857:
-                        resultados.append(("N_puntos", N_puntos))
+                    if len(frases) > 37:
                         documento = "Dificil"
-                if Por_verbs > 9.968354:
-                    resultados.append(("Por_verbs", Por_verbs, verbs))
+            if Por_comillas > 0.280767:
+                if Por_comillas <= 0.879121:
                     documento = "Facil"
-            if Por_comillas > 0:
-                resultados.append(("Por_comillas", Por_comillas, comillas))
-                documento = "Dificil"
+                if Por_comillas > 0.879121:
+                    documento = "Dificil"
+        if Por_presente_indicativo > 3.058824:
+            if len(words) <= 489:
+                if por_comas <= 6.621773:
+                    if words <= 306:
+                        documento = "Dificil"
+                    if words > 306:
+                        if Participle_Verbs_number <= 0.974026:
+                            documento = "Facil"
+                        if Participle_Verbs_number > 0.974026:
+                            if por_noun <= 29.320988:
+                                documento = "Dificil"
+                            if por_noun > 29.320988:
+                                documento = "Facil"
+                if por_comas > 6.621773:
+                    documento = "Facil"
+            if len(words) > 489:
+                if por_largas <= 7.234043:
+                    if por_muy_frecuentes_sub <= 68.782161:
+                        if Preposition_number <= 14.554637:
+                            documento = "Facil"
+                        if Preposition_number > 14.554637:
+                            if Por_comillas <= 0.214823:
+                                if Por_frec <= 3.342618:
+                                    documento = "Facil"
+                                if Por_frec > 3.342618:
+                                    documento = "Dificil"
+                            if Por_comillas > 0.214823:
+                                documento = "Dificil"
+                    if por_muy_frecuentes_sub > 68.782161:
+                        documento = "Facil"
+                if por_largas > 7.234043:
+                    if Por_presente_indicativo <= 4.41989:
+                        documento = "Dificil"
+                    if Por_presente_indicativo > 4.41989:
+                        documento = "Facil"
 
         resultados[0] = ("Resumen", documento)
 

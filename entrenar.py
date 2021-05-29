@@ -2,6 +2,7 @@ import codecs
 import math
 import pickle
 import string
+import enchant
 import nltk
 import nltk.data
 import dic as dic
@@ -46,8 +47,7 @@ class EntrenarCsv:
 
         caracteres = 0
         for i in words:
-            if i not in punct:
-                caracteres += len(i)
+            caracteres += len(i)
 
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
         dic_frecuencia = dic.diccionario_frecuencia()
@@ -57,6 +57,7 @@ class EntrenarCsv:
         dic_siglas = dic.diccionario_siglas()
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
+        dicEnchant = enchant.Dict("es_ES")
 
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
@@ -127,6 +128,7 @@ class EntrenarCsv:
         date_mal = []
         romanos = []
         dos_puntos = []
+        otro_idioma = []
 
         for x in analisis:
             i = x[0]
@@ -134,6 +136,16 @@ class EntrenarCsv:
             k = i
             if len(x) == 3:
                 k = x[2]
+
+            if dicEnchant.check(i.lower()) == False and dicEnchant.check(j.lower()) == False and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
+                if not any(map(str.isdigit, i)):
+                    if "_" in i:
+                        itemp = i.split("_")
+                        for item2 in itemp:
+                            if not dicEnchant.check(item2):
+                                otro_idioma.append((item2, cont))
+                    else:
+                        otro_idioma.append((i, cont))
 
             if "_" in i:
                 siglas_temp = i.split("_")
@@ -157,7 +169,7 @@ class EntrenarCsv:
                 else:
                     if len(i) > 1:
                         mayus_no_sigla.append((i, cont))
-            if i == "&" or i == "%" or i == "/" or i == "(" or i == ")" or i == "^" or i == "[" or i == "]" or i == "{" or i == "}" or i == "..." or i == "ª":
+            if "&" in i or "%" in i or "/" in i or "(" in i or ")" in i or "^" in i or "[" in i or "]" in i or "{" in i or "}" in i or "..." in i or "ª" in i:
                 errores.append((i, cont))
             if "etc" in i:
                 etc.append((i, cont))
@@ -183,9 +195,8 @@ class EntrenarCsv:
                 con_complex.append((i, cont))
             if i.lower() == "por_consiguiente":
                 con_complex.append((i, cont))
-            if cont < len(analisis) - 1:
-                if i.lower() == "sin" and analisis[cont + 1][0].lower() == "embargo":
-                    con_complex.append((i, cont))
+            if i.lower() == "sin" and analisis[cont + 1][0].lower() == "embargo":
+                con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
                 abrv.append(i)
@@ -194,9 +205,9 @@ class EntrenarCsv:
             if i in dic_hom:
                 homo.append(i)
 
-            if i not in sinonimos_usados:
-                if i in dic_sinonimos:
-                    x = dic_sinonimos[i]
+            if k not in sinonimos_usados:
+                if k in dic_sinonimos:
+                    x = dic_sinonimos[k]
                     usado = 0
                     for t in x:
                         t = t.replace(",", "")
@@ -210,7 +221,7 @@ class EntrenarCsv:
                                 sinonimos.append(i.lower())
                             sin.append(i)
                     if usado == 0:
-                        sinonimos_usados[i] = ""
+                        sinonimos_usados[k] = ""
 
             if "_" in i:
                 z = i.split("_")
@@ -298,30 +309,12 @@ class EntrenarCsv:
                 puntos.append(j)
             if j == "Fx":
                 punto_coma.append(j)
-            if j == "Fd":
-                dos_puntos.append(j)
 
             if j[0] == "F":
                 puntuacion.append(j)
 
             if j[0] != "F" and i not in frecuencia:
                 frecuencia.append(i)
-
-            if i.lower() in dic_frecuencia:
-                if dic_frecuencia[i.lower()] >= 5:
-                    muy_frecuentes.append(i.lower())
-                if 5 > dic_frecuencia[i.lower()] > 0.3:
-                    frecuentes.append(i.lower())
-                if dic_frecuencia[i.lower()] <= 0.3:
-                    poco_frecuentes.append(i.lower())
-
-            if i.lower() in dic_frecuencia_sub:
-                if dic_frecuencia_sub[i.lower()] >= 108:
-                    muy_frecuentes_sub.append(i.lower())
-                if 108 > dic_frecuencia_sub[i.lower()] > 31:
-                    frecuentes_sub.append(i.lower())
-                if dic_frecuencia_sub[i.lower()] <= 31:
-                    poco_frecuentes_sub.append(i.lower())
 
             cont += 1
 
@@ -377,11 +370,12 @@ class EntrenarCsv:
                    (len(general) * 100) / len(freq2),
                    (len(especifico) * 100) / len(freq2),
                    (len(dos_puntos) * 100) / lenwords,
+                   (len(otro_idioma) * 100) / lenwords,
                    len(words),
                    len(frases),
                    self.tipo]
 
-        with open(self.directory + '/final_v51.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v56.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

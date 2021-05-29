@@ -24,7 +24,7 @@ textReturn = ""
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v51.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v56.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -78,6 +78,7 @@ def crearcsv(directory):
                              "%general",
                              "%especifico",
                              "%dos_puntos",
+                             "%otro_idioma",
                              "#words",
                              "#frases",
                              'Tipo'])
@@ -149,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
         self.setWindowTitle("Análisis")
-        # self.bentrenar.hide()
+        self.bentrenar.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
