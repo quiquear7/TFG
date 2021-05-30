@@ -434,53 +434,83 @@ class Pln:
         documento = "vacio"
 
         if Por_presente_indicativo <= 3.058824:
+            resultados.append(("% presente indicativo", Por_presente_indicativo))
             if Por_comillas <= 0.280767:
+                resultados.append(("Comillas", Por_comillas))
                 if len(frases) <= 34:
+                    resultados.append(("Longitud", len(frases)))
                     documento = "Dificil"
                 if len(frases) > 34:
                     if len(frases) <= 37:
+                        resultados.append(("Longitud", len(frases)))
                         documento = "Facil"
                     if len(frases) > 37:
+                        resultados.append(("Longitud", len(frases)))
                         documento = "Dificil"
             if Por_comillas > 0.280767:
                 if Por_comillas <= 0.879121:
+                    resultados.append(("Comillas", Por_comillas))
                     documento = "Facil"
                 if Por_comillas > 0.879121:
+                    resultados.append(("Comillas", Por_comillas))
                     documento = "Dificil"
         if Por_presente_indicativo > 3.058824:
+            resultados.append(("% presente indicativo", Por_presente_indicativo))
             if len(words) <= 489:
+                resultados.append(("palabras", len(words)))
                 if por_comas <= 6.621773:
-                    if words <= 306:
+                    resultados.append(("% comas", por_comas))
+                    if len(words) <= 306:
+                        resultados.append(("palabras", len(words)))
                         documento = "Dificil"
                     if words > 306:
+                        resultados.append(("palabras", len(words)))
                         if Participle_Verbs_number <= 0.974026:
+                            resultados.append(("participios", Participle_Verbs_number))
                             documento = "Facil"
                         if Participle_Verbs_number > 0.974026:
+                            resultados.append(("participios", Participle_Verbs_number))
                             if por_noun <= 29.320988:
+                                resultados.append(("sustantivos", por_noun))
                                 documento = "Dificil"
                             if por_noun > 29.320988:
+                                resultados.append(("sustantivos", por_noun))
                                 documento = "Facil"
                 if por_comas > 6.621773:
+                    resultados.append(("% comas", por_comas))
                     documento = "Facil"
             if len(words) > 489:
+                resultados.append(("palabras", len(words)))
                 if por_largas <= 7.234043:
+                    resultados.append(("Porcentaje de palabras largas", por_largas))
                     if por_muy_frecuentes_sub <= 68.782161:
+                        resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
                         if Preposition_number <= 14.554637:
+                            resultados.append(("% Preposiciones", Preposition_number))
                             documento = "Facil"
                         if Preposition_number > 14.554637:
+                            resultados.append(("% Preposiciones", Preposition_number))
                             if Por_comillas <= 0.214823:
+                                resultados.append(("Comillas", Por_comillas))
                                 if Por_frec <= 3.342618:
+                                    resultados.append(("% Frecuentes", Por_frec))
                                     documento = "Facil"
                                 if Por_frec > 3.342618:
+                                    resultados.append(("% Frecuentes", Por_frec))
                                     documento = "Dificil"
                             if Por_comillas > 0.214823:
+                                resultados.append(("Comillas", Por_comillas))
                                 documento = "Dificil"
                     if por_muy_frecuentes_sub > 68.782161:
+                        resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
                         documento = "Facil"
                 if por_largas > 7.234043:
+                    resultados.append(("Porcentaje de palabras largas", por_largas))
                     if Por_presente_indicativo <= 4.41989:
+                        resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Dificil"
                     if Por_presente_indicativo > 4.41989:
+                        resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Facil"
 
         resultados[0] = ("Resumen", documento)
