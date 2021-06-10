@@ -371,32 +371,41 @@ class MainWindow(QMainWindow):
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         widgets.plainTextEdit.hide()
         widgets.textBrowser.setText("hola")
-        widgets.barchivo.clicked.connect(self.openFileNamesDialog)
-        widgets.urlb.clicked.connect(self.openUrl)
-        widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
+        widgets.barchivo.clicked.connect(lambda: self.openFileNamesDialog(widgets))
+        widgets.urlb.clicked.connect(lambda: self.openUrl(widgets))
+        widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir, widgets))
         widgets.btextPlano.clicked.connect(lambda: self.textPlano(widgets))
 
-    def textPlano(self, widgets):
+    def hideT(self, widgets):
+        widgets.plainTextEdit.hide()
+
+    def showT(self, widgets):
         widgets.plainTextEdit.show()
+        widgets.textBrowser.setText("")
 
-    def openFileNamesDialog(self):
+    def textPlano(self, widgets):
+        self.showT(widgets)
+        self.archivos = ("", 3)
 
+    def openFileNamesDialog(self, widgets):
+        self.hideT(widgets)
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
         if file:
             #self.pintarButton(self.barchivo)
-            #self.limpiarArchivo()
-            #self.listWidget.addItem(file)
+            self.limpiarArchivo(widgets)
+            widgets.textBrowser.setText(file)
             self.archivos = (file, 0)
 
-    def openUrl(self):
+    def openUrl(self, widgets):
+        self.hideT(widgets)
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
         if okPressed and text != '':
             #self.pintarButton(self.burl)
-            #self.limpiarArchivo()
-            #self.listWidget.addItem(text)
+            self.limpiarArchivo(widgets)
+            widgets.textBrowser.setText(text)
             self.archivos = (text, 1)
 
-    def aceptar(self, file, ruta):
+    def aceptar(self, file, ruta, widgets):
         if file == "":
             QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
         else:
@@ -434,6 +443,15 @@ class MainWindow(QMainWindow):
                     entrenar(self, ruta)
                 else:
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
+            if file[1] == 3:
+                text = widgets.plainTextEdit.toPlainText()
+                print(text)
+                if len(text) == 0:
+                    QMessageBox.about(self, "Error", "Texto Necesari0")
+
+    def limpiarArchivo(self, widgets):
+        self.archivos = ""
+        widgets.textBrowser.setText("")
 
     def buttonClick(self):
         btn = self.sender()
