@@ -15,6 +15,15 @@ from entrenar import EntrenarCsv
 from pln import Pln
 from ui.ventana_ui import *
 import json
+import sys
+import os
+import platform
+from PySide6.QtWidgets import QApplication
+from modules import *
+from widgets import *
+
+os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
+widgets = None
 
 app = ""
 fileJson = ""
@@ -68,6 +77,7 @@ def crearcsv(directory):
                              "doble_negacion",
                              "partitivos o porcentajes",
                              "presente_indicativo",
+                             "presente_indicativo/verbs",
                              "subjuntivo",
                              "condicional",
                              "nverbseguidos",
@@ -140,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         # set the title
         self.setWindowTitle("Análisis")
-        self.bentrenar.hide()
+        # self.bentrenar.hide()
         self.barchivo.clicked.connect(self.openFileNamesDialog)
         self.burl.clicked.connect(self.openUrl)
         self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
@@ -245,20 +255,15 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
         self.setWindowTitle("Resumen Análisis")
-        self.listWidget.hide()
         self.bjson.clicked.connect(self.saveJson)
         self.banalisis.clicked.connect(lambda: inicio(self))
         self.rellenarAnalisis()
 
     def rellenarAnalisis(self):
-        for i in resultados:
-            item = i[0] + ": " + str(i[1])
-            if len(i) == 3:
-                item += str(i[2])
 
-            # self.listWidget.addItem(item)
-        print(textReturn)
-        print(dic_resultados)
+        for i in resultados:
+            item = i[0] + ": " + str(i[1])[0:7]
+            self.listWidget.addItem(item)
 
         nums = {}
         for i in dic_resultados:
@@ -268,13 +273,16 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
         cont = 0
         html = ""
         text = ""
+
         for i in analisis:
             if cont in nums:
+
                 text += "<font color="'red'" title=" + nums[cont] + ">" + i[0] + " " + "</font>"
-                #html += "<p style="'color:#FF0000'" title=" + nums[cont] + ">" + i[0] + "</p>"
+                # html += "<p style="'color:#FF0000'" title=" + nums[cont] + ">" + i[0] + "</p>"
             else:
                 text += i[0] + " "
             cont += 1
+        print(text)
         self.textBrowser.setHtml(text)
 
     def saveJson(self):
@@ -299,9 +307,188 @@ def inicio(self):
     self.hide()
 
 
+class MainWindow(QMainWindow):
+    archivos = ""
+    dir = ""
+
+    def __init__(self):
+        QMainWindow.__init__(self)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        global widgets
+        widgets = self.ui
+
+        Settings.ENABLE_CUSTOM_TITLE_BAR = True
+
+        title = "Analizador de Textos"
+        description = "TFG - Enrique de Aramburu"
+
+        self.setWindowTitle(title)
+        widgets.titleRightInfo.setText(description)
+
+        # TOGGLE MENU
+        # ///////////////////////////////////////////////////////////////
+        widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
+
+        # SET UI DEFINITIONS
+        # ///////////////////////////////////////////////////////////////
+        UIFunctions.uiDefinitions(self)
+
+        # QTableWidget PARAMETERS
+        # ///////////////////////////////////////////////////////////////
+
+        # BUTTONS CLICK
+        # ///////////////////////////////////////////////////////////////
+
+        # LEFT MENUS
+        widgets.btn_home.clicked.connect(self.buttonClick)
+        widgets.btn_widgets.clicked.connect(self.buttonClick)
+        widgets.btn_new.clicked.connect(self.buttonClick)
+
+
+        # EXTRA RIGHT BOX
+        def openCloseRightBox():
+            UIFunctions.toggleRightBox(self, True)
+
+        # SHOW APP
+        # ///////////////////////////////////////////////////////////////
+        self.show()
+
+        # SET CUSTOM THEME
+        # ///////////////////////////////////////////////////////////////
+        useCustomTheme = False
+        themeFile = "themes\py_dracula_dark.qss"
+
+        # SET THEME AND HACKS
+        if useCustomTheme:
+            # LOAD AND APPLY STYLE
+            UIFunctions.theme(self, themeFile, True)
+
+            # SET HACKS
+            AppFunctions.setThemeHack(self)
+
+        widgets.stackedWidget.setCurrentWidget(widgets.home)
+        widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
+        widgets.plainTextEdit.hide()
+        widgets.textBrowser.setText("hola")
+        widgets.barchivo.clicked.connect(self.openFileNamesDialog)
+        widgets.urlb.clicked.connect(self.openUrl)
+        widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
+        widgets.btextPlano.clicked.connect(lambda: self.textPlano(widgets))
+
+    def textPlano(self, widgets):
+        widgets.plainTextEdit.show()
+
+    def openFileNamesDialog(self):
+
+        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
+        if file:
+            #self.pintarButton(self.barchivo)
+            #self.limpiarArchivo()
+            #self.listWidget.addItem(file)
+            self.archivos = (file, 0)
+
+    def openUrl(self):
+        text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            #self.pintarButton(self.burl)
+            #self.limpiarArchivo()
+            #self.listWidget.addItem(text)
+            self.archivos = (text, 1)
+
+    def aceptar(self, file, ruta):
+        if file == "":
+            QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
+        else:
+            if file[1] == 0:
+                extension = file[0].split(".")
+                text = ""
+                if extension[1] == "txt":
+                    ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
+                    text = ftemp.read()
+                if extension[1] == "pdf":
+                    doc = fitz.open(file[0])
+                    for i in range(1, doc.page_count):
+                        page = doc.loadPage(i)
+                        text += page.getText("text")
+                if len(text) == 0:
+                    QMessageBox.about(self, "Error", "No se puede obtener texto")
+                else:
+                    title = ntpath.basename(file[0]).split(".")
+                    process_text(self, text, title[0], "")
+            if file[1] == 1:
+                if validators.url(file[0]):
+                    req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
+                    webpage = urlopen(req).read()
+                    soup = BeautifulSoup(webpage, "html.parser")
+                    text = soup.get_text(strip=True)
+                    if len(text) == 0:
+                        QMessageBox.about(self, "Error", "No se puede obtener texto")
+                    else:
+                        title = soup.title.string
+                        process_text(self, text, title, file[0])
+                else:
+                    QMessageBox.about(self, "Error", "URL incorrecta")
+            if file[1] == 2:
+                if ruta != "":
+                    entrenar(self, ruta)
+                else:
+                    QMessageBox.about(self, "Error", "Ruta Necesaria")
+
+    def buttonClick(self):
+        btn = self.sender()
+        btnName = btn.objectName()
+
+        if btnName == "btn_home":
+            widgets.stackedWidget.setCurrentWidget(widgets.home)
+            UIFunctions.resetStyle(self, btnName)
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+
+        if btnName == "btn_widgets":
+            widgets.stackedWidget.setCurrentWidget(widgets.widgets)
+            UIFunctions.resetStyle(self, btnName)
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+
+        # SHOW NEW PAGE
+        if btnName == "btn_new":
+            widgets.stackedWidget.setCurrentWidget(widgets.new_page)  # SET PAGE
+            UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
+
+        if btnName == "btn_save":
+            print("Save BTN clicked!")
+
+        # PRINT BTN NAME
+        print(f'Button "{btnName}" pressed!')
+
+    # RESIZE EVENTS
+    # ///////////////////////////////////////////////////////////////
+    def resizeEvent(self, event):
+        # Update Size Grips
+        UIFunctions.resize_grips(self)
+
+    # MOUSE CLICK EVENTS
+    # ///////////////////////////////////////////////////////////////
+    def mousePressEvent(self, event):
+        # SET DRAG POS WINDOW
+        self.dragPos = event.globalPos()
+
+        # PRINT MOUSE EVENTS
+        if event.buttons() == Qt.LeftButton:
+            print('Mouse click: LEFT CLICK')
+        if event.buttons() == Qt.RightButton:
+            print('Mouse click: RIGHT CLICK')
+
+
 if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
+    app = QApplication(sys.argv)
+    app.setApplicationName("Analizador Textos")
+    app.setWindowIcon(QIcon("logo.svg"))
+    window = MainWindow()
+    sys.exit(app.exec())
+
+    '''app = QtWidgets.QApplication([])
     window = MainWindow()
     apply_stylesheet(app, theme='dark_teal.xml')
     window.show()
-    app.exec_()
+    app.exec_()'''

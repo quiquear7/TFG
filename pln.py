@@ -447,66 +447,51 @@ class Pln:
                 dic_resultados["comillas"] = comillas
                 if len(frases) <= 34:
                     resultados.append(("Longitud", len(frases)))
-                    #dic_resultados["tipo"] = "Dificil"
-                    dic_resultados["frases"] = len(frases)
                     documento = "Dificil"
                 if len(frases) > 34:
-                    dic_resultados["frases"] = len(frases)
                     if len(frases) <= 37:
-                        # dic_resultados["tipo"] = "Facil"
+                        resultados.append(("Longitud", len(frases)))
                         documento = "Facil"
                     if len(frases) > 37:
                         resultados.append(("Longitud", len(frases)))
-                        #dic_resultados["tipo"] = "Dificil"
                         documento = "Dificil"
             if Por_comillas > 0.280767:
                 dic_resultados["comillas"] = comillas
                 if Por_comillas <= 0.879121:
                     resultados.append(("Comillas", Por_comillas))
                     documento = "Facil"
-                    #dic_resultados["tipo"] = "Facil"
                 if Por_comillas > 0.879121:
                     resultados.append(("Comillas", Por_comillas))
                     documento = "Dificil"
-                    #dic_resultados["tipo"] = "Dificil"
         if Por_presente_indicativo > 3.058824:
             dic_resultados["indicativo"] = verbos_no_indicativo
             resultados.append(("% presente indicativo", Por_presente_indicativo))
             if len(words) <= 489:
                 resultados.append(("palabras", len(words)))
-                dic_resultados["palabras"] = len(words)
                 if por_comas <= 6.621773:
                     resultados.append(("% comas", por_comas))
                     dic_resultados["comas"] = comas
                     if len(words) <= 306:
-                        dic_resultados["palabras"] = len(words)
-                        #dic_resultados["tipo"] = "Dificil"
                         documento = "Dificil"
                     if len(words) > 306:
-                        dic_resultados["palabras"] = len(words)
-                        resultados.append(("palabras", len(words)))
                         if Participle_Verbs_number <= 0.974026:
                             dic_resultados["participio"] = verbp
                             resultados.append(("participios", Participle_Verbs_number))
-                            #dic_resultados["tipo"] = "Facil"
                         if Participle_Verbs_number > 0.974026:
                             dic_resultados["participio"] = verbp
                             if por_noun <= 29.320988:
                                 dic_resultados["noun"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Dificil"
-                                #dic_resultados["tipo"] = "Dificil"
                             if por_noun > 29.320988:
                                 dic_resultados["noun"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Facil"
-                                #dic_resultados["tipo"] = "Facil"
                 if por_comas > 6.621773:
                     resultados.append(("% comas", por_comas))
                     documento = "Facil"
-                    #dic_resultados["tipo"] = "Facil"
+                    dic_resultados["comas"] = comas
             if len(words) > 489:
-                dic_resultados["palabras"] = len(words)
                 resultados.append(("palabras", len(words)))
                 if por_largas <= 7.234043:
                     dic_resultados["largas"] = large
@@ -518,7 +503,6 @@ class Pln:
                             dic_resultados["preposiciones"] = preposition
                             resultados.append(("% Preposiciones", Preposition_number))
                             documento = "Facil"
-                            #dic_resultados["tipo"] = "Facil"
                         if Preposition_number > 14.554637:
                             resultados.append(("% Preposiciones", Preposition_number))
                             dic_resultados["preposiciones"] = preposition
@@ -529,12 +513,10 @@ class Pln:
                                     dic_resultados["frec"] = frecuentes
                                     resultados.append(("% Frecuentes", Por_frec))
                                     documento = "Facil"
-                                    #dic_resultados["tipo"] = "Facil"
                                 if Por_frec > 3.342618:
                                     resultados.append(("% Frecuentes", Por_frec))
                                     dic_resultados["frec"] = frecuentes
                                     documento = "Dificil"
-                                    #dic_resultados["tipo"] = "Dificil"
                             if Por_comillas > 0.214823:
                                 resultados.append(("Comillas", Por_comillas))
                                 documento = "Dificil"
@@ -550,12 +532,10 @@ class Pln:
                         resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Dificil"
                         dic_resultados["indicativo"] = verbos_no_indicativo
-                        #dic_resultados["tipo"] = "Dificil"
                     if Por_presente_indicativo > 4.41989:
                         resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Facil"
                         dic_resultados["indicativo"] = verbos_no_indicativo
-                        #dic_resultados["tipo"] = "Facil"
 
         resultados[0] = ("Resumen", documento)
 

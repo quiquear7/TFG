@@ -220,7 +220,7 @@ class EntrenarCsv:
                                 sinonimos.append(i.lower())
                             sin.append(i)
                     if usado == 0:
-                        sinonimos_usados[k] = ""
+                        sinonimos_usados[i] = ""
 
             if "_" in i:
                 z = i.split("_")
@@ -334,7 +334,8 @@ class EntrenarCsv:
                     poco_frecuentes_sub.append(i.lower())
 
             cont += 1
-
+        if len(verbs) == 0:
+            verbs.append("")
         valores = [self.title,
                    (len(sin) * 100) / lenwords,
                    (len(abrv) * 100) / lenwords,
@@ -374,6 +375,7 @@ class EntrenarCsv:
                    (doble_negacion * 100) / lenwords,
                    (len(partitivos) * 100) / lenwords,
                    (len(presente_indicativo) * 100) / lenwords,
+                   (len(presente_indicativo) * 100) / len(verbs),
                    (len(subjuntivo) * 100) / lenwords,
                    (len(condicional) * 100) / lenwords,
                    (nverbseguidos * 100) / lenwords,
