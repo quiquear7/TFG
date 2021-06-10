@@ -22,7 +22,6 @@ class EntrenarCsv:
     def process(self):
 
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
-        frases2 = tokenizer.tokenize(self.text)
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
@@ -77,7 +76,6 @@ class EntrenarCsv:
         large = []
         superlative = []
         adverbs = []
-        title = []
         indeterminate = []
         numbers = []
         comillas = []
@@ -102,7 +100,6 @@ class EntrenarCsv:
         interjection = []
         desconocidas = []
         sinonimos = []
-        caracteres = 0
         nverbseguidos = 0
         puntos = []
         comas = []
@@ -137,7 +134,8 @@ class EntrenarCsv:
             if len(x) == 3:
                 k = x[2]
 
-            if dicEnchant.check(i.lower()) == False and dicEnchant.check(j.lower()) == False and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
+            if dicEnchant.check(i.lower()) == False and dicEnchant.check(j.lower()) == False \
+                    and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
                 if not any(map(str.isdigit, i)):
                     if "_" in i:
                         itemp = i.split("_")
@@ -169,6 +167,7 @@ class EntrenarCsv:
                 else:
                     if len(i) > 1:
                         mayus_no_sigla.append((i, cont))
+
             if "&" in i or "%" in i or "/" in i or "(" in i or ")" in i or "^" in i or "[" in i or "]" in i or "{" in i or "}" in i or "..." in i or "ª" in i:
                 errores.append((i, cont))
             if "etc" in i:
@@ -316,6 +315,24 @@ class EntrenarCsv:
             if j[0] != "F" and i not in frecuencia:
                 frecuencia.append(i)
 
+            if i.lower() in dic_frecuencia:
+                if dic_frecuencia[i.lower()] >= 4:
+                    muy_frecuentes.append(i.lower())
+                if 4 > dic_frecuencia[i.lower()] > 1:
+                    frecuentes.append(i.lower())
+                if dic_frecuencia[i.lower()] <= 1:
+                    poco_frecuentes.append(i.lower())
+            else:
+                desconocidas.append(i.lower())
+
+            if i.lower() in dic_frecuencia_sub:
+                if dic_frecuencia_sub[i.lower()] >= 108:
+                    muy_frecuentes_sub.append(i.lower())
+                if 108 > dic_frecuencia_sub[i.lower()] > 31:
+                    frecuentes_sub.append(i.lower())
+                if dic_frecuencia_sub[i.lower()] <= 31:
+                    poco_frecuentes_sub.append(i.lower())
+
             cont += 1
 
         valores = [self.title,
@@ -330,7 +347,6 @@ class EntrenarCsv:
                    (len(determiner) * 100) / lenwords,
                    (len(preposition) * 100) / lenwords,
                    (len(noun) * 100) / lenwords,
-                   (len(desconocidas) * 100) / lenwords,
                    (len(large) * 100) / lenwords,
                    (len(superlative) * 100) / lenwords,
                    (len(adverbs) * 100) / lenwords,
@@ -375,7 +391,7 @@ class EntrenarCsv:
                    len(frases),
                    self.tipo]
 
-        with open(self.directory + '/final_v56.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/final_v57.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

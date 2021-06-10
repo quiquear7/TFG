@@ -2,7 +2,6 @@ import codecs
 import math
 import pickle
 import string
-
 import enchant
 import nltk
 import nltk.data
@@ -47,7 +46,6 @@ class Pln:
         }
 
         tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
-        frases2 = tokenizer.tokenize(self.text)
         frases = sent_tokenize(self.text, "spanish")
         words = word_tokenize(self.text, "spanish")
         freq = nltk.FreqDist(words)
@@ -103,7 +101,6 @@ class Pln:
         large = []
         superlative = []
         adverbs = []
-        title = []
         indeterminate = []
         numbers = []
         comillas = []
@@ -142,9 +139,6 @@ class Pln:
         negative_text = ""
         doble_negacion_array = []
         puntuacion = []
-        muy_frecuentes = []
-        frecuentes = []
-        poco_frecuentes = []
         muy_frecuentes_sub = []
         frecuentes_sub = []
         poco_frecuentes_sub = []
@@ -153,8 +147,8 @@ class Pln:
         ordinales = []
         date_mal = []
         romanos = []
-
         otro_idioma = []
+        verbos_no_indicativo = []
 
         for x in analisis:
             i = x[0]
@@ -163,8 +157,8 @@ class Pln:
             if len(x) == 3:
                 k = x[2]
 
-            if dicEnchant.check(i.lower()) == False and dicEnchant.check(
-                    j.lower()) == False and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
+            if dicEnchant.check(i.lower()) == False and dicEnchant.check(j.lower()) == False \
+                    and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
                 if not any(map(str.isdigit, i)):
                     if "_" in i:
                         itemp = i.split("_")
@@ -224,11 +218,11 @@ class Pln:
                 con_complex.append((i, cont))
 
             if i in dic_abreviaturas:
-                abrv.append(i)
+                abrv.append((i, cont))
             if i in dic_siglas:
-                siglas.append(i)
+                siglas.append((i, cont))
             if i in dic_hom:
-                homo.append(i)
+                homo.append((i, cont))
 
             if k not in sinonimos_usados:
                 if k in dic_sinonimos:
@@ -239,12 +233,12 @@ class Pln:
                         t = t.replace("\n", "")
                         if t in sinonimos_usados:
                             if sinonimos_usados[t] == "" and t not in sinonimos:
-                                sinonimos.append(t)
+                                sinonimos.append((t, cont))
                             usado = 1
                             sinonimos_usados[t] += i + ", "
                             if i.lower() not in sinonimos:
-                                sinonimos.append(i.lower())
-                            sin.append(i)
+                                sinonimos.append((i.lower(), cont))
+                            sin.append((i, cont))
                     if usado == 0:
                         sinonimos_usados[k] = ""
 
@@ -252,22 +246,22 @@ class Pln:
                 z = i.split("_")
                 for t in z:
                     if t in dic_abreviaturas:
-                        abrv.append(i)
+                        abrv.append((t, cont))
                     if t in dic_siglas:
-                        siglas.append(i)
+                        siglas.append((t, cont))
 
             if j[0] == "A":
-                adjective.append(i)
+                adjective.append((i, cont))
             if j[0] == "C":
-                conjunction.append(i)
+                conjunction.append((i, cont))
             if j[0] == "D":
-                determiner.append(i)
+                determiner.append((i, cont))
             if j[0] == "N":
-                noun.append(i)
+                noun.append((i, cont))
             if j[0] == "P":
-                pronoun.append(i)
+                pronoun.append((i, cont))
             if j[0] == "R":
-                adverb.append(i)
+                adverb.append((i, cont))
                 if j[1] == "N":
                     cont_negative += 1
                     negative_text += i + "-"
@@ -275,29 +269,31 @@ class Pln:
                 cont_negative += 1
                 negative_text += i + "-"
             if j[0] == "V":
-                verbs.append(i)
+                verbs.append((i, cont))
                 if analisis[cont + 1][1][0] == "V":
                     verbos_seguidos.append((i, analisis[cont + 1][0]))
                     nverbseguidos += 2
                 if j[2] == "N":
-                    verbi.append(i)
+                    verbi.append((i, cont))
                 if j[2] == "G":
-                    verbg.append(i)
+                    verbg.append((i, cont))
                 if j[2] == "P":
-                    verbp.append(i)
+                    verbp.append((i, cont))
                 if j[2] == "I" and j[3] == "P":
-                    presente_indicativo.append(i)
+                    presente_indicativo.append((i, cont))
+                if j[2] != "I":
+                    verbos_no_indicativo.append((i, cont))
                 if j[2] == "S":
-                    subjuntivo.append(i)
+                    subjuntivo.append((i, cont))
                 if j[3] == "C":
-                    condicional.append(i)
+                    condicional.append((i, cont))
                 if j[2] == "M":
-                    imperative.append(i)
+                    imperative.append((i, cont))
             if j[0] == "Z":
                 number.append(i)
                 if len(j) > 1:
                     if j[1] == "p" or j[1] == "d":
-                        partitivos.append(i)
+                        partitivos.append((i, cont))
                 if "º" in i:
                     ordinales.append((i, cont))
                 if len(i) == 10:
@@ -313,18 +309,18 @@ class Pln:
                     if barras == 0 and guiones == 2:
                         date_mal.append((i, cont))
             if j == "W":
-                date.append(i)
+                date.append((i, cont))
                 if "/" in i:
                     date_mal.append((i, cont))
                 if "I" in i or "V" in i or "X" in i or "L" in i or "C" in i or "D" in i or "M" in i:
                     romanos.append((i, cont))
             if j[0] == "Yo":
-                interjection.append(i)
+                interjection.append((i, cont))
             if j == "SP":
-                preposition.append(i)
+                preposition.append((i, cont))
 
             if j == "Fc":
-                comas.append(j)
+                comas.append((j, cont))
             if j == "Fp":
                 if cont_negative > 1:
                     doble_negacion += 1
@@ -333,13 +329,21 @@ class Pln:
                 negative_text = ""
                 puntos.append(j)
             if j == "Fx":
-                punto_coma.append(j)
+                punto_coma.append((j, cont))
 
             if j[0] == "F":
-                puntuacion.append(j)
+                puntuacion.append((j, cont))
 
             if j[0] != "F" and i not in frecuencia:
                 frecuencia.append(i)
+
+            if i.lower() in dic_frecuencia_sub:
+                if dic_frecuencia_sub[i.lower()] >= 108:
+                    muy_frecuentes_sub.append((i.lower(), cont))
+                if 108 > dic_frecuencia_sub[i.lower()] > 31:
+                    frecuentes_sub.append((i.lower(), cont))
+                if dic_frecuencia_sub[i.lower()] <= 31:
+                    poco_frecuentes_sub.append((i.lower(), cont))
 
             cont += 1
 
@@ -433,85 +437,125 @@ class Pln:
         por_muy_frecuentes_sub = (len(muy_frecuentes_sub) * 100) / lenwords
         documento = "vacio"
 
+        dic_resultados = {}
+
         if Por_presente_indicativo <= 3.058824:
-            resultados.append(("% presente indicativo", Por_presente_indicativo))
+            resultados.append(("indicativo", Por_presente_indicativo))
+            dic_resultados["indicativo"] = verbos_no_indicativo
             if Por_comillas <= 0.280767:
                 resultados.append(("Comillas", Por_comillas))
+                dic_resultados["comillas"] = comillas
                 if len(frases) <= 34:
                     resultados.append(("Longitud", len(frases)))
+                    #dic_resultados["tipo"] = "Dificil"
+                    dic_resultados["frases"] = len(frases)
                     documento = "Dificil"
                 if len(frases) > 34:
+                    dic_resultados["frases"] = len(frases)
                     if len(frases) <= 37:
-                        resultados.append(("Longitud", len(frases)))
+                        # dic_resultados["tipo"] = "Facil"
                         documento = "Facil"
                     if len(frases) > 37:
                         resultados.append(("Longitud", len(frases)))
+                        #dic_resultados["tipo"] = "Dificil"
                         documento = "Dificil"
             if Por_comillas > 0.280767:
+                dic_resultados["comillas"] = comillas
                 if Por_comillas <= 0.879121:
                     resultados.append(("Comillas", Por_comillas))
                     documento = "Facil"
+                    #dic_resultados["tipo"] = "Facil"
                 if Por_comillas > 0.879121:
                     resultados.append(("Comillas", Por_comillas))
                     documento = "Dificil"
+                    #dic_resultados["tipo"] = "Dificil"
         if Por_presente_indicativo > 3.058824:
+            dic_resultados["indicativo"] = verbos_no_indicativo
             resultados.append(("% presente indicativo", Por_presente_indicativo))
             if len(words) <= 489:
                 resultados.append(("palabras", len(words)))
+                dic_resultados["palabras"] = len(words)
                 if por_comas <= 6.621773:
                     resultados.append(("% comas", por_comas))
+                    dic_resultados["comas"] = comas
                     if len(words) <= 306:
-                        resultados.append(("palabras", len(words)))
+                        dic_resultados["palabras"] = len(words)
+                        #dic_resultados["tipo"] = "Dificil"
                         documento = "Dificil"
-                    if words > 306:
+                    if len(words) > 306:
+                        dic_resultados["palabras"] = len(words)
                         resultados.append(("palabras", len(words)))
                         if Participle_Verbs_number <= 0.974026:
+                            dic_resultados["participio"] = verbp
                             resultados.append(("participios", Participle_Verbs_number))
-                            documento = "Facil"
+                            #dic_resultados["tipo"] = "Facil"
                         if Participle_Verbs_number > 0.974026:
-                            resultados.append(("participios", Participle_Verbs_number))
+                            dic_resultados["participio"] = verbp
                             if por_noun <= 29.320988:
+                                dic_resultados["noun"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Dificil"
+                                #dic_resultados["tipo"] = "Dificil"
                             if por_noun > 29.320988:
+                                dic_resultados["noun"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Facil"
+                                #dic_resultados["tipo"] = "Facil"
                 if por_comas > 6.621773:
                     resultados.append(("% comas", por_comas))
                     documento = "Facil"
+                    #dic_resultados["tipo"] = "Facil"
             if len(words) > 489:
+                dic_resultados["palabras"] = len(words)
                 resultados.append(("palabras", len(words)))
                 if por_largas <= 7.234043:
+                    dic_resultados["largas"] = large
                     resultados.append(("Porcentaje de palabras largas", por_largas))
                     if por_muy_frecuentes_sub <= 68.782161:
+                        dic_resultados["muy_frec"] = muy_frecuentes_sub
                         resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
                         if Preposition_number <= 14.554637:
+                            dic_resultados["preposiciones"] = preposition
                             resultados.append(("% Preposiciones", Preposition_number))
                             documento = "Facil"
+                            #dic_resultados["tipo"] = "Facil"
                         if Preposition_number > 14.554637:
                             resultados.append(("% Preposiciones", Preposition_number))
+                            dic_resultados["preposiciones"] = preposition
                             if Por_comillas <= 0.214823:
+                                dic_resultados["comillas"] = comillas
                                 resultados.append(("Comillas", Por_comillas))
                                 if Por_frec <= 3.342618:
+                                    dic_resultados["frec"] = frecuentes
                                     resultados.append(("% Frecuentes", Por_frec))
                                     documento = "Facil"
+                                    #dic_resultados["tipo"] = "Facil"
                                 if Por_frec > 3.342618:
                                     resultados.append(("% Frecuentes", Por_frec))
+                                    dic_resultados["frec"] = frecuentes
                                     documento = "Dificil"
+                                    #dic_resultados["tipo"] = "Dificil"
                             if Por_comillas > 0.214823:
                                 resultados.append(("Comillas", Por_comillas))
                                 documento = "Dificil"
                     if por_muy_frecuentes_sub > 68.782161:
+                        dic_resultados["muy_frec"] = muy_frecuentes_sub
                         resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
                         documento = "Facil"
                 if por_largas > 7.234043:
+                    dic_resultados["largas"] = large
                     resultados.append(("Porcentaje de palabras largas", por_largas))
                     if Por_presente_indicativo <= 4.41989:
+
                         resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Dificil"
+                        dic_resultados["indicativo"] = verbos_no_indicativo
+                        #dic_resultados["tipo"] = "Dificil"
                     if Por_presente_indicativo > 4.41989:
                         resultados.append(("% presente indicativo", Por_presente_indicativo))
                         documento = "Facil"
+                        dic_resultados["indicativo"] = verbos_no_indicativo
+                        #dic_resultados["tipo"] = "Facil"
 
         resultados[0] = ("Resumen", documento)
 
@@ -537,4 +581,4 @@ class Pln:
         # client.close()
 
         print("Fin\n")
-        return resultados, fjson, self.title, self.text
+        return resultados, fjson, self.title, self.text, dic_resultados, analisis

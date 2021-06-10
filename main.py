@@ -1,5 +1,6 @@
 import codecs
 import fitz
+from PyQt5.QtGui import QTextCharFormat
 from bson import json_util
 import csv
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
@@ -21,10 +22,12 @@ nameJson = ""
 resumenDoc = ""
 resultados = ""
 textReturn = ""
+dic_resultados = {}
+analisis = []
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v56.csv', 'w', newline='') as csvfile:
+    with open(directory + '/final_v57.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -38,7 +41,6 @@ def crearcsv(directory):
                              "Determiners_number",
                              "Preposition_number",
                              "Noun",
-                             "Por_Desconocidas",
                              "Por_Largas",
                              "Por_Superlativos",
                              "Por_Adverbios_mente",
@@ -93,18 +95,6 @@ def entrenar(win, direccion):
         crearcsv(direccion)
         cont = 1
 
-        '''contenido = os.listdir('GigaBDCorpus-master/Originales_txt')
-        for name in contenido:
-            print(cont, name)
-            ruta = 'GigaBDCorpus-master/Originales_txt/' + name
-            ftemp = open(ruta, 'r', encoding="utf-8", errors="ignore")
-            text = ftemp.read()
-            long_media += len(text)
-            title = name.split(".")
-            x = EntrenarCsv(text, direccion, title[0], "Dificil")
-            x.process()
-            cont += 1'''
-
         contenido = os.listdir('GigaBDCorpus-master/Dificiles')
         for name in contenido:
             print(cont, name)
@@ -133,8 +123,8 @@ def entrenar(win, direccion):
 def process_text(self, text, titulo, url):
     app.closeAllWindows()
     x = Pln(text, titulo, url)
-    global resultados, fileJson, nameJson, textReturn
-    resultados, fileJson, nameJson, textReturn = x.process()
+    global resultados, fileJson, nameJson, textReturn, dic_resultados, analisis
+    resultados, fileJson, nameJson, textReturn, dic_resultados, analisis = x.process()
     self.w = AnalisisWindow()
     self.w.show()
     self.hide()
@@ -255,18 +245,37 @@ class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
         QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
         self.setWindowTitle("Resumen Análisis")
+        self.listWidget.hide()
         self.bjson.clicked.connect(self.saveJson)
         self.banalisis.clicked.connect(lambda: inicio(self))
         self.rellenarAnalisis()
 
     def rellenarAnalisis(self):
         for i in resultados:
-
             item = i[0] + ": " + str(i[1])
             if len(i) == 3:
                 item += str(i[2])
-            self.listWidget.addItem(item)
-        self.listWidget.addItem(textReturn)
+
+            # self.listWidget.addItem(item)
+        print(textReturn)
+        print(dic_resultados)
+
+        nums = {}
+        for i in dic_resultados:
+            if len(dic_resultados[i]) > 0:
+                for j in dic_resultados[i]:
+                    nums[j[1]] = i
+        cont = 0
+        html = ""
+        text = ""
+        for i in analisis:
+            if cont in nums:
+                text += "<font color="'red'" title=" + nums[cont] + ">" + i[0] + " " + "</font>"
+                #html += "<p style="'color:#FF0000'" title=" + nums[cont] + ">" + i[0] + "</p>"
+            else:
+                text += i[0] + " "
+            cont += 1
+        self.textBrowser.setHtml(text)
 
     def saveJson(self):
         directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
