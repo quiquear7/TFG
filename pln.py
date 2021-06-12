@@ -5,6 +5,8 @@ import string
 import enchant
 import nltk
 import nltk.data
+from PySide6.QtCore import QThread, QObject
+
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
@@ -20,11 +22,6 @@ class Pln:
         self.url = url
 
     def process(self):
-
-        """Conectamos con la base de datos"""
-        # client = pymongo.MongoClient("mongodb+srv://quiquear7:tfg2021uc3m@tfg.ickp8.mongodb.net/BD_TFG?retryWrites
-        # =true&w=majority") db = client.BD_TFG collection = db.Docs
-
         """obtenemos el título del documento"""
         punct = string.punctuation
         self.title = self.title.replace(" ", "")
@@ -443,97 +440,92 @@ class Pln:
             resultados.append(("indicativo", Por_presente_indicativo))
             dic_resultados["indicativo"] = verbos_no_indicativo
             if Por_comillas <= 0.280767:
-                resultados.append(("Comillas", Por_comillas))
+                resultados.append(("comillas", Por_comillas))
                 dic_resultados["comillas"] = comillas
                 if len(frases) <= 34:
-                    resultados.append(("Longitud", len(frases)))
+                    resultados.append(("#Frases", len(frases)))
                     documento = "Dificil"
                 if len(frases) > 34:
                     if len(frases) <= 37:
-                        resultados.append(("Longitud", len(frases)))
+                        resultados.append(("#Frases", len(frases)))
                         documento = "Facil"
                     if len(frases) > 37:
-                        resultados.append(("Longitud", len(frases)))
+                        resultados.append(("#Frases", len(frases)))
                         documento = "Dificil"
             if Por_comillas > 0.280767:
-                dic_resultados["comillas"] = comillas
-                if Por_comillas <= 0.879121:
-                    resultados.append(("Comillas", Por_comillas))
-                    documento = "Facil"
-                if Por_comillas > 0.879121:
-                    resultados.append(("Comillas", Por_comillas))
+                    resultados.append(("comillas", Por_comillas))
                     documento = "Dificil"
         if Por_presente_indicativo > 3.058824:
             dic_resultados["indicativo"] = verbos_no_indicativo
-            resultados.append(("% presente indicativo", Por_presente_indicativo))
+            resultados.append(("indicativo", Por_presente_indicativo))
             if len(words) <= 489:
                 resultados.append(("palabras", len(words)))
                 if por_comas <= 6.621773:
-                    resultados.append(("% comas", por_comas))
+                    resultados.append(("comas", por_comas))
                     dic_resultados["comas"] = comas
                     if len(words) <= 306:
                         documento = "Dificil"
                     if len(words) > 306:
                         if Participle_Verbs_number <= 0.974026:
                             dic_resultados["participio"] = verbp
-                            resultados.append(("participios", Participle_Verbs_number))
+                            resultados.append(("participio", Participle_Verbs_number))
+                            documento = "Facil"
                         if Participle_Verbs_number > 0.974026:
                             dic_resultados["participio"] = verbp
                             if por_noun <= 29.320988:
-                                dic_resultados["noun"] = noun
+                                dic_resultados["sustantivos"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Dificil"
                             if por_noun > 29.320988:
-                                dic_resultados["noun"] = noun
+                                dic_resultados["sustantivos"] = noun
                                 resultados.append(("sustantivos", por_noun))
                                 documento = "Facil"
                 if por_comas > 6.621773:
-                    resultados.append(("% comas", por_comas))
+                    resultados.append(("comas", por_comas))
                     documento = "Facil"
                     dic_resultados["comas"] = comas
             if len(words) > 489:
                 resultados.append(("palabras", len(words)))
                 if por_largas <= 7.234043:
                     dic_resultados["largas"] = large
-                    resultados.append(("Porcentaje de palabras largas", por_largas))
+                    resultados.append(("largas", por_largas))
                     if por_muy_frecuentes_sub <= 68.782161:
                         dic_resultados["muy_frec"] = muy_frecuentes_sub
-                        resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
+                        resultados.append(("muy_frec", por_muy_frecuentes_sub))
                         if Preposition_number <= 14.554637:
                             dic_resultados["preposiciones"] = preposition
-                            resultados.append(("% Preposiciones", Preposition_number))
+                            resultados.append(("preposiciones", Preposition_number))
                             documento = "Facil"
                         if Preposition_number > 14.554637:
-                            resultados.append(("% Preposiciones", Preposition_number))
+                            resultados.append(("preposiciones", Preposition_number))
                             dic_resultados["preposiciones"] = preposition
                             if Por_comillas <= 0.214823:
                                 dic_resultados["comillas"] = comillas
-                                resultados.append(("Comillas", Por_comillas))
+                                resultados.append(("comillas", Por_comillas))
                                 if Por_frec <= 3.342618:
-                                    dic_resultados["frec"] = frecuentes
-                                    resultados.append(("% Frecuentes", Por_frec))
+                                    dic_resultados["frecuentes"] = frecuentes
+                                    resultados.append(("frecuentes", Por_frec))
                                     documento = "Facil"
                                 if Por_frec > 3.342618:
-                                    resultados.append(("% Frecuentes", Por_frec))
-                                    dic_resultados["frec"] = frecuentes
+                                    resultados.append(("frecuentes", Por_frec))
+                                    dic_resultados["frecuentes"] = frecuentes
                                     documento = "Dificil"
                             if Por_comillas > 0.214823:
-                                resultados.append(("Comillas", Por_comillas))
+                                resultados.append(("comillas", Por_comillas))
                                 documento = "Dificil"
                     if por_muy_frecuentes_sub > 68.782161:
-                        dic_resultados["muy_frec"] = muy_frecuentes_sub
-                        resultados.append(("% Muy frecuentes", por_muy_frecuentes_sub))
+                        dic_resultados["muy_frecuente_sub"] = muy_frecuentes_sub
+                        resultados.append(("muy_frecuente_sub", por_muy_frecuentes_sub))
                         documento = "Facil"
                 if por_largas > 7.234043:
                     dic_resultados["largas"] = large
-                    resultados.append(("Porcentaje de palabras largas", por_largas))
+                    resultados.append(("largas", por_largas))
                     if Por_presente_indicativo <= 4.41989:
-
-                        resultados.append(("% presente indicativo", Por_presente_indicativo))
+                        resultados.append(("indicativo", Por_presente_indicativo))
                         documento = "Dificil"
                         dic_resultados["indicativo"] = verbos_no_indicativo
                     if Por_presente_indicativo > 4.41989:
-                        resultados.append(("% presente indicativo", Por_presente_indicativo))
+                        resultados.append(("indicativo", Por_presente_indicativo))
                         documento = "Facil"
                         dic_resultados["indicativo"] = verbos_no_indicativo
 
@@ -554,11 +546,9 @@ class Pln:
             "Dates_number": len(date),
             "Own_name_number": len(noun),
             "Percentage_desconocidas": (len(desconocidas) * 100) / lenwords,
-            "Resumen": documento
+            "Resumen": documento,
+            "Analisis_Reglas": resultados
         })
-
-        # collection.insert_one(fjson)
-        # client.close()
 
         print("Fin\n")
         return resultados, fjson, self.title, self.text, dic_resultados, analisis

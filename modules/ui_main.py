@@ -963,11 +963,8 @@ class Ui_MainWindow(object):
         self.home.setObjectName(u"home")
         self.home.setStyleSheet(u"background-position: center;\n"
                                 "background-repeat: no-repeat;")
-        #self.stackedWidget.addWidget(self.home)
-        self.widgets = QWidget()
-        self.widgets.setObjectName(u"widgets")
-        self.widgets.setStyleSheet(u"b")
-        self.verticalLayout = QVBoxLayout(self.widgets)
+        self.stackedWidget.addWidget(self.home)
+        self.verticalLayout = QVBoxLayout(self.home)
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
@@ -1009,12 +1006,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(-1, -1, -1, 0)
-
-
-
-
-
+        self.gridLayout.setContentsMargins(200, -1, 200, 0)
 
         self.barchivo = QPushButton(self.frame_content_wid_1)
         self.barchivo.setObjectName(u"pushButton")
@@ -1069,6 +1061,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(200, -1, 200, 0)
         self.textBrowser = QTextBrowser(self.verticalFrame)
         self.textBrowser.setObjectName(u"textBrowser")
 
@@ -1082,7 +1075,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.row_1)
 
-        self.row_2 = QFrame(self.widgets)
+        self.row_2 = QFrame(self.home)
         self.row_2.setObjectName(u"row_2")
         self.row_2.setMinimumSize(QSize(0, 150))
         self.row_2.setFrameShape(QFrame.StyledPanel)
@@ -1091,6 +1084,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(200, -1, 200, 0)
 
         self.plainTextEdit = QPlainTextEdit()
         self.plainTextEdit.setObjectName(u"plainTextEdit")
@@ -1105,8 +1099,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.row_2)
 
-        self.row_3 = QFrame(self.widgets)
+        self.row_3 = QFrame(self.home)
         self.row_3.setObjectName(u"row_3")
+        self.row_3.setMinimumSize(QSize(16777215, 50))
         self.row_3.setMaximumSize(QSize(16777215, 70))
         self.verticalLayout_21 = QVBoxLayout(self.row_3)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
@@ -1128,18 +1123,144 @@ class Ui_MainWindow(object):
         self.verticalLayout_21.addLayout(self.gridLayout_4)
 
         self.verticalLayout.addWidget(self.row_3)
+        self.stackedWidget.addWidget(self.home)
 
+        self.widgets = QWidget()
+        self.widgets.setObjectName(u"widgets")
+        self.widgets.setStyleSheet(u"b")
+        self.verticalLayout = QVBoxLayout(self.widgets)
+        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.row1 = QFrame(self.widgets)
+        self.row1.setObjectName(u"row1")
+        self.row1.setMaximumSize(QSize(16777215, 80))
+        self.row1.setFrameShape(QFrame.StyledPanel)
+        self.row1.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_16 = QVBoxLayout(self.row1)
+        self.verticalLayout_16.setSpacing(0)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
+        self.frame_div_hor = QFrame(self.row1)
+        self.frame_div_hor.setObjectName(u"frame_div_hor")
+        self.frame_div_hor.setMinimumSize(QSize(0, 110))
+        self.frame_div_hor.setMaximumSize(QSize(16777215, 110))
+        self.frame_div_hor.setFrameShape(QFrame.NoFrame)
+        self.frame_div_hor.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_17 = QVBoxLayout(self.frame_div_hor)
+        self.verticalLayout_17.setSpacing(0)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
+        self.frame_ver = QFrame(self.frame_div_hor)
+        self.frame_ver.setObjectName(u"frame_ver")
+        self.frame_ver.setFrameShape(QFrame.NoFrame)
+        self.frame_ver.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_9 = QHBoxLayout(self.frame_ver)
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.grid2 = QGridLayout()
+        self.grid2.setObjectName(u"grid2")
+        self.grid2.setContentsMargins(515, -1, 0, 0)
+        self.tituloAnalisis = QLabel(self.frame_ver)
+        self.tituloAnalisis.setObjectName(u"tituloAnalisis")
+        self.tituloAnalisis.setMaximumSize(QSize(16777215, 40))
+
+        self.grid2.addWidget(self.tituloAnalisis, 3, 0, 1, 1)
+
+        self.horizontalLayout_9.addLayout(self.grid2)
+
+        self.verticalLayout_17.addWidget(self.frame_ver)
+
+        self.verticalLayout_16.addWidget(self.frame_div_hor)
+
+        self.verticalLayout.addWidget(self.row1)
+
+        self.row2 = QFrame(self.widgets)
+        self.row2.setObjectName(u"row2")
+        self.row2.setMinimumSize(QSize(0, 150))
+        self.row2.setFrameShape(QFrame.StyledPanel)
+        self.row2.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_19 = QVBoxLayout(self.row2)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.gridLayout_2 = QGridLayout()
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+
+        self.listAnalisis = QTextBrowser(self.row2)
+        self.listAnalisis.setObjectName(u"textAnalisis")
+        self.listAnalisis.setMaximumSize(QSize(400, 1000))
+        self.gridLayout_2.addWidget(self.listAnalisis, 1, 0, 1, 1)
+
+        self.textAnalisis = QTextBrowser(self.row2)
+        self.textAnalisis.setObjectName(u"textAnalisis")
+
+        self.gridLayout_2.addWidget(self.textAnalisis, 1, 1, 1, 1)
+
+        self.verticalLayout_19.addLayout(self.gridLayout_2)
+
+        self.verticalLayout.addWidget(self.row2)
+
+        self.row3 = QFrame(self.widgets)
+        self.row3.setObjectName(u"row3")
+        self.row3.setMinimumSize(QSize(16777215, 50))
+        self.row3.setMaximumSize(QSize(16777215, 100))
+        self.verticalLayout_21 = QVBoxLayout(self.row3)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.gridLayout_4 = QGridLayout()
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.bjson = QPushButton(self.row3)
+        self.bjson.setObjectName(u"bjson")
+        self.bjson.setMaximumSize(QSize(150, 60))
+        self.bjson.setFont(font)
+        self.bjson.setCursor(QCursor(Qt.PointingHandCursor))
+        self.bjson.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        icon4 = QIcon()
+        icon4.addFile(u":/icons/images/icons/cil-file.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.bjson.setIcon(icon4)
+
+        self.gridLayout_4.addWidget(self.bjson, 0, 0, 1, 1)
+
+        self.verticalLayout_21.addLayout(self.gridLayout_4)
+
+        self.verticalLayout.addWidget(self.row3)
 
         self.stackedWidget.addWidget(self.widgets)
+
         self.new_page = QWidget()
         self.new_page.setObjectName(u"new_page")
         self.verticalLayout_20 = QVBoxLayout(self.new_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.label = QLabel(self.new_page)
-        self.label.setObjectName(u"label")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.fila2 = QFrame(self.new_page)
+        self.fila2.setObjectName(u"fila2")
+        self.verticalLayout_22 = QVBoxLayout(self.fila2)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.gridLayout_4 = QGridLayout()
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.gridLayout_4.setContentsMargins(450, -1, -1, -1)
+        self.imagenInfo = QLabel(self.fila2)
+        self.imagenInfo.setObjectName(u"imagenInfo")
+        self.imagenInfo.setPixmap(QPixmap(u"logo_256.png"))
 
-        self.verticalLayout_20.addWidget(self.label)
+        self.gridLayout_4.addWidget(self.imagenInfo, 2, 0, 1, 1)
+
+        self.verticalLayout_22.addLayout(self.gridLayout_4)
+
+        self.verticalLayout_20.addWidget(self.fila2)
+
+        self.fila1 = QFrame(self.new_page)
+        self.fila1.setObjectName(u"fila1")
+        self.fila1.setMaximumSize(QSize(16777215, 160))
+        self.verticalLayout_18 = QVBoxLayout(self.fila1)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.gridLayout_5 = QGridLayout()
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.gridLayout_5.setContentsMargins(300, -1, 300, 20)
+        self.infoTFG = QTextBrowser(self.fila1)
+        self.infoTFG.setObjectName(u"infoTFG")
+
+        self.gridLayout_5.addWidget(self.infoTFG, 0, 0, 1, 1)
+
+        self.verticalLayout_18.addLayout(self.gridLayout_5)
+
+        self.verticalLayout_20.addWidget(self.fila1)
 
         self.stackedWidget.addWidget(self.new_page)
 
@@ -1325,10 +1446,16 @@ class Ui_MainWindow(object):
         self.btextPlano.setText(QCoreApplication.translate("MainWindow", u"Texto", None))
         self.urlb.setText(QCoreApplication.translate("MainWindow", u"URL", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Comenzar", None))
-
-
-
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Info", None))
+        self.tituloAnalisis.setText(QCoreApplication.translate("MainWindow", u"RESUMEN AN\u00c1LISIS", None))
+        self.bjson.setText(QCoreApplication.translate("MainWindow", u"JSON", None))
+        self.infoTFG.setHtml(QCoreApplication.translate("MainWindow",
+                                                        u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                        "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                        "p, li { white-space: pre-wrap; }\n"
+                                                        "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+                                                        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a name=\"docs-internal-guid-f19928b8-7fff-b9c3-82b9-c402431d1c35\"></a><span style=\" font-family:'Arial'; font-size:11pt; color:#ffffff; background-color:transparent;\">E</span><span style=\" font-family:'Arial'; font-size:11pt; color:#ffffff; background-color:transparent;\">sta herramienta es un Analizador de Textos. Ha sido realizada por Enrique de Aramburu en su TFG.  Est\u00e1 pensada para ayudar a los escritores a localizar las partes del texto que se encuentran en conflicto con las normas UNE y de esta forma poder simplificar y adaptar e"
+                                                        "l texto para mejorar su comprensi\u00f3n. </span></p></body></html>",
+                                                        None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"", None))

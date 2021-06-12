@@ -1,0 +1,11 @@
+indicativo:La Norma UNE 6.3.2 establece que se debería usar el presente indicativo siempre que se pueda.
+comillas:La Norma UNE 6.1.10 estable que no se deberían usar las comillas.
+#Frases:Los textos fáciles suelen tener más frases que los difíciles, porque son más claros y explicativos.
+palabras:Los textos fáciles tienen más palabras que los difíciles.
+comas:EL uso de comas facilita la comprensión de oraciones.
+participio:Se debería evitar el uso de participios siempre que se pueda.
+sustantivos:Se debería utilizar un 30% o más de sustantivos para facilitar la lectura.
+largas:Se debería evitar el uso de palabras de más de 10 caracteres.
+muy_frec:Se debería utilizar palabras muy frecuentes, ver diccionarios de frecuencias.
+preposiciones:No usar un porcentaje de preposiciones mayor a 14.
+frecuentes:Se debería utilizar palabras muy frecuentes, ver diccionarios de frecuencias.

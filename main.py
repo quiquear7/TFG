@@ -1,7 +1,10 @@
 import codecs
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 import fitz
 from PyQt5.QtGui import QTextCharFormat
 from bson import json_util
+from nltk import word_tokenize, sent_tokenize
+
 import csv
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
 from qt_material import apply_stylesheet
@@ -21,6 +24,7 @@ import platform
 from PySide6.QtWidgets import QApplication
 from modules import *
 from widgets import *
+import threading
 
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 widgets = None
@@ -130,181 +134,8 @@ def entrenar(win, direccion):
             cont += 1
 
 
-def process_text(self, text, titulo, url):
-    app.closeAllWindows()
-    x = Pln(text, titulo, url)
-    global resultados, fileJson, nameJson, textReturn, dic_resultados, analisis
-    resultados, fileJson, nameJson, textReturn, dic_resultados, analisis = x.process()
-    self.w = AnalisisWindow()
-    self.w.show()
-    self.hide()
-
-
-class MainWindow(QtWidgets.QMainWindow, Ui_TFG):
-    archivos = ""
-    dir = ""
-
-    def __init__(self, *args, **kwargs):
-        QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
-        self.setupUi(self)
-        # self.setWindowIcon(QtGui.QIcon('logo.png'))
-        # set the title
-        self.setWindowTitle("Análisis")
-        # self.bentrenar.hide()
-        self.barchivo.clicked.connect(self.openFileNamesDialog)
-        self.burl.clicked.connect(self.openUrl)
-        self.baceptar.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
-        self.bentrenar.clicked.connect(self.preEntreno)
-
-    def preEntreno(self):
-        self.pintarButton(self.bentrenar)
-        self.limpiarArchivo()
-        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
-        self.dir = directorio
-        self.archivos = ("", 2)
-        self.listWidget.clear()
-        self.listWidget.addItem(directorio)
-
-    def openFileNamesDialog(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
-        if file:
-            self.pintarButton(self.barchivo)
-            self.limpiarArchivo()
-            self.listWidget.addItem(file)
-            self.archivos = (file, 0)
-
-    def openUrl(self):
-        text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
-        if okPressed and text != '':
-            self.pintarButton(self.burl)
-            self.limpiarArchivo()
-            self.listWidget.addItem(text)
-            self.archivos = (text, 1)
-
-    def aceptar(self, file, ruta):
-        if file == "":
-            QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
-        else:
-            if file[1] == 0:
-                extension = file[0].split(".")
-                text = ""
-                if extension[1] == "txt":
-                    ftemp = open(file[0], 'r', encoding="utf8", errors="ignore")
-                    text = ftemp.read()
-                if extension[1] == "pdf":
-                    doc = fitz.open(file[0])
-                    for i in range(1, doc.page_count):
-                        page = doc.loadPage(i)
-                        text += page.getText("text")
-                if len(text) == 0:
-                    QMessageBox.about(self, "Error", "No se puede obtener texto")
-                else:
-                    title = ntpath.basename(file[0]).split(".")
-                    process_text(self, text, title[0], "")
-            if file[1] == 1:
-                if validators.url(file[0]):
-                    req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
-                    webpage = urlopen(req).read()
-                    soup = BeautifulSoup(webpage, "html.parser")
-                    text = soup.get_text(strip=True)
-                    if len(text) == 0:
-                        QMessageBox.about(self, "Error", "No se puede obtener texto")
-                    else:
-                        title = soup.title.string
-                        process_text(self, text, title, file[0])
-                else:
-                    QMessageBox.about(self, "Error", "URL incorrecta")
-            if file[1] == 2:
-                if ruta != "":
-                    entrenar(self, ruta)
-                else:
-                    QMessageBox.about(self, "Error", "Ruta Necesaria")
-
-    def limpiarArchivo(self):
-        self.archivos = ""
-        self.listWidget.clear()
-
-    def limpiarVentana(self):
-        self.burl.hide()
-        self.barchivo.hide()
-        self.bentrenar.hide()
-        self.listWidget.hide()
-        self.baceptar.hide()
-
-    def pintarButton(self, button):
-        qss = '''
-        QPushButton{
-            background-color: #31363b;
-        }
-        QPushButton:hover{
-            background-color: #018786;
-        }
-        '''
-        self.barchivo.setStyleSheet(qss)
-        self.burl.setStyleSheet(qss)
-        self.bentrenar.setStyleSheet(qss)
-        button.setStyleSheet('QPushButton {background-color: #232629; }')
-
-
 def parse_json(data):
     return json.loads(json_util.dumps(data))
-
-
-class AnalisisWindow(QtWidgets.QMainWindow, Ui_Analisis):
-    def __init__(self, *args, **kwargs):
-        QtWidgets.QMainWindow.__init__(self, *args, **kwargs)
-        self.setupUi(self)
-        self.setWindowTitle("Resumen Análisis")
-        self.bjson.clicked.connect(self.saveJson)
-        self.banalisis.clicked.connect(lambda: inicio(self))
-        self.rellenarAnalisis()
-
-    def rellenarAnalisis(self):
-
-        for i in resultados:
-            item = i[0] + ": " + str(i[1])[0:7]
-            self.listWidget.addItem(item)
-
-        nums = {}
-        for i in dic_resultados:
-            if len(dic_resultados[i]) > 0:
-                for j in dic_resultados[i]:
-                    nums[j[1]] = i
-        cont = 0
-        html = ""
-        text = ""
-
-        for i in analisis:
-            if cont in nums:
-
-                text += "<font color="'red'" title=" + nums[cont] + ">" + i[0] + " " + "</font>"
-                # html += "<p style="'color:#FF0000'" title=" + nums[cont] + ">" + i[0] + "</p>"
-            else:
-                text += i[0] + " "
-            cont += 1
-        print(text)
-        self.textBrowser.setHtml(text)
-
-    def saveJson(self):
-        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
-        if directorio != "":
-            ajson = directorio + '/' + nameJson + '.json'
-
-            with open(ajson, 'w', encoding='utf8') as file:
-                json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
-
-            if os.path.exists(ajson):
-                QMessageBox.about(self, "JSON", "JSON Guardado")
-            else:
-                QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
-
-
-def inicio(self):
-    app.closeAllWindows()
-    apply_stylesheet(app, theme='dark_teal.xml')
-    self.w = MainWindow()
-    self.w.show()
-    self.hide()
 
 
 class MainWindow(QMainWindow):
@@ -326,55 +157,50 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(title)
         widgets.titleRightInfo.setText(description)
 
-        # TOGGLE MENU
-        # ///////////////////////////////////////////////////////////////
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
-        # SET UI DEFINITIONS
-        # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
-        # QTableWidget PARAMETERS
-        # ///////////////////////////////////////////////////////////////
-
-        # BUTTONS CLICK
-        # ///////////////////////////////////////////////////////////////
-
-        # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-
-        # EXTRA RIGHT BOX
         def openCloseRightBox():
             UIFunctions.toggleRightBox(self, True)
 
-        # SHOW APP
-        # ///////////////////////////////////////////////////////////////
         self.show()
 
-        # SET CUSTOM THEME
-        # ///////////////////////////////////////////////////////////////
         useCustomTheme = False
-        themeFile = "themes\py_dracula_dark.qss"
+        themeFile = "themes/py_dracula_light.qss"
 
-        # SET THEME AND HACKS
         if useCustomTheme:
-            # LOAD AND APPLY STYLE
             UIFunctions.theme(self, themeFile, True)
-
-            # SET HACKS
             AppFunctions.setThemeHack(self)
 
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         widgets.plainTextEdit.hide()
-        widgets.textBrowser.setText("hola")
+        widgets.textBrowser.setText("")
         widgets.barchivo.clicked.connect(lambda: self.openFileNamesDialog(widgets))
         widgets.urlb.clicked.connect(lambda: self.openUrl(widgets))
         widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir, widgets))
         widgets.btextPlano.clicked.connect(lambda: self.textPlano(widgets))
+        widgets.bjson.clicked.connect(self.saveJson)
+
+
+        self.analisisHide()
+
+    def analisisShow(self):
+        widgets.listAnalisis.show()
+        widgets.textAnalisis.show()
+        widgets.tituloAnalisis.show()
+        widgets.bjson.show()
+
+    def analisisHide(self):
+        widgets.listAnalisis.hide()
+        widgets.textAnalisis.hide()
+        widgets.tituloAnalisis.hide()
+        widgets.bjson.hide()
 
     def hideT(self, widgets):
         widgets.plainTextEdit.hide()
@@ -391,21 +217,21 @@ class MainWindow(QMainWindow):
         self.hideT(widgets)
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
         if file:
-            #self.pintarButton(self.barchivo)
             self.limpiarArchivo(widgets)
-            widgets.textBrowser.setText(file)
+            widgets.textBrowser.setText("Archivo Seleccionado: " + file)
             self.archivos = (file, 0)
 
     def openUrl(self, widgets):
         self.hideT(widgets)
         text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
         if okPressed and text != '':
-            #self.pintarButton(self.burl)
             self.limpiarArchivo(widgets)
-            widgets.textBrowser.setText(text)
+            widgets.textBrowser.setText("URL: " + text)
             self.archivos = (text, 1)
 
     def aceptar(self, file, ruta, widgets):
+        self.analisisHide()
+
         if file == "":
             QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
         else:
@@ -424,7 +250,10 @@ class MainWindow(QMainWindow):
                     QMessageBox.about(self, "Error", "No se puede obtener texto")
                 else:
                     title = ntpath.basename(file[0]).split(".")
-                    process_text(self, text, title[0], "")
+                    QMessageBox.about(self, "Info", "Realizando Análisis")
+                    self.process_text(text, title[0], "")
+                    '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], "",), daemon=True)
+                    hilo1.start()'''
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
@@ -435,7 +264,10 @@ class MainWindow(QMainWindow):
                         QMessageBox.about(self, "Error", "No se puede obtener texto")
                     else:
                         title = soup.title.string
-                        process_text(self, text, title, file[0])
+                        QMessageBox.about(self, "Info", "Realizando Análisis")
+                        '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], file[0],), daemon=True)
+                        hilo1.start()'''
+
                 else:
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
@@ -445,9 +277,16 @@ class MainWindow(QMainWindow):
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
             if file[1] == 3:
                 text = widgets.plainTextEdit.toPlainText()
-                print(text)
-                if len(text) == 0:
-                    QMessageBox.about(self, "Error", "Texto Necesari0")
+                title, okPressed = QInputDialog.getText(self, "Ingrese Titulo", "Titulo:", QLineEdit.Normal, "")
+                if okPressed and title != '':
+                    if len(text) == 0:
+                        QMessageBox.about(self, "Error", "Texto Necesari0")
+                    else:
+                        QMessageBox.about(self, "Info", "Realizando Análisis")
+                        hilo1 = threading.Thread(target=self.process_text, args=(text, title, "",), daemon=True)
+                        hilo1.start()
+                else:
+                    QMessageBox.about(self, "Error", "Titulo Necesari0")
 
     def limpiarArchivo(self, widgets):
         self.archivos = ""
@@ -473,29 +312,78 @@ class MainWindow(QMainWindow):
             UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
 
-        if btnName == "btn_save":
-            print("Save BTN clicked!")
+    def process_text(self, text, titulo, url):
+        x = Pln(text, titulo, url)
+        global resultados, fileJson, nameJson, textReturn, dic_resultados, analisis
+        resultados, fileJson, nameJson, textReturn, dic_resultados, analisis = x.process()
+        self.analisis(resultados, analisis)
 
-        # PRINT BTN NAME
-        print(f'Button "{btnName}" pressed!')
+    def analisis(self, resultados, analisis):
+        self.analisisShow()
+        widgets.stackedWidget.setCurrentWidget(widgets.widgets)  # SET PAGE
+        UIFunctions.resetStyle(self, 'btn_widgets')  # RESET ANOTHERS BUTTONS SELECTED
+        widgets.btn_widgets.setStyleSheet(UIFunctions.selectMenu(widgets.btn_widgets.styleSheet()))
+        self.rellenarAnalisis(resultados, analisis)
 
-    # RESIZE EVENTS
-    # ///////////////////////////////////////////////////////////////
     def resizeEvent(self, event):
-        # Update Size Grips
         UIFunctions.resize_grips(self)
 
-    # MOUSE CLICK EVENTS
-    # ///////////////////////////////////////////////////////////////
-    def mousePressEvent(self, event):
-        # SET DRAG POS WINDOW
-        self.dragPos = event.globalPos()
+    def saveJson(self):
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
+        if directorio != "":
+            ajson = directorio + '/' + nameJson + '.json'
 
-        # PRINT MOUSE EVENTS
-        if event.buttons() == Qt.LeftButton:
-            print('Mouse click: LEFT CLICK')
-        if event.buttons() == Qt.RightButton:
-            print('Mouse click: RIGHT CLICK')
+            with open(ajson, 'w', encoding='utf8') as file:
+                json.dump(parse_json(fileJson), file, ensure_ascii=False, indent=4)
+
+            if os.path.exists(ajson):
+                QMessageBox.about(self, "JSON", "JSON Guardado")
+            else:
+                QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
+
+    def rellenarAnalisis(self, resultados, analisis):
+        dic_explicaciones = {}
+        sigl = codecs.open("diccionarios/variables.txt", "r", encoding="utf-8")
+        for entrada in sigl:
+            pal = entrada.split(":")
+            dic_explicaciones[pal[0]] = pal[1]
+
+        textA = ""
+        for i in resultados:
+            textA += i[0] + ": " + str(i[1])[0:7]
+            textA += "<br/>"
+            if i[0] != 'Resumen':
+                textA += dic_explicaciones[i[0]]
+                textA += "<br/>"
+                textA += "<br/>"
+
+        widgets.listAnalisis.setHtml(textA)
+
+        palabras = {}
+        palabras2 = {}
+        for i in dic_resultados:
+            if len(dic_resultados[i]) > 0:
+                for j in dic_resultados[i]:
+                    palabras2[j[0]] = i
+                    if j[0] not in palabras:
+                        palabras[j[0]] = dic_explicaciones[i]
+                    else:
+                        palabras[j[0]] += dic_explicaciones[i]
+
+        text = ""
+        frases = textReturn.split("\n")
+
+        for j in frases:
+            words = word_tokenize(j, "spanish")
+            for i in words:
+                if i in palabras:
+                    text += "<font color="'red'" title=" + palabras2[i] + ">" + i + " " + "</font>"
+                    print(palabras[i])
+                else:
+                    text += i + " "
+            text += "<br/>"
+
+        widgets.textAnalisis.setHtml(text)
 
 
 if __name__ == "__main__":
@@ -504,9 +392,3 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon("logo.svg"))
     window = MainWindow()
     sys.exit(app.exec())
-
-    '''app = QtWidgets.QApplication([])
-    window = MainWindow()
-    apply_stylesheet(app, theme='dark_teal.xml')
-    window.show()
-    app.exec_()'''
