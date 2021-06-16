@@ -29,6 +29,7 @@ import threading
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 widgets = None
 
+titleA = ""
 app = ""
 fileJson = ""
 nameJson = ""
@@ -40,7 +41,7 @@ analisis = []
 
 
 def crearcsv(directory):
-    with open(directory + '/final_v57.csv', 'w', newline='') as csvfile:
+    with open(directory + '/entrenamiento.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['Title',
                              'Por_Sinonimos',
@@ -97,6 +98,12 @@ def crearcsv(directory):
                              "%otro_idioma",
                              "#words",
                              "#frases",
+                             "nombres_propios",
+                             "nombres_propios/noun",
+                             "futuro",
+                             "futuro/verbs",
+                             "pasado",
+                             "pasado/verbs",
                              'Tipo'])
 
 
@@ -152,7 +159,7 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         title = "Analizador de Textos"
-        description = "TFG - Enrique de Aramburu"
+        description = "Analizador de Textos"
 
         self.setWindowTitle(title)
         widgets.titleRightInfo.setText(description)
@@ -180,13 +187,15 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         widgets.plainTextEdit.hide()
-        widgets.textBrowser.setText("")
-        widgets.barchivo.clicked.connect(lambda: self.openFileNamesDialog(widgets))
-        widgets.urlb.clicked.connect(lambda: self.openUrl(widgets))
-        widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir, widgets))
-        widgets.btextPlano.clicked.connect(lambda: self.textPlano(widgets))
+        widgets.barchivo.clicked.connect(self.openFileNamesDialog)
+        widgets.urlb.clicked.connect(self.openUrl)
+        # widgets.urlb.clicked.connect(self.preEntreno)
+        widgets.pushButton_3.clicked.connect(lambda: self.aceptar(self.archivos, self.dir))
+        widgets.btextPlano.clicked.connect(self.textPlano)
         widgets.bjson.clicked.connect(self.saveJson)
-
+        widgets.listAnalisis.setStyleSheet("*{border: 2px solid rgb(91, 101, 124);"
+                                           "border-radius: 5px;"
+                                           "padding: 10px}")
 
         self.analisisHide()
 
@@ -202,38 +211,53 @@ class MainWindow(QMainWindow):
         widgets.tituloAnalisis.hide()
         widgets.bjson.hide()
 
-    def hideT(self, widgets):
+    def hideT(self):
         widgets.plainTextEdit.hide()
 
-    def showT(self, widgets):
+    def showT(self):
         widgets.plainTextEdit.show()
-        widgets.textBrowser.setText("")
+        widgets.textBrowser.clear()
 
-    def textPlano(self, widgets):
-        self.showT(widgets)
+    def textPlano(self):
+        self.showT()
         self.archivos = ("", 3)
 
-    def openFileNamesDialog(self, widgets):
-        self.hideT(widgets)
+    def preEntreno(self):
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
+        self.dir = directorio
+        self.archivos = ("", 2)
+
+    def openFileNamesDialog(self):
+        self.hideT()
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
         if file:
-            self.limpiarArchivo(widgets)
-            widgets.textBrowser.setText("Archivo Seleccionado: " + file)
+            self.limpiarArchivo()
+            widgets.textBrowser.addItem("Archivo Seleccionado: " + file)
             self.archivos = (file, 0)
 
-    def openUrl(self, widgets):
-        self.hideT(widgets)
-        text, okPressed = QInputDialog.getText(self, "Ingrese Url", "URL:", QLineEdit.Normal, "")
-        if okPressed and text != '':
-            self.limpiarArchivo(widgets)
-            widgets.textBrowser.setText("URL: " + text)
-            self.archivos = (text, 1)
+    def openUrl(self):
+        self.hideT()
+        dlg = QInputDialog(self)
+        dlg.setInputMode(QInputDialog.TextInput)
+        dlg.setStyleSheet("*{background-color: rgb(27, 29, 35);"
+                          "color:#FFFFFF;}")
+        dlg.setLabelText("URL:")
+        dlg.resize(500, 100)
+        ok = dlg.exec()
+        url = dlg.textValue()
+        if ok and url != '':
+            self.limpiarArchivo()
+            widgets.textBrowser.addItem("URL: " + url)
+            self.archivos = (url, 1)
 
-    def aceptar(self, file, ruta, widgets):
+    def aceptar(self, file, ruta):
         self.analisisHide()
 
         if file == "":
-            QMessageBox.about(self, "Error", "No se ha seleccionado archivo o URL")
+            msg = QMessageBox(self)
+            msg.setStyleSheet("QMessageBox {background-color: rgb(27, 29, 35);"
+                              "color:#FFFFFF;}")
+            msg.about(self, "Error", "No se ha detectado ningún metodo de entrada")
         else:
             if file[1] == 0:
                 extension = file[0].split(".")
@@ -265,10 +289,12 @@ class MainWindow(QMainWindow):
                     else:
                         title = soup.title.string
                         QMessageBox.about(self, "Info", "Realizando Análisis")
+                        self.process_text(text, title[0], file[0])
                         '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], file[0],), daemon=True)
                         hilo1.start()'''
 
                 else:
+
                     QMessageBox.about(self, "Error", "URL incorrecta")
             if file[1] == 2:
                 if ruta != "":
@@ -277,20 +303,31 @@ class MainWindow(QMainWindow):
                     QMessageBox.about(self, "Error", "Ruta Necesaria")
             if file[1] == 3:
                 text = widgets.plainTextEdit.toPlainText()
-                title, okPressed = QInputDialog.getText(self, "Ingrese Titulo", "Titulo:", QLineEdit.Normal, "")
-                if okPressed and title != '':
+
+                dlg = QInputDialog(self)
+                dlg.setInputMode(QInputDialog.TextInput)
+                dlg.setStyleSheet("*{background-color: rgb(27, 29, 35);"
+                                  "color:#FFFFFF;}")
+
+                dlg.setLabelText("Titulo:")
+                dlg.resize(300, 100)
+                ok = dlg.exec()
+                title = dlg.textValue()
+
+                if ok and title != '':
                     if len(text) == 0:
-                        QMessageBox.about(self, "Error", "Texto Necesari0")
+                        QMessageBox.about(self, "Error", "Texto Necesario")
                     else:
                         QMessageBox.about(self, "Info", "Realizando Análisis")
-                        hilo1 = threading.Thread(target=self.process_text, args=(text, title, "",), daemon=True)
-                        hilo1.start()
+                        self.process_text(text, title, "")
+                        '''hilo1 = threading.Thread(target=self.process_text, args=(text, title, "",), daemon=True)
+                        hilo1.start()'''
                 else:
-                    QMessageBox.about(self, "Error", "Titulo Necesari0")
+                    QMessageBox.about(self, "Error", "Titulo Necesario")
 
-    def limpiarArchivo(self, widgets):
+    def limpiarArchivo(self):
         self.archivos = ""
-        widgets.textBrowser.setText("")
+        widgets.textBrowser.clear()
 
     def buttonClick(self):
         btn = self.sender()
@@ -314,16 +351,16 @@ class MainWindow(QMainWindow):
 
     def process_text(self, text, titulo, url):
         x = Pln(text, titulo, url)
-        global resultados, fileJson, nameJson, textReturn, dic_resultados, analisis
-        resultados, fileJson, nameJson, textReturn, dic_resultados, analisis = x.process()
-        self.analisis(resultados, analisis)
+        global resultados, fileJson, nameJson, textReturn, dic_resultados, titleA
+        resultados, fileJson, nameJson, textReturn, dic_resultados, titleA = x.process()
+        self.analisis()
 
-    def analisis(self, resultados, analisis):
+    def analisis(self):
         self.analisisShow()
         widgets.stackedWidget.setCurrentWidget(widgets.widgets)  # SET PAGE
         UIFunctions.resetStyle(self, 'btn_widgets')  # RESET ANOTHERS BUTTONS SELECTED
         widgets.btn_widgets.setStyleSheet(UIFunctions.selectMenu(widgets.btn_widgets.styleSheet()))
-        self.rellenarAnalisis(resultados, analisis)
+        self.rellenarAnalisis()
 
     def resizeEvent(self, event):
         UIFunctions.resize_grips(self)
@@ -341,49 +378,55 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
 
-    def rellenarAnalisis(self, resultados, analisis):
+    def rellenarAnalisis(self):
         dic_explicaciones = {}
         sigl = codecs.open("diccionarios/variables.txt", "r", encoding="utf-8")
         for entrada in sigl:
             pal = entrada.split(":")
             dic_explicaciones[pal[0]] = pal[1]
+        resumen = resultados[0][1]
 
-        textA = ""
-        for i in resultados:
-            textA += i[0] + ": " + str(i[1])[0:7]
-            textA += "<br/>"
-            if i[0] != 'Resumen':
-                textA += dic_explicaciones[i[0]]
+        if resumen == "Dificil":
+            textA = "Título: " + titleA + "<br/><br/>"
+            for i in resultados:
+                textA += i[0] + ": " + str(i[1])[0:7]
                 textA += "<br/>"
-                textA += "<br/>"
+                if i[0] != 'Resumen':
+                    textA += dic_explicaciones[i[0]]
+                    textA += "<br/>"
+                    textA += "<br/>"
 
-        widgets.listAnalisis.setHtml(textA)
+            widgets.listAnalisis.setHtml(textA)
 
-        palabras = {}
-        palabras2 = {}
-        for i in dic_resultados:
-            if len(dic_resultados[i]) > 0:
-                for j in dic_resultados[i]:
-                    palabras2[j[0]] = i
-                    if j[0] not in palabras:
-                        palabras[j[0]] = dic_explicaciones[i]
+            palabras = {}
+            palabras2 = {}
+            for i in dic_resultados:
+                if len(dic_resultados[i]) > 0:
+                    for j in dic_resultados[i]:
+                        palabras2[j[0]] = i
+                        if j[0] not in palabras:
+                            palabras[j[0]] = dic_explicaciones[i]
+                        else:
+                            palabras[j[0]] += dic_explicaciones[i]
+
+            text = ""
+            frases = textReturn.split("\n")
+
+            for j in frases:
+                words = word_tokenize(j, "spanish")
+                for i in words:
+                    if i in palabras:
+                        text += "<font color="'red'" title=" + palabras2[i] + ">" + i + " " + "</font>"
                     else:
-                        palabras[j[0]] += dic_explicaciones[i]
+                        text += i + " "
+                text += "<br/>"
 
-        text = ""
-        frases = textReturn.split("\n")
-
-        for j in frases:
-            words = word_tokenize(j, "spanish")
-            for i in words:
-                if i in palabras:
-                    text += "<font color="'red'" title=" + palabras2[i] + ">" + i + " " + "</font>"
-                    print(palabras[i])
-                else:
-                    text += i + " "
-            text += "<br/>"
-
-        widgets.textAnalisis.setHtml(text)
+            widgets.textAnalisis.setHtml(text)
+        else:
+            textA = "Título: " + titleA + "\n\n"
+            textA += "Resumen: Fácil\n\nEl texto se ha identificado como fácil no es necesario realizar ningún cambio"
+            widgets.listAnalisis.setText(textA)
+            widgets.textAnalisis.setText(textReturn)
 
 
 if __name__ == "__main__":

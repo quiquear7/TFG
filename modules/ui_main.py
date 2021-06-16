@@ -1062,9 +1062,9 @@ class Ui_MainWindow(object):
         self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.gridLayout_3.setContentsMargins(200, -1, 200, 0)
-        self.textBrowser = QTextBrowser(self.verticalFrame)
+        self.textBrowser = QListWidget(self.verticalFrame)
         self.textBrowser.setObjectName(u"textBrowser")
-
+        self.textBrowser.setMinimumSize(QSize(500,30 ))
         self.gridLayout_3.addWidget(self.textBrowser, 0, 0, 1, 1)
 
         self.horizontalLayout_7.addLayout(self.gridLayout_3)
@@ -1393,7 +1393,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"Analizador ", None))
+        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"Menu ", None))
         self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"", None))
         self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"Ocultar", None))
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Analisis", None))

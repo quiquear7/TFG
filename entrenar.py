@@ -126,6 +126,9 @@ class EntrenarCsv:
         romanos = []
         dos_puntos = []
         otro_idioma = []
+        proper_noun = []
+        futuro = []
+        pasado = []
 
         for x in analisis:
             i = x[0]
@@ -238,6 +241,8 @@ class EntrenarCsv:
                 determiner.append(i)
             if j[0] == "N":
                 noun.append(i)
+                if j[1] == "P":
+                    proper_noun.append(i)
             if j[0] == "P":
                 pronoun.append(i)
             if j[0] == "R":
@@ -265,6 +270,10 @@ class EntrenarCsv:
                     subjuntivo.append(i)
                 if j[3] == "C":
                     condicional.append(i)
+                if j[3] == "F":
+                    futuro.append(i)
+                if j[3] == "S":
+                    pasado.append(i)
                 if j[2] == "M":
                     imperative.append(i)
             if j[0] == "Z":
@@ -336,6 +345,8 @@ class EntrenarCsv:
             cont += 1
         if len(verbs) == 0:
             verbs.append("")
+        if len(noun) == 0:
+            noun.append("")
         valores = [self.title,
                    (len(sin) * 100) / lenwords,
                    (len(abrv) * 100) / lenwords,
@@ -391,9 +402,15 @@ class EntrenarCsv:
                    (len(otro_idioma) * 100) / lenwords,
                    len(words),
                    len(frases),
+                   (len(proper_noun) * 100) / lenwords,
+                   (len(proper_noun) * 100) / len(noun),
+                   (len(futuro) * 100) / lenwords,
+                   (len(futuro) * 100) / len(verbs),
+                   (len(pasado) * 100) / lenwords,
+                   (len(pasado) * 100) / len(verbs),
                    self.tipo]
 
-        with open(self.directory + '/final_v57.csv', 'a', newline='') as csvfile:
+        with open(self.directory + '/entrenamiento.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(valores)
 

@@ -6,7 +6,6 @@ import enchant
 import nltk
 import nltk.data
 from PySide6.QtCore import QThread, QObject
-
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
@@ -146,6 +145,7 @@ class Pln:
         romanos = []
         otro_idioma = []
         verbos_no_indicativo = []
+        proper_noun = []
 
         for x in analisis:
             i = x[0]
@@ -255,6 +255,8 @@ class Pln:
                 determiner.append((i, cont))
             if j[0] == "N":
                 noun.append((i, cont))
+                if j[1] == "P":
+                    proper_noun.append(i)
             if j[0] == "P":
                 pronoun.append((i, cont))
             if j[0] == "R":
@@ -360,10 +362,10 @@ class Pln:
                     if dic_frecuencia[p.lower()] >= 4:
                         muy_frecuentes.append((p.lower(), cont2))
                         valor = "es muy frecuente"
-                    if 4 > dic_frecuencia[p.lower()] > 0.3:
+                    if 4 > dic_frecuencia[p.lower()] > 1:
                         frecuentes.append((p.lower(), cont2))
                         valor = "es frecuente"
-                    if dic_frecuencia[p.lower()] <= 0.3:
+                    if dic_frecuencia[p.lower()] <= 1:
                         poco_frecuentes.append((p.lower(), cont2))
                         valor = "es poco frecuente"
                     wordsjson.append({
@@ -434,6 +436,19 @@ class Pln:
         por_muy_frecuentes_sub = (len(muy_frecuentes_sub) * 100) / lenwords
         documento = "vacio"
 
+        variables = [{
+            "%Presente_Indicativo": Por_presente_indicativo,
+            "%Comillas": Por_comillas,
+            "#Frases": len(frases),
+            "#Palabras": len(words),
+            "%Comas": por_comas,
+            "%Parciticipios": Participle_Verbs_number,
+            "%Sustantivos": por_noun,
+            "%Largas": por_largas,
+            "%Muy_Frecuentes": por_muy_frecuentes_sub,
+            "%Preposiciones": Preposition_number,
+            "%Frecuentes": Por_frec
+        }]
         dic_resultados = {}
 
         if Por_presente_indicativo <= 3.058824:
@@ -453,8 +468,8 @@ class Pln:
                         resultados.append(("#Frases", len(frases)))
                         documento = "Dificil"
             if Por_comillas > 0.280767:
-                    resultados.append(("comillas", Por_comillas))
-                    documento = "Dificil"
+                resultados.append(("comillas", Por_comillas))
+                documento = "Dificil"
         if Por_presente_indicativo > 3.058824:
             dic_resultados["indicativo"] = verbos_no_indicativo
             resultados.append(("indicativo", Por_presente_indicativo))
@@ -544,11 +559,11 @@ class Pln:
             "Articles_number": len(determiner),
             "Preposition_number": len(preposition),
             "Dates_number": len(date),
-            "Own_name_number": len(noun),
+            "Own_name_number": len(proper_noun),
             "Percentage_desconocidas": (len(desconocidas) * 100) / lenwords,
-            "Resumen": documento,
-            "Analisis_Reglas": resultados
+            "Result": documento,
+            "Vars": variables
         })
 
         print("Fin\n")
-        return resultados, fjson, self.title, self.text, dic_resultados, analisis
+        return resultados, fjson, self.title, self.text, dic_resultados, self.title
