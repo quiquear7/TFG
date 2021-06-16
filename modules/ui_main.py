@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
             "\n"
             "QWidget{\n"
             "	color: rgb(221, 221, 221);\n"
-            "	font: 10pt \"Segoe UI\";\n"
+            "	font: 13pt \"Segoe UI\";\n"
             "}\n"
             "\n"
             "/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -995,7 +995,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_18 = QVBoxLayout(self.frame_title_wid_1)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
 
-
         self.verticalLayout_17.addWidget(self.frame_title_wid_1)
 
         self.frame_content_wid_1 = QFrame(self.frame_div_content_1)
@@ -1013,7 +1012,9 @@ class Ui_MainWindow(object):
         self.barchivo.setMinimumSize(QSize(150, 30))
         self.barchivo.setFont(font)
         self.barchivo.setCursor(QCursor(Qt.PointingHandCursor))
-        self.barchivo.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.barchivo.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                    u"color: rgb(255, 255, 255);"
+                                    u"font-size: 17px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.barchivo.setIcon(icon4)
@@ -1025,7 +1026,9 @@ class Ui_MainWindow(object):
         self.urlb.setMinimumSize(QSize(150, 30))
         self.urlb.setFont(font)
         self.urlb.setCursor(QCursor(Qt.PointingHandCursor))
-        self.urlb.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.urlb.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                u"color: rgb(255, 255, 255);"
+                                u"font-size: 17px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-link.png", QSize(), QIcon.Normal, QIcon.Off)
         self.urlb.setIcon(icon4)
@@ -1037,7 +1040,9 @@ class Ui_MainWindow(object):
         self.btextPlano.setMinimumSize(QSize(150, 30))
         self.btextPlano.setFont(font)
         self.btextPlano.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btextPlano.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.btextPlano.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                      u"color: rgb(255, 255, 255);"
+                                      u"font-size: 17px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-text.png", QSize(), QIcon.Normal, QIcon.Off)
         self.btextPlano.setIcon(icon4)
@@ -1064,7 +1069,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.setContentsMargins(200, -1, 200, 0)
         self.textBrowser = QListWidget(self.verticalFrame)
         self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setMinimumSize(QSize(500,30 ))
+        self.textBrowser.setMinimumSize(QSize(500, 30))
         self.gridLayout_3.addWidget(self.textBrowser, 0, 0, 1, 1)
 
         self.horizontalLayout_7.addLayout(self.gridLayout_3)
@@ -1091,8 +1096,6 @@ class Ui_MainWindow(object):
         self.plainTextEdit.setMinimumSize(QSize(200, 200))
         self.plainTextEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
 
-
-
         self.gridLayout_2.addWidget(self.plainTextEdit, 0, 5, 3, 1)
 
         self.verticalLayout_19.addLayout(self.gridLayout_2)
@@ -1113,7 +1116,9 @@ class Ui_MainWindow(object):
         self.pushButton_3.setMaximumSize(QSize(150, 30))
         self.pushButton_3.setFont(font)
         self.pushButton_3.setCursor(QCursor(Qt.PointingHandCursor))
-        self.pushButton_3.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.pushButton_3.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                        u"color: rgb(255, 255, 255);"
+                                        u"font-size: 17px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-chevron-circle-right-alt.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pushButton_3.setIcon(icon4)
@@ -1211,7 +1216,9 @@ class Ui_MainWindow(object):
         self.bjson.setMaximumSize(QSize(150, 60))
         self.bjson.setFont(font)
         self.bjson.setCursor(QCursor(Qt.PointingHandCursor))
-        self.bjson.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.bjson.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                 u"color: rgb(255, 255, 255);"
+                                 u"font-size: 17px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-file.png", QSize(), QIcon.Normal, QIcon.Off)
         self.bjson.setIcon(icon4)
@@ -1325,8 +1332,6 @@ class Ui_MainWindow(object):
         self.btn_print.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-print.png);")
 
         self.verticalLayout_14.addWidget(self.btn_print)
-
-
 
         self.verticalLayout_13.addWidget(self.topMenus, 0, Qt.AlignTop)
 
@@ -1448,14 +1453,12 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Comenzar", None))
         self.tituloAnalisis.setText(QCoreApplication.translate("MainWindow", u"RESUMEN AN\u00c1LISIS", None))
         self.bjson.setText(QCoreApplication.translate("MainWindow", u"JSON", None))
-        self.infoTFG.setHtml(QCoreApplication.translate("MainWindow",
-                                                        u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.infoTFG.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                         "p, li { white-space: pre-wrap; }\n"
                                                         "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-                                                        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a name=\"docs-internal-guid-f19928b8-7fff-b9c3-82b9-c402431d1c35\"></a><span style=\" font-family:'Arial'; font-size:11pt; color:#ffffff; background-color:transparent;\">E</span><span style=\" font-family:'Arial'; font-size:11pt; color:#ffffff; background-color:transparent;\">sta herramienta es un Analizador de Textos. Ha sido realizada por Enrique de Aramburu en su TFG.  Est\u00e1 pensada para ayudar a los escritores a localizar las partes del texto que se encuentran en conflicto con las normas UNE y de esta forma poder simplificar y adaptar e"
-                                                        "l texto para mejorar su comprensi\u00f3n. </span></p></body></html>",
-                                                        None))
+                                                        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a name=\"docs-internal-guid-f19928b8-7fff-b9c3-82b9-c402431d1c35\"></a><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">E</span><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">sta herramienta es un Analizador de Textos. Ha sido realizada por Enrique de Aramburu en su TFG.  Est\u00e1 pensada para ayudar a los escritores a localizar las partes del texto que se encuentran en conflicto con las normas UNE y de esta forma poder simplificar y adaptar e"
+                                                        "l texto para mejorar su comprensi\u00f3n.</span></p></body></html>", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"", None))

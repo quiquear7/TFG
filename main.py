@@ -233,8 +233,9 @@ class MainWindow(QMainWindow):
         self.hideT()
         dlg = QInputDialog(self)
         dlg.setInputMode(QInputDialog.TextInput)
-        dlg.setStyleSheet("*{background-color: rgb(27, 29, 35);"
-                          "color:#FFFFFF;}")
+        dlg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
+                          u"color:#FFFFFF;"
+                          u"font-size:17px;")
         dlg.setLabelText("URL:")
         dlg.resize(500, 100)
         ok = dlg.exec()
@@ -249,8 +250,9 @@ class MainWindow(QMainWindow):
 
         if file == "":
             msg = QMessageBox(self)
-            msg.setStyleSheet("QMessageBox {background-color: rgb(27, 29, 35);"
-                              "color:#FFFFFF;}")
+            msg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
+                              u"color:#FFFFFF;"
+                              u"font-size:17px;")
             msg.about(self, "Error", "No se ha detectado ningún metodo de entrada")
         else:
             if file[1] == 0:
@@ -265,7 +267,11 @@ class MainWindow(QMainWindow):
                         page = doc.loadPage(i)
                         text += page.getText("text")
                 if len(text) == 0:
-                    QMessageBox.about(self, "Error", "No se puede obtener texto")
+                    msg = QMessageBox(self)
+                    msg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
+                                      u"color:#FFFFFF;"
+                                      u"font-size:17px;")
+                    msg.about(self, "Error", "No se puede obtener texto")
                 else:
                     title = ntpath.basename(file[0]).split(".")
                     QMessageBox.about(self, "Info", "Realizando Análisis")
@@ -279,10 +285,18 @@ class MainWindow(QMainWindow):
                     soup = BeautifulSoup(webpage, "html.parser")
                     text = soup.get_text(strip=True)
                     if len(text) == 0:
-                        QMessageBox.about(self, "Error", "No se puede obtener texto")
+                        msg = QMessageBox(self)
+                        msg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
+                                          u"color:#FFFFFF;"
+                                          u"font-size:17px;")
+                        msg.about(self, "Error", "No se puede obtener texto")
                     else:
                         title = soup.title.string
-                        QMessageBox.about(self, "Info", "Realizando Análisis")
+                        msg = QMessageBox(self)
+                        msg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
+                                          u"color:#FFFFFF;"
+                                          u"font-size:17px;")
+                        msg.about(self, "Info", "Realizando Análisis")
                         self.process_text(text, title[0], file[0])
                         '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], file[0],), daemon=True)
                         hilo1.start()'''
