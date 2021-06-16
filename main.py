@@ -4,7 +4,6 @@ import fitz
 from PyQt5.QtGui import QTextCharFormat
 from bson import json_util
 from nltk import word_tokenize, sent_tokenize
-
 import csv
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QFileDialog, QMessageBox
 from qt_material import apply_stylesheet
@@ -13,10 +12,8 @@ import validators
 import ntpath
 import os
 from bs4 import BeautifulSoup
-from ui.analisis_ui import Ui_Analisis
 from entrenar import EntrenarCsv
 from pln import Pln
-from ui.ventana_ui import *
 import json
 import sys
 import os
@@ -108,7 +105,6 @@ def crearcsv(directory):
 
 
 def entrenar(win, direccion):
-    long_media = 0
     if dir == "":
         QMessageBox.about(win, "Error", "Seleccione ruta")
     else:
@@ -122,7 +118,6 @@ def entrenar(win, direccion):
             ruta = 'GigaBDCorpus-master/Dificiles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
-            long_media += len(text)
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Dificil")
             x.process()
@@ -134,7 +129,6 @@ def entrenar(win, direccion):
             ruta = 'GigaBDCorpus-master/Faciles/' + name
             ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
             text = ftemp.read()
-            long_media += len(text)
             title = name.split(".")
             x = EntrenarCsv(text, direccion, title[0], "Facil")
             x.process()
