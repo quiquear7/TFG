@@ -2,10 +2,13 @@ import codecs
 import math
 import pickle
 import string
+from time import time
 import enchant
 import nltk
 import nltk.data
-from PySide6.QtCore import QThread, QObject
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PySide6.QtCore import QThread, QObject, Signal
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
@@ -13,14 +16,17 @@ from legibilidad import legibilidad
 import textstat
 
 
-class Pln:
+class Pln(QThread):
+    started2 = Signal(int)
+    final_signal = Signal(dict, dict)
 
-    def __init__(self, text, title, url):
+    def __init__(self, text, title, url, parent=None):
+        QThread.__init__(self, parent)
         self.text = text
         self.title = title
         self.url = url
 
-    def process(self):
+    def run(self):
         """obtenemos el título del documento"""
         punct = string.punctuation
         self.title = self.title.replace(" ", "")
@@ -47,6 +53,7 @@ class Pln:
         freq = nltk.FreqDist(words)
         punct = string.punctuation
         freq2 = []
+
         for i in freq:
             if i not in punct:
                 freq2.append((i, freq[i]))
@@ -58,6 +65,7 @@ class Pln:
             if item[1] == 1:
                 i1 += 1
         pt = ((math.sqrt(1 + 8 * i1) - 1) / 2)
+
         for item in freq2:
             if item[1] >= pt:
                 general.append(item[0])
@@ -68,24 +76,33 @@ class Pln:
         for i in words:
             caracteres += len(i)
 
+        self.started2.emit(10)
+
         '''obtenemos los diccionarios que vamos a utilizar en el texto'''
 
         dic_frecuencia = dic.diccionario_frecuencia()
+        self.started2.emit(11)
         dic_frecuencia_sub = dic.diccionario_frecuencia_sub()
+        self.started2.emit(12)
         dic_sinonimos = dic.diccionario_sinonimos()
+        self.started2.emit(13)
         dic_abreviaturas = dic.diccionario_abreviaturas()
         dic_siglas = dic.diccionario_siglas()
+        self.started2.emit(14)
         dic_hom = dic.diccionario_homonimas()
         diccionario = dic.diccionario_freeling()
         dicEnchant = enchant.Dict("es_ES")
 
+        self.started2.emit(15)
+
         entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
         etiquetador = pickle.load(entrada)
-        analisis, lenwords = dic.freeling(self.text)
+        analisis, lenwords = dic.freeling(self.text, self.started2)
         if lenwords == 0:
             analisis = etiquetador.tag(words)
             lenwords = len(words)
         entrada.close()
+
 
         etc = []
         abrv = []
@@ -346,6 +363,7 @@ class Pln:
 
             cont += 1
 
+        self.started2.emit(95)
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
@@ -391,7 +409,6 @@ class Pln:
             })
 
             sentence += 1
-
         resultados = [("Resultado: ", "")]
 
         N_sentences = len(frases)
@@ -564,6 +581,15 @@ class Pln:
             "Result": documento,
             "Vars": variables
         })
+        self.started2.emit(100)
+
+        dic_resultados2 = {'resultados': resultados, 'json': fjson, 'titulo': self.title, 'texto': self.text}
+        self.final_signal.emit(dic_resultados, dic_resultados2)
 
         print("Fin\n")
-        return resultados, fjson, self.title, self.text, dic_resultados, self.title
+        # return resultados, fjson, self.title, self.text, dic_resultados
+
+    def stop(self):
+        self.is_running = False
+        print('Stopping thread...', self.index)
+        self.terminate()

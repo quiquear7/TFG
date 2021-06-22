@@ -37,7 +37,7 @@ class Ui_MainWindow(object):
             "	border: 1px solid rgb(44, 49, 58);\n"
             "	background-image: none;\n"
             "	background-position: left center;\n"
-            "    background-repeat: no-repeat;\n"
+            "   background-repeat: no-repeat;\n"
             "	border: none;\n"
             "	border-left: 2px solid rgb(255, 121, 198);\n"
             "	text-align: left;\n"
@@ -1014,7 +1014,7 @@ class Ui_MainWindow(object):
         self.barchivo.setCursor(QCursor(Qt.PointingHandCursor))
         self.barchivo.setStyleSheet(u"background-color: rgb(52, 59, 72);"
                                     u"color: rgb(255, 255, 255);"
-                                    u"font-size: 17px;")
+                                    u"font-size: 20px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.barchivo.setIcon(icon4)
@@ -1028,7 +1028,7 @@ class Ui_MainWindow(object):
         self.urlb.setCursor(QCursor(Qt.PointingHandCursor))
         self.urlb.setStyleSheet(u"background-color: rgb(52, 59, 72);"
                                 u"color: rgb(255, 255, 255);"
-                                u"font-size: 17px;")
+                                u"font-size: 20px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-link.png", QSize(), QIcon.Normal, QIcon.Off)
         self.urlb.setIcon(icon4)
@@ -1042,7 +1042,7 @@ class Ui_MainWindow(object):
         self.btextPlano.setCursor(QCursor(Qt.PointingHandCursor))
         self.btextPlano.setStyleSheet(u"background-color: rgb(52, 59, 72);"
                                       u"color: rgb(255, 255, 255);"
-                                      u"font-size: 17px;")
+                                      u"font-size: 20px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-text.png", QSize(), QIcon.Normal, QIcon.Off)
         self.btextPlano.setIcon(icon4)
@@ -1118,7 +1118,7 @@ class Ui_MainWindow(object):
         self.pushButton_3.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton_3.setStyleSheet(u"background-color: rgb(52, 59, 72);"
                                         u"color: rgb(255, 255, 255);"
-                                        u"font-size: 17px;")
+                                        u"font-size: 20px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-chevron-circle-right-alt.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pushButton_3.setIcon(icon4)
@@ -1164,12 +1164,42 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
         self.grid2 = QGridLayout()
         self.grid2.setObjectName(u"grid2")
-        self.grid2.setContentsMargins(515, -1, 0, 0)
+        self.grid2.setContentsMargins(-1, -1, -1, 0)
+
+        self.gridNuevo2 = QGridLayout()
+        self.gridNuevo2.setObjectName(u"gridNuevo")
+        self.gridNuevo2.setContentsMargins(515, -1, 0, 0)
+
         self.tituloAnalisis = QLabel(self.frame_ver)
         self.tituloAnalisis.setObjectName(u"tituloAnalisis")
         self.tituloAnalisis.setMaximumSize(QSize(16777215, 40))
 
-        self.grid2.addWidget(self.tituloAnalisis, 3, 0, 1, 1)
+        self.gridNuevo2.addWidget(self.tituloAnalisis, 0, 0, 1, 1)
+
+        self.grid2.addLayout(self.gridNuevo2, 1, 0, 1, 1)
+
+        self.gridNuevo = QGridLayout()
+        self.gridNuevo.setObjectName(u"gridNuevo")
+        self.gridNuevo.setContentsMargins(200, -1, 200, 0)
+        self.progressBar = QProgressBar(self.frame_ver)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setValue(0)
+        self.progressBar.setStyleSheet(u"QProgressBar {\n"
+                                       "    border: 2px solid grey;\n"
+                                       "    border-radius: 5px;\n"
+                                       "    text-align: center;\n"
+                                       "    background-color: #FFFFFF;\n"
+                                       "    color: #000000\n"
+                                       "}\n"
+                                       "\n"
+                                       "QProgressBar::chunk {\n"
+                                       "    background-color: #BD93F9;\n"
+                                       "    width: 20px;\n"
+                                       "}")
+
+        self.gridNuevo.addWidget(self.progressBar, 0, 0, 1, 1)
+
+        self.grid2.addLayout(self.gridNuevo, 1, 0, 1, 1)
 
         self.horizontalLayout_9.addLayout(self.grid2)
 
@@ -1218,7 +1248,7 @@ class Ui_MainWindow(object):
         self.bjson.setCursor(QCursor(Qt.PointingHandCursor))
         self.bjson.setStyleSheet(u"background-color: rgb(52, 59, 72);"
                                  u"color: rgb(255, 255, 255);"
-                                 u"font-size: 17px;")
+                                 u"font-size: 20px;")
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-file.png", QSize(), QIcon.Normal, QIcon.Off)
         self.bjson.setIcon(icon4)
@@ -1309,7 +1339,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setSpacing(0)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(0, 0, 0, 0)
-        self.btn_message = QPushButton(self.topMenus)
+        self.btn_message = QPushQPushButton(self.topMenus)
         self.btn_message.setObjectName(u"btn_message")
         sizePolicy.setHeightForWidth(self.btn_message.sizePolicy().hasHeightForWidth())
         self.btn_message.setSizePolicy(sizePolicy)
@@ -1453,12 +1483,14 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Comenzar", None))
         self.tituloAnalisis.setText(QCoreApplication.translate("MainWindow", u"RESUMEN AN\u00c1LISIS", None))
         self.bjson.setText(QCoreApplication.translate("MainWindow", u"JSON", None))
-        self.infoTFG.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.infoTFG.setHtml(QCoreApplication.translate("MainWindow",
+                                                        u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                         "p, li { white-space: pre-wrap; }\n"
                                                         "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
                                                         "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a name=\"docs-internal-guid-f19928b8-7fff-b9c3-82b9-c402431d1c35\"></a><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">E</span><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">sta herramienta es un Analizador de Textos. Ha sido realizada por Enrique de Aramburu en su TFG.  Est\u00e1 pensada para ayudar a los escritores a localizar las partes del texto que se encuentran en conflicto con las normas UNE y de esta forma poder simplificar y adaptar e"
-                                                        "l texto para mejorar su comprensi\u00f3n.</span></p></body></html>", None))
+                                                        "l texto para mejorar su comprensi\u00f3n.</span></p></body></html>",
+                                                        None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"", None))

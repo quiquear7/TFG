@@ -1,5 +1,5 @@
 import codecs
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 import fitz
 from PyQt5.QtGui import QTextCharFormat
 from bson import json_util
@@ -22,19 +22,14 @@ from PySide6.QtWidgets import QApplication
 from modules import *
 from widgets import *
 import threading
+import pln
 
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 widgets = None
 
-titleA = ""
 app = ""
 fileJson = ""
 nameJson = ""
-resumenDoc = ""
-resultados = ""
-textReturn = ""
-dic_resultados = {}
-analisis = []
 
 
 def crearcsv(directory):
@@ -161,7 +156,7 @@ class MainWindow(QMainWindow):
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         UIFunctions.uiDefinitions(self)
-
+        self.thread = {}
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
@@ -190,10 +185,11 @@ class MainWindow(QMainWindow):
         widgets.listAnalisis.setStyleSheet("*{border: 2px solid rgb(91, 101, 124);"
                                            "border-radius: 5px;"
                                            "padding: 10px}")
-
+        widgets.progressBar.hide()
         self.analisisHide()
 
     def analisisShow(self):
+        widgets.progressBar.hide()
         widgets.listAnalisis.show()
         widgets.textAnalisis.show()
         widgets.tituloAnalisis.show()
@@ -274,10 +270,7 @@ class MainWindow(QMainWindow):
                     msg.about(self, "Error", "No se puede obtener texto")
                 else:
                     title = ntpath.basename(file[0]).split(".")
-                    QMessageBox.about(self, "Info", "Realizando Análisis")
                     self.process_text(text, title[0], "")
-                    '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], "",), daemon=True)
-                    hilo1.start()'''
             if file[1] == 1:
                 if validators.url(file[0]):
                     req = Request(file[0], headers={'User-Agent': 'Mozilla/5.0'})
@@ -292,15 +285,7 @@ class MainWindow(QMainWindow):
                         msg.about(self, "Error", "No se puede obtener texto")
                     else:
                         title = soup.title.string
-                        msg = QMessageBox(self)
-                        msg.setStyleSheet(u"background-color: rgb(27, 29, 35);"
-                                          u"color:#FFFFFF;"
-                                          u"font-size:17px;")
-                        msg.about(self, "Info", "Realizando Análisis")
                         self.process_text(text, title[0], file[0])
-                        '''hilo1 = threading.Thread(target=self.process_text, args=(text, title[0], file[0],), daemon=True)
-                        hilo1.start()'''
-
                 else:
 
                     QMessageBox.about(self, "Error", "URL incorrecta")
@@ -326,10 +311,7 @@ class MainWindow(QMainWindow):
                     if len(text) == 0:
                         QMessageBox.about(self, "Error", "Texto Necesario")
                     else:
-                        QMessageBox.about(self, "Info", "Realizando Análisis")
                         self.process_text(text, title, "")
-                        '''hilo1 = threading.Thread(target=self.process_text, args=(text, title, "",), daemon=True)
-                        hilo1.start()'''
                 else:
                     QMessageBox.about(self, "Error", "Titulo Necesario")
 
@@ -358,17 +340,22 @@ class MainWindow(QMainWindow):
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
 
     def process_text(self, text, titulo, url):
-        x = Pln(text, titulo, url)
-        global resultados, fileJson, nameJson, textReturn, dic_resultados, titleA
-        resultados, fileJson, nameJson, textReturn, dic_resultados, titleA = x.process()
-        self.analisis()
-
-    def analisis(self):
-        self.analisisShow()
+        widgets.progressBar.setValue(0)
+        self.thread = Pln(text, titulo, url, None)
+        self.thread.started2.connect(self.pintarBarra)
+        self.thread.final_signal.connect(self.analisis)
+        self.thread.start()
         widgets.stackedWidget.setCurrentWidget(widgets.widgets)  # SET PAGE
         UIFunctions.resetStyle(self, 'btn_widgets')  # RESET ANOTHERS BUTTONS SELECTED
         widgets.btn_widgets.setStyleSheet(UIFunctions.selectMenu(widgets.btn_widgets.styleSheet()))
-        self.rellenarAnalisis()
+        widgets.progressBar.show()
+
+    def pintarBarra(self, counter):
+        widgets.progressBar.setValue(counter)
+
+    def analisis(self, dic_resultados1, dic_resultados2):
+        self.analisisShow()
+        self.rellenarAnalisis(dic_resultados1, dic_resultados2)
 
     def resizeEvent(self, event):
         UIFunctions.resize_grips(self)
@@ -386,7 +373,15 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.about(self, "JSON Error", "JSON no se ha guardado")
 
-    def rellenarAnalisis(self):
+    def rellenarAnalisis(self, dic_resultados, dic_resultados2):
+        resultados = dic_resultados2['resultados']
+        titleA = dic_resultados2['titulo']
+        textReturn = dic_resultados2['texto']
+
+        global fileJson, nameJson
+        fileJson = dic_resultados2['json']
+        nameJson = dic_resultados2['titulo']
+
         dic_explicaciones = {}
         sigl = codecs.open("diccionarios/variables.txt", "r", encoding="utf-8")
         for entrada in sigl:
