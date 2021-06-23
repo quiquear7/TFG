@@ -1339,17 +1339,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setSpacing(0)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(0, 0, 0, 0)
-        self.btn_message = QPushQPushButton(self.topMenus)
-        self.btn_message.setObjectName(u"btn_message")
-        sizePolicy.setHeightForWidth(self.btn_message.sizePolicy().hasHeightForWidth())
-        self.btn_message.setSizePolicy(sizePolicy)
-        self.btn_message.setMinimumSize(QSize(0, 45))
-        self.btn_message.setFont(font)
-        self.btn_message.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_message.setLayoutDirection(Qt.LeftToRight)
-        self.btn_message.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-envelope-open.png);")
 
-        self.verticalLayout_14.addWidget(self.btn_message)
+
+
 
         self.btn_print = QPushButton(self.topMenus)
         self.btn_print.setObjectName(u"btn_print")
@@ -1491,7 +1483,7 @@ class Ui_MainWindow(object):
                                                         "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a name=\"docs-internal-guid-f19928b8-7fff-b9c3-82b9-c402431d1c35\"></a><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">E</span><span style=\" font-family:'Arial'; font-size:14pt; color:#ffffff; background-color:transparent;\">sta herramienta es un Analizador de Textos. Ha sido realizada por Enrique de Aramburu en su TFG.  Est\u00e1 pensada para ayudar a los escritores a localizar las partes del texto que se encuentran en conflicto con las normas UNE y de esta forma poder simplificar y adaptar e"
                                                         "l texto para mejorar su comprensi\u00f3n.</span></p></body></html>",
                                                         None))
-        self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
+
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"", None))
