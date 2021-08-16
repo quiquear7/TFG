@@ -24,7 +24,7 @@ from widgets import *
 import threading
 import pln
 
-os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
+os.environ["QT_FONT_DPI"] = "96"
 widgets = None
 
 app = ""
