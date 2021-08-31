@@ -213,36 +213,36 @@ def printDepTree(dtree, depth):
     print('')
 
 
-def freeling(text, signal):
-    signal.emit(20)
+def freeling(text):
+
     if "FREELINGDIR" not in os.environ:
         if sys.platform == "win32" or sys.platform == "win64":
             os.environ["FREELINGDIR"] = "C:\\Program Files"
         else:
             os.environ["FREELINGDIR"] = "/usr/local"
         print("FREELINGDIR environment variable not defined, trying ", os.environ["FREELINGDIR"], file=sys.stderr)
-    signal.emit(25)
+
     if not os.path.exists(os.environ["FREELINGDIR"] + "/share/freeling"):
         print("Folder", os.environ["FREELINGDIR"] + "/share/freeling",
               "not found.\nPlease set FREELINGDIR environment variable to FreeLing installation directory",
               file=sys.stderr)
         sys.exit(1)
 
-    signal.emit(30)
+
     # Location of FreeLing configuration files.
     DATA = os.environ["FREELINGDIR"] + "/share/freeling/"
 
     # Init locales
     pyfreeling.util_init_locale("default")
-    signal.emit(35)
+
     # create language detector. Used just to show it. Results are printed
     # but ignored (after, it is assumed language is LANG)
     la = pyfreeling.lang_ident(DATA + "common/lang_ident/ident-few.dat");
-    signal.emit(40)
+
     # create options set for maco analyzer. Default values are Ok, except for data files.
     LANG = "es"
     op = pyfreeling.maco_options(LANG)
-    signal.emit(45)
+
     op.set_data_files("",
                       DATA + "common/punct.dat",
                       DATA + LANG + "/dicc.src",
@@ -252,14 +252,14 @@ def freeling(text, signal):
                       DATA + LANG + "/np.dat",
                       DATA + LANG + "/quantities.dat",
                       DATA + LANG + "/probabilitats.dat")
-    signal.emit(50)
+
     # create analyzers
     tk = pyfreeling.tokenizer(DATA + LANG + "/tokenizer.dat")
     sp = pyfreeling.splitter(DATA + LANG + "/splitter.dat")
     sid = sp.open_session()
     mf = pyfreeling.maco(op)
 
-    signal.emit(60)
+
     # activate mmorpho odules to be used in next call
     mf.set_active_options(False, True, True, True,  # select which among created
                           True, True, False, True,  # submodules are to be used.
@@ -291,7 +291,6 @@ def freeling(text, signal):
             analisis.append((w.get_form(), w.get_tag(), w.get_lemma()))
 
         res = int(((cont * 30) / len(ls)) + 60)
-        signal.emit(res)
         cont += 1
 
     sp.close_session(sid)

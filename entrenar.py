@@ -8,10 +8,12 @@ import nltk.data
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
+from PySide6.QtCore import QThread, QObject, Signal
 import csv
 
 
 class EntrenarCsv:
+
 
     def __init__(self, text, directory, title, tipo):
         self.text = text

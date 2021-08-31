@@ -1125,6 +1125,20 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.pushButton_3, 0, 0, 1, 1)
 
+        self.bAceptar = QPushButton(self.row_3)
+        self.bAceptar.setObjectName(u"bAceptar")
+        self.bAceptar.setMaximumSize(QSize(150, 30))
+        self.bAceptar.setFont(font)
+        self.bAceptar.setCursor(QCursor(Qt.PointingHandCursor))
+        self.bAceptar.setStyleSheet(u"background-color: rgb(52, 59, 72);"
+                                        u"color: rgb(255, 255, 255);"
+                                        u"font-size: 20px;")
+        icon4 = QIcon()
+        icon4.addFile(u":/icons/images/icons/cil-chevron-circle-right-alt.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.bAceptar.setIcon(icon4)
+
+        self.gridLayout_4.addWidget(self.bAceptar, 0, 1, 1, 1)
+
         self.verticalLayout_21.addLayout(self.gridLayout_4)
 
         self.verticalLayout.addWidget(self.row_3)
@@ -1473,6 +1487,7 @@ class Ui_MainWindow(object):
         self.btextPlano.setText(QCoreApplication.translate("MainWindow", u"Texto", None))
         self.urlb.setText(QCoreApplication.translate("MainWindow", u"URL", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Comenzar", None))
+        self.bAceptar.setText(QCoreApplication.translate("MainWindow", u"Entrenar", None))
         self.tituloAnalisis.setText(QCoreApplication.translate("MainWindow", u"RESUMEN AN\u00c1LISIS", None))
         self.bjson.setText(QCoreApplication.translate("MainWindow", u"JSON", None))
         self.infoTFG.setHtml(QCoreApplication.translate("MainWindow",

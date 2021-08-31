@@ -99,37 +99,6 @@ def crearcsv(directory):
                              'Tipo'])
 
 
-def entrenar(win, direccion):
-    if dir == "":
-        QMessageBox.about(win, "Error", "Seleccione ruta")
-    else:
-        app.closeAllWindows()
-        crearcsv(direccion)
-        cont = 1
-
-        contenido = os.listdir('GigaBDCorpus-master/Dificiles')
-        for name in contenido:
-            print(cont, name)
-            ruta = 'GigaBDCorpus-master/Dificiles/' + name
-            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
-            text = ftemp.read()
-            title = name.split(".")
-            x = EntrenarCsv(text, direccion, title[0], "Dificil")
-            x.process()
-            cont += 1
-
-        contenido = os.listdir('GigaBDCorpus-master/Faciles')
-        for name in contenido:
-            print(cont, name)
-            ruta = 'GigaBDCorpus-master/Faciles/' + name
-            ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
-            text = ftemp.read()
-            title = name.split(".")
-            x = EntrenarCsv(text, direccion, title[0], "Facil")
-            x.process()
-            cont += 1
-
-
 def parse_json(data):
     return json.loads(json_util.dumps(data))
 
@@ -178,6 +147,7 @@ class MainWindow(QMainWindow):
         widgets.listAnalisis.setStyleSheet("*{border: 2px solid rgb(91, 101, 124);"
                                            "border-radius: 5px;"
                                            "padding: 10px}")
+        widgets.bAceptar.clicked.connect(self.entrenar)
         widgets.progressBar.hide()
         self.analisisHide()
 
@@ -205,11 +175,6 @@ class MainWindow(QMainWindow):
         self.showT()
         self.archivos = ("", 3)
 
-    def preEntreno(self):
-        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
-        self.dir = directorio
-        self.archivos = ("", 2)
-
     def openFileNamesDialog(self):
         self.hideT()
         file, _ = QFileDialog.getOpenFileName(self, "Selección de Archivo", "", "txt File (*.txt);;PDF Files (*.pdf)")
@@ -233,6 +198,38 @@ class MainWindow(QMainWindow):
             self.limpiarArchivo()
             widgets.textBrowser.addItem("URL: " + url)
             self.archivos = (url, 1)
+
+    def entrenar(self):
+        directorio = str(QFileDialog.getExistingDirectory(self, "Selección de Directorio"))
+        if directorio == "":
+            msg = QMessageBox(self)
+            msg.about(self, "Error", "Seleccione ruta")
+        else:
+            self.close()
+            crearcsv(directorio)
+            cont = 1
+
+            contenido = os.listdir('GigaBDCorpus-master/Dificiles')
+            for name in contenido:
+                print(cont, name)
+                ruta = 'GigaBDCorpus-master/Dificiles/' + name
+                ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
+                text = ftemp.read()
+                title = name.split(".")
+                x = EntrenarCsv(text, directorio, title[0], "Dificil")
+                x.process()
+                cont += 1
+
+            contenido = os.listdir('GigaBDCorpus-master/Faciles')
+            for name in contenido:
+                print(cont, name)
+                ruta = 'GigaBDCorpus-master/Faciles/' + name
+                ftemp = open(ruta, 'r', encoding="utf-8-sig", errors="ignore")
+                text = ftemp.read()
+                title = name.split(".")
+                x = EntrenarCsv(text, directorio, title[0], "Facil")
+                x.process()
+                cont += 1
 
     def aceptar(self, file, ruta):
         self.analisisHide()

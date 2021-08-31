@@ -86,13 +86,14 @@ class Pln(QThread):
 
         '''analisis nos devuelve una lista con el etiquetado de las palabras, en lenwords se alamacena el número de 
         palabras etiquetadas'''
-        analisis, lenwords = dic.freeling(self.text, self.started2)
+        analisis, lenwords = dic.freeling(self.text)
         if lenwords == 0:
             entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
             etiquetador = pickle.load(entrada)
             analisis = etiquetador.tag(words)
             lenwords = len(words)
             entrada.close()
+        self.started2.emit(90)
 
         cont = 0  # indica la posición en la que se encuentra la palabra
 
