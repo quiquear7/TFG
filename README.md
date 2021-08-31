@@ -10,6 +10,7 @@ Analizador de Textos. Es necesaria una instalación de FreeLing.
 2. Instalar FreeLing siguiendo los pasos del siguiente enlace https://freeling-user-manual.readthedocs.io/en/v4.2/
 
 Instalar Módulos
+
 3. pip install pyqt5
 4. pip install pymupdf
 5. pip install pymongo
