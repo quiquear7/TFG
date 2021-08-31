@@ -17,6 +17,7 @@ import textstat
 
 
 class Pln(QThread):
+
     """señal para enviar el porcentaje de análisis realizado"""
     started2 = Signal(int)
 
