@@ -8,31 +8,38 @@ import nltk.data
 import dic as dic
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
-from PySide6.QtCore import QThread, QObject, Signal
 import csv
 
 
 class EntrenarCsv:
 
-
     def __init__(self, text, directory, title, tipo):
-        self.text = text
-        self.directory = directory
-        self.title = title
-        self.tipo = tipo
+        self.text = text  # texto que se va a analizar
+        self.directory = directory  # directorio donde se va a almacenar el archivo csv
+        self.title = title  # titulo del archivo a analizar
+        self.tipo = tipo  # guarda si el archivo es facil o dificil
 
     def process(self):
 
-        tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
+        """obtenemos listado con las frases tokenizadas"""
         frases = sent_tokenize(self.text, "spanish")
+
+        """obtenemos listado con las palabras tokenizadas"""
         words = word_tokenize(self.text, "spanish")
+
+        """obtenemos una lista de tuplas con las frecuencias de las palabras"""
         freq = nltk.FreqDist(words)
-        punct = string.punctuation
+
+
+        punct = string.punctuation  # lista con los signos de
+
+        '''creamos una lista de tuplas con la palabra y su frecuencia'''
         freq2 = []
         for i in freq:
-            if i not in punct:
+            if i not in punct:  # comprobamos que no la palabra no sea un signo de puntuación
                 freq2.append((i, freq[i]))
 
+        """calculamos cuantas palabras son específicas y generales"""
         i1 = 0
         especifico = []
         general = []
@@ -46,6 +53,7 @@ class EntrenarCsv:
             else:
                 especifico.append(item[0])
 
+        '''calculamos los caracteres totales de las palabras'''
         caracteres = 0
         for i in words:
             caracteres += len(i)
@@ -60,45 +68,47 @@ class EntrenarCsv:
         diccionario = dic.diccionario_freeling()
         dicEnchant = enchant.Dict("es_ES")
 
-        entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
-        etiquetador = pickle.load(entrada)
-        analisis, lenwords = dic.freeling(self.text)
-        if lenwords == 0:
+        '''analisis nos devuelve una lista con el etiquetado de las palabras, en lenwords se alamacena el número de 
+                palabras etiquetadas'''
+        analisis, lenwords = dic.freeling(self.text)  # obtenemos el etiquetado y el número de palabras
+        if lenwords == 0:  # si el etiquetado falla utilizamos otro etiquetado
+            entrada = open('diccionarios/etiquetador-spa.pkl', 'rb')
+            etiquetador = pickle.load(entrada)
             analisis = etiquetador.tag(words)
             lenwords = len(words)
-        entrada.close()
+            entrada.close()
 
-        etc = []
-        abrv = []
-        siglas = []
-        homo = []
-        sinonimos_usados = {}
-        numeros = []
-        errores = []
-        large = []
-        superlative = []
-        adverbs = []
-        indeterminate = []
-        numbers = []
-        comillas = []
-        con_complex = []
-        presente_indicativo = []
-        subjuntivo = []
-        condicional = []
-        adjective = []
-        conjunction = []
-        determiner = []
-        noun = []
-        pronoun = []
-        adverb = []
-        preposition = []
-        verbs = []
-        verbi = []
-        verbg = []
-        verbp = []
-        imperative = []
-        number = []
-        date = []
+        etc = []  # almacena la abreviatura 'etc'
+        abrv = []  # almacena las abrevituras en el texto
+        siglas = []  # almacena las siglas del texto
+        homo = []  # almacena los homonimos del texto
+        sinonimos_usados = {}  # almacena los sinonimos del texto
+        numeros = []  # almacena los números del texto
+        errores = []  # almacena las simbolos del texto
+        large = []  # almacena las palabras largas del texto
+        superlative = []  # almacena los superlativos del texto
+        adverbs = []  # almacena los adverbios del texto
+        indeterminate = []  # almacena los indeterminados
+        numbers = []  # almacena los numeros del texto
+        comillas = []  # almacena las comillas del texto
+        con_complex = []  # almacena los conectores complejos
+        presente_indicativo = []  # almacena los verbos en presente de indicativo
+        subjuntivo = []  # almacena verbos en subjuntivo
+        condicional = []  # almacena verbos condicionales
+        adjective = []  # almacena adejetivos
+        conjunction = []  # almacena conjunciones
+        determiner = []  # almacena determinantes
+        noun = []  # almacena sustantivos
+        pronoun = []  # almacena pronombres
+        adverb = []  # almacena adverbios
+        preposition = []  # almacena preposiciones
+        verbs = []  # almacena verbos
+        verbi = []  # almacena verbos en infinitivo
+        verbg = []  # almacena verbos en gerundio
+        verbp = []  # almacena verbos en participio
+        imperative = []  # almacena verbos en imperativo
+        number = []  # almacena numeros
+        date = []  # almacena fechas
         interjection = []
         desconocidas = []
         sinonimos = []

@@ -66,7 +66,7 @@ class Pln(QThread):
         '''creamos una lista de tuplas con la palabra y su frecuencia'''
         freq2 = []
         for i in freq:
-            if i not in punct:
+            if i not in punct:  # comprobamos que no la palabra no sea un signo de puntuación
                 freq2.append((i, freq[i]))
 
         '''calculamos los caracteres totales de las palabras'''

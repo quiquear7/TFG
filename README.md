@@ -22,3 +22,7 @@ Instalar Módulos
 11. pip install PySide6
 12. pip install legibilidad
 13. pip install textstat
+
+#Funcionamiento
+
+
