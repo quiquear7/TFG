@@ -185,6 +185,7 @@ class EntrenarCsv:
                             if len(i) > 1:
                                 mayus_no_sigla.append((sig, cont))
 
+
             if i.isupper() and i not in dic_siglas:
                 if i.lower() not in diccionario and "_" not in i and 2 <= len(i) <= 7:
                     f = codecs.open('diccionarios/siglas-final.txt', "a", "utf-8")
@@ -195,26 +196,45 @@ class EntrenarCsv:
                     if len(i) > 1:
                         mayus_no_sigla.append((i, cont))
 
+            """busca los simbolos en el texto"""
             if "&" in i or "%" in i or "/" in i or "(" in i or ")" in i or "^" in i or "[" in i or "]" in i or "{" in i or "}" in i or "..." in i or "ª" in i:
                 errores.append((i, cont))
+            "etc"
             if "etc" in i:
                 etc.append((i, cont))
+
+            '''si la palabra tiene mas de 10 caracteres es considerada larga '''
             if len(i) > 10 and "_" not in i:
                 large.append((i, cont))
+
+            """Superlativos"""
             if j[0] == "A" and j[2] == "S":
                 superlative.append((i, cont))
+
+            """Adverbios"""
             if j[0] == "R" and "mente" in i:
                 adverbs.append((i, cont))
+
+            "Arroba"
             if "@" in i:
                 errores.append((i, cont))
+
+            """palabras inderterminadas como cosa, algo o asunto"""
             if i == "cosa" or i == "algo" or i == "asunto":
                 indeterminate.append((i, cont))
+
+            """Numeros"""
             if ("º" in i or "ª" in i) or (j[0] == "M" and j[1] == "O"):
                 numbers.append((i, cont))
+
+            """Comillas"""
             if '"' == i or "«" == i or "»" == i or "'" == i:
                 comillas.append((i, cont))
+            """Numeros"""
             if i.isdigit():
                 numeros.append((i, cont))
+
+            """Comprueba si existen los siguientes conectores complejos"""
             if i.lower() == "por_lo_tanto":
                 con_complex.append((i, cont))
             if i.lower() == "no_obstante":
@@ -224,13 +244,19 @@ class EntrenarCsv:
             if i.lower() == "sin" and analisis[cont + 1][0].lower() == "embargo":
                 con_complex.append((i, cont))
 
+            """Abreviaturas"""
             if i in dic_abreviaturas:
                 abrv.append(i)
+
+            """Siglas"""
             if i in dic_siglas:
                 siglas.append(i)
+
+            """Homonimas"""
             if i in dic_hom:
                 homo.append(i)
 
+            """Sinonimos"""
             if k not in sinonimos_usados:
                 if k in dic_sinonimos:
                     x = dic_sinonimos[k]
@@ -249,6 +275,7 @@ class EntrenarCsv:
                     if usado == 0:
                         sinonimos_usados[i] = ""
 
+            """Abrebiatura y siglas"""
             if "_" in i:
                 z = i.split("_")
                 for t in z:
@@ -256,57 +283,102 @@ class EntrenarCsv:
                         abrv.append(i)
                     if t in dic_siglas:
                         siglas.append(i)
-
+            """Adejetivos"""
             if j[0] == "A":
                 adjective.append(i)
+
+            """Conjunciones"""
             if j[0] == "C":
                 conjunction.append(i)
+
+            """Determinantes"""
             if j[0] == "D":
                 determiner.append(i)
+
+            """Sustantivos"""
             if j[0] == "N":
                 noun.append(i)
+                """nombres propios"""
                 if j[1] == "P":
                     proper_noun.append(i)
+
+            """Pronombres"""
             if j[0] == "P":
                 pronoun.append(i)
+
+            """Adverbios"""
             if j[0] == "R":
                 adverb.append(i)
+
+                """Advebios de negación"""
                 if j[1] == "N":
                     cont_negative += 1
                     negative_text += i + "-"
+
+
             if "ningun" in i or "ningún" in i:
                 cont_negative += 1
                 negative_text += i + "-"
+
+            """Verbos """
             if j[0] == "V":
                 verbs.append(i)
+
+                """verbos consecutivos"""
                 if analisis[cont + 1][1][0] == "V":
                     verbos_seguidos.append((i, analisis[cont + 1][0]))
                     nverbseguidos += 2
+
+                """Infinitivo"""
                 if j[2] == "N":
                     verbi.append(i)
+
+                """Gerundio"""
                 if j[2] == "G":
                     verbg.append(i)
+
+                """Participio"""
                 if j[2] == "P":
                     verbp.append(i)
+
+                """Presente de Indicativo"""
                 if j[2] == "I" and j[3] == "P":
                     presente_indicativo.append(i)
+
+                """Subjuntivo"""
                 if j[2] == "S":
                     subjuntivo.append(i)
+
+                """Condicional"""
                 if j[3] == "C":
                     condicional.append(i)
+
+                """Futuro"""
                 if j[3] == "F":
                     futuro.append(i)
+
+                """Pasado"""
                 if j[3] == "S":
                     pasado.append(i)
+
+                """Imperativo"""
                 if j[2] == "M":
                     imperative.append(i)
+
+            """Numeros"""
             if j[0] == "Z":
                 number.append(i)
+
                 if len(j) > 1:
+                    """Partitivos"""
                     if j[1] == "p" or j[1] == "d":
                         partitivos.append(i)
+
+                """Ordinales"""
                 if "º" in i:
                     ordinales.append((i, cont))
+
+                """Fechas que no estan en el formato UNE"""
                 if len(i) == 10:
                     barras = 0
                     guiones = 0
@@ -319,19 +391,32 @@ class EntrenarCsv:
                         date_mal.append((i, cont))
                     if barras == 0 and guiones == 2:
                         date_mal.append((i, cont))
+
+            """Fechas"""
             if j == "W":
                 date.append(i)
+
+                """fechas que no siguen la normativa UNE"""
                 if "/" in i:
                     date_mal.append((i, cont))
+
+                """Números romanos"""
                 if "I" in i or "V" in i or "X" in i or "L" in i or "C" in i or "D" in i or "M" in i:
                     romanos.append((i, cont))
+
+            """Interjecciones"""
             if j[0] == "Yo":
                 interjection.append(i)
+
+            """Proposiciones"""
             if j == "SP":
                 preposition.append(i)
 
+            """comas"""
             if j == "Fc":
                 comas.append(j)
+
+            """Puntos"""
             if j == "Fp":
                 if cont_negative > 1:
                     doble_negacion += 1
@@ -339,15 +424,20 @@ class EntrenarCsv:
                 cont_negative = 0
                 negative_text = ""
                 puntos.append(j)
+
+            """Punto y coma"""
             if j == "Fx":
                 punto_coma.append(j)
 
+            """Cualquier signo de puntuación"""
             if j[0] == "F":
                 puntuacion.append(j)
 
+            """Frecuencia de una palabra"""
             if j[0] != "F" and i not in frecuencia:
                 frecuencia.append(i)
 
+            """Frecuenica según el listado de la RAE"""
             if i.lower() in dic_frecuencia:
                 if dic_frecuencia[i.lower()] >= 4:
                     muy_frecuentes.append(i.lower())
@@ -358,6 +448,7 @@ class EntrenarCsv:
             else:
                 desconocidas.append(i.lower())
 
+            """Frecuencia según el listado de subtitulos"""
             if i.lower() in dic_frecuencia_sub:
                 if dic_frecuencia_sub[i.lower()] >= 108:
                     muy_frecuentes_sub.append(i.lower())
@@ -366,11 +457,15 @@ class EntrenarCsv:
                 if dic_frecuencia_sub[i.lower()] <= 31:
                     poco_frecuentes_sub.append(i.lower())
 
-            cont += 1
+            cont += 1 # aumentamos el contador con la posición de la palabra
+
+        """comprobamos si los resultados son iguales a 0 """
         if len(verbs) == 0:
             verbs.append("")
         if len(noun) == 0:
             noun.append("")
+
+        """escribimos los porcentajes de las variables en el archivo CSV"""
         valores = [self.title,
                    (len(sin) * 100) / lenwords,
                    (len(abrv) * 100) / lenwords,
