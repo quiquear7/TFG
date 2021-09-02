@@ -397,12 +397,12 @@ class MainWindow(QMainWindow):
     """funcion que recibe los resultados del analisis y los muestra por pantalla"""
     def rellenarAnalisis(self, dic_resultados, dic_resultados2):
         resultados = dic_resultados2['resultados']
-        titleA = dic_resultados2['titulo']
-        textReturn = dic_resultados2['texto']
+        titleA = dic_resultados2['titulo']  # obtenemos titulo del documento
+        textReturn = dic_resultados2['texto']  # obtenemos texto
 
         global fileJson, nameJson
-        fileJson = dic_resultados2['json']
-        nameJson = dic_resultados2['titulo']
+        fileJson = dic_resultados2['json']  # obtenemos json
+        nameJson = dic_resultados2['titulo']  # obtenemos nombre del json
 
         dic_explicaciones = {}
         sigl = codecs.open("diccionarios/variables.txt", "r", encoding="utf-8")
@@ -412,8 +412,9 @@ class MainWindow(QMainWindow):
         resumen = resultados[0][1]
 
         if resumen == "Dificil":
-            textA = "Título: " + titleA + "<br/><br/>"
+            textA = "Título: " + titleA + "<br/><br/>"  # escribimos titulo del documento
             for i in resultados:
+                """escribimos los resultadoso de las variables"""
                 textA += i[0] + ": " + str(i[1])[0:7]
                 textA += "<br/>"
                 if i[0] != 'Resumen':
@@ -437,6 +438,7 @@ class MainWindow(QMainWindow):
             text = ""
             frases = textReturn.split("\n")
 
+            """escribimos el texto marcando en rojo los errores"""
             for j in frases:
                 words = word_tokenize(j, "spanish")
                 for i in words:

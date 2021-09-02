@@ -4,9 +4,8 @@ import pickle
 import sys
 import nltk
 from freeling import pyfreeling
-from time import time
 
-
+"""funcion para leer diccionario de frecuencias de la RAE"""
 def diccionario_frecuencia():
     dic_frecuencias = {}
     archivo_frecuencia = codecs.open("diccionarios/CREA_total.txt", "r", encoding="latin-1")
@@ -16,7 +15,7 @@ def diccionario_frecuencia():
         dic_frecuencias[word] = float(entrada[3])
     return dic_frecuencias
 
-
+"""funcion para leer diccionario de frecuencias de subtitulos"""
 def diccionario_frecuencia_sub():
     dic_frecuencias = {}
     archivo_frecuencia = codecs.open("diccionarios/es_full.txt", "r", encoding="latin-1")
@@ -27,7 +26,7 @@ def diccionario_frecuencia_sub():
             dic_frecuencias[word] = int(entrada[1])
     return dic_frecuencias
 
-
+"""funcion para leer diccionario de sinonimos"""
 def diccionario_sinonimos():
     dic_sinonimos = {}
     sin = codecs.open("diccionarios/sinonimos_final.txt", "r", encoding="utf-8")
@@ -36,7 +35,7 @@ def diccionario_sinonimos():
         dic_sinonimos[pal[0]] = pal
     return dic_sinonimos
 
-
+"""funcion para leer diccionario de abreviaturas"""
 def diccionario_abreviaturas():
     dic_abreviaturas = {}
     abrv = codecs.open("diccionarios/abreviaturas.txt", "r", encoding="utf-8")
@@ -49,7 +48,7 @@ def diccionario_abreviaturas():
         dic_abreviaturas[i] = i
     return dic_abreviaturas
 
-
+"""funcion para leer diccionario de frecuencias de siglas"""
 def diccionario_siglas():
     dic_siglas = {}
     sigl = codecs.open("diccionarios/siglas-final.txt", "r", encoding="utf-8")
@@ -58,7 +57,7 @@ def diccionario_siglas():
         dic_siglas[pal[0]] = pal[1]
     return dic_siglas
 
-
+"""funcion para leer diccionario de homonimos"""
 def diccionario_homonimas():
     dic_hom = {}
     hom = codecs.open("diccionarios/homonimas.txt", "r", encoding="utf-8")
@@ -67,7 +66,7 @@ def diccionario_homonimas():
         dic_hom[pal[0]] = pal[1].rstrip()
     return dic_hom
 
-
+"""funcion para leer diccionario de freeling"""
 def diccionario_freeling():
     diccionario = {}
     archivo_diccionario = codecs.open("diccionarios/diccionario-freeling-spa.txt", "r", encoding="utf-8")
@@ -98,121 +97,7 @@ def diccionario_freeling():
     return diccionario
 
 
-def etiquetado():
-    diccionario = diccionario_freeling()
-    entrada = codecs.open("diccionarios/fragmento-wikicorpus-tagged-spa.txt", "r", encoding="utf-8")
-
-    tagged_words = []
-    tagged_sents = []
-    tagged_sents_per_unigrams = []
-    for linia in entrada:
-        linia = linia.rstrip()
-        if linia.startswith("<") or len(linia) == 0:
-            # nova linia
-            if len(tagged_words) > 0:
-                tagged_sents.append(tagged_words)
-                tagged_sents_per_unigrams.append(tagged_words)
-                tagged_words = []
-        else:
-            camps = linia.split(" ")
-            forma = camps[0]
-            lema = camps[1]
-            etiqueta = camps[2]
-            tupla = (forma, etiqueta)
-            tagged_words.append(tupla)
-
-    if len(tagged_words) > 0:
-        tagged_sents.append(tagged_words)
-        tagged_sents_per_unigrams.append(tagged_words)
-        tagged_words = []
-
-    for linia in diccionario:
-        linia = linia.rstrip()
-        camps = linia.split(":")
-        if len(camps) >= 3:
-            forma = camps[0]
-            lema = camps[1]
-            etiqueta = camps[2]
-            tupla = (forma, etiqueta)
-            tagged_words.append(tupla)
-    tagged_sents_per_unigrams.append(tagged_words)
-
-    default_tagger = nltk.DefaultTagger("NP00000")
-    affix_tagger = nltk.AffixTagger(tagged_sents_per_unigrams, affix_length=-3, min_stem_length=2,
-                                    backoff=default_tagger)
-    unigram_tagger_diccionari = nltk.UnigramTagger(tagged_sents_per_unigrams, backoff=affix_tagger)
-    unigram_tagger = nltk.UnigramTagger(tagged_sents, backoff=unigram_tagger_diccionari)
-    bigram_tagger = nltk.BigramTagger(tagged_sents, backoff=unigram_tagger)
-    trigram_tagger = nltk.TrigramTagger(tagged_sents, backoff=bigram_tagger)
-
-    sortida = open('etiq-spanish.pkl', 'wb')
-    pickle.dump(trigram_tagger, sortida, -1)
-    sortida.close()
-
-
-def printTree(ptree, depth):
-    node = ptree.begin()
-
-    print(''.rjust(depth * 2), end='')
-    info = node.get_info()
-    if info.is_head():
-        print('+', end='')
-
-    nch = node.num_children()
-    if nch == 0:
-        w = info.get_word()
-        print('({0} {1} {2})'.format(w.get_form(), w.get_lemma(), w.get_tag()), end='')
-
-    else:
-        print('{0}_['.format(info.get_label()))
-
-        for i in range(nch):
-            child = node.nth_child_ref(i)
-            printTree(child, depth + 1)
-
-        print(''.rjust(depth * 2), end='')
-        print(']', end='')
-
-    print('')
-
-
-def printDepTree(dtree, depth):
-    node = dtree.begin()
-
-    print(''.rjust(depth * 2), end='')
-
-    info = node.get_info()
-    link = info.get_link()
-    linfo = link.get_info()
-    print('{0}/{1}/'.format(link.get_info().get_label(), info.get_label()), end='')
-
-    w = node.get_info().get_word()
-    print('({0} {1} {2})'.format(w.get_form(), w.get_lemma(), w.get_tag()), end='')
-
-    nch = node.num_children()
-    if nch > 0:
-        print(' [')
-
-        for i in range(nch):
-            d = node.nth_child_ref(i)
-            if not d.begin().get_info().is_chunk():
-                printDepTree(d, depth + 1)
-
-        ch = {}
-        for i in range(nch):
-            d = node.nth_child_ref(i)
-            if d.begin().get_info().is_chunk():
-                ch[d.begin().get_info().get_chunk_ord()] = d
-
-        for i in sorted(ch.keys()):
-            printDepTree(ch[i], depth + 1)
-
-        print(''.rjust(depth * 2), end='')
-        print(']', end='')
-
-    print('')
-
-
+"""función para realizar el etiquetado de FreeLing"""
 def freeling(text):
 
     if "FREELINGDIR" not in os.environ:
@@ -286,11 +171,11 @@ def freeling(text):
     cont = 0
     for s in ls:
         ws = s.get_words()
-        words += len(ws)
+        words += len(ws) # obtenemos el número de palabras analizadas
         for w in ws:
+            #guardamos la palabra, la etiqueta y el lema de cada palabra
             analisis.append((w.get_form(), w.get_tag(), w.get_lemma()))
 
-        res = int(((cont * 30) / len(ls)) + 60)
         cont += 1
 
     sp.close_session(sid)
