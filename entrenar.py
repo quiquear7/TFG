@@ -119,28 +119,35 @@ class EntrenarCsv:
         doble_negacion = 0  # almacena el número de dobles negaciones en el texto
         verbos_seguidos = []  # almacena los verbos que estan seguidos
         partitivos = []  # almacena los partitivos del texto
-        sin = []
-        cont = 0  #
-        cont_negative = 0
-        negative_text = ""
-        doble_negacion_array = []
-        puntuacion = []
+        sin = []  # almacena los sinonimos sin repetición
+        cont = 0  # contador para obtener la posición de la palabra en el texto
+        cont_negative = 0  # almacenas cuantas negaciones hay en una frase
+        negative_text = ""  # obtiene las cadenas de las negaciones de una frase
+        doble_negacion_array = []  # almacena las cadenas de las dobles negaciones en un array
+        puntuacion = []  # almacenas los signos de puntación en el texto
+
+        """almacena las palabras muy frecuentes, frecuentes y poco frecuentes en base a dos listados"""
+
+        """listado de RAE"""
         muy_frecuentes = []
         frecuentes = []
         poco_frecuentes = []
+
+        """Listado de Subtitulos"""
         muy_frecuentes_sub = []
         frecuentes_sub = []
         poco_frecuentes_sub = []
-        mayus_no_sigla = []
-        frecuencia = []
-        ordinales = []
-        date_mal = []
-        romanos = []
-        dos_puntos = []
-        otro_idioma = []
-        proper_noun = []
-        futuro = []
-        pasado = []
+
+        mayus_no_sigla = []  # almacena las mmayusculas que no son siglas en el texto
+        frecuencia = []  # almacena la frecuencia de las palabras en el texto
+        ordinales = []  # almacena los número ordinales
+        date_mal = []  # almacena las fechas que están con formato erroneo
+        romanos = []  # almacena números romanos
+        dos_puntos = []  # almacena las posiciones donde hay dos puntos en el texto
+        otro_idioma = []  # almacena palabras que no estén en castellano
+        proper_noun = []  # almacena nombres propios
+        futuro = []  # almacena verbos en futuro
+        pasado = []  # almacena verbos en pasado
 
         for x in analisis:
             i = x[0]
