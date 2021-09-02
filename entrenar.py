@@ -155,8 +155,9 @@ class EntrenarCsv:
             j = x[1]  # etiqueta
             k = i
             if len(x) == 3:
-                k = x[2]
+                k = x[2]  # utilizamos la variable k para almacenar el lema en caso de que exista
 
+            """comprueba si una palabra es de otro idioma y no es una sigla, abreviatura o signo de puntuación"""
             if dicEnchant.check(i.lower()) == False and dicEnchant.check(j.lower()) == False \
                     and i.lower() not in punct and i not in dic_siglas and i not in dic_abreviaturas:
                 if not any(map(str.isdigit, i)):
@@ -168,6 +169,9 @@ class EntrenarCsv:
                     else:
                         otro_idioma.append((i, cont))
 
+            """calcula siglas que no esten guardadas en el listado de siglas, para ello comprueba si está en mayusuculas,
+            no son una palabra y tienen entre 2 y 7, si no se cumple se asume que es una palabra en mayuscula, el listado
+            de siglas se actualiza agregando la nueva palabra"""
             if "_" in i:
                 siglas_temp = i.split("_")
                 for sig in siglas_temp:
