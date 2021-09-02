@@ -24,7 +24,7 @@ Instalar Módulos
 12. pip install legibilidad
 13. pip install textstat
 
-#Funcionamiento
+# Funcionamiento
 
 El programa tiene dos funciones:
 1. Extractor de Características: se usa en la fase de entrenamiento, la ruta de la que se obtienen los textos ya está

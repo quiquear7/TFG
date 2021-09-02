@@ -149,9 +149,10 @@ class EntrenarCsv:
         futuro = []  # almacena verbos en futuro
         pasado = []  # almacena verbos en pasado
 
+        '''en este momento recorremos una a una cada palabra etiquetada'''
         for x in analisis:
-            i = x[0]
-            j = x[1]
+            i = x[0]  # palabra a analizar
+            j = x[1]  # etiqueta
             k = i
             if len(x) == 3:
                 k = x[2]
